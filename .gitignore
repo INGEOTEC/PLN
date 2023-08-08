@@ -1,12 +1,2 @@
-_site/index.html
-_site/LICENSE
-_site/README.md
-_site/assets/css/just-the-docs-dark.css
-_site/assets/css/just-the-docs-default.css
-_site/assets/css/just-the-docs-light.css
-_site/assets/images/large-image.jpg
-_site/assets/images/small-image.jpg
-_site/assets/js/just-the-docs.js
-_site/assets/js/search-data.json
-_site/assets/js/vendor/lunr.min.js
+_site/
 Gemfile.lock
