@@ -1,0 +1,23 @@
+lang: es
+
+project:
+  type: book
+book:
+  title: "Procesamiento de Lenguaje Natural"
+  author: 
+    - name: "Eric S. Téllez"
+    - name: "Mario Graff"
+  date: "8/8/2023"
+  chapters:
+    - index.qmd
+    - intro.qmd
+    - summary.qmd
+    - references.qmd
+
+bibliography: references.bib
+
+format:
+  html:
+    theme: cosmo
+  pdf:
+    documentclass: scrreprt
