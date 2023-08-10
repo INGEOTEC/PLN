@@ -6,8 +6,11 @@ book:
   title: "Procesamiento de Lenguaje Natural"
   author: 
     - name: "Eric S. Téllez"
+      url: https://sadit.github.io
+      affiliation: INFOTEC Centro de Investigación e Innovación en Tecnologías de la Información y Comunicación    
     - name: "Mario Graff"
-  date: "8/8/2023"
+      url: https://mgraffg.github.io
+      affiliation: INFOTEC Centro de Investigación e Innovación en Tecnologías de la Información y Comunicación
   chapters:
     - index.qmd
     - capitulos/01Introduccion.qmd
@@ -23,6 +26,7 @@ book:
     - capitulos/11Referencias.qmd    
 
 bibliography: references.bib
+title-block-banner: false
 
 format:
   html:
