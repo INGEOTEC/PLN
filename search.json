@@ -7,17 +7,73 @@
     "text": "Prefacio\nEl curso trata de ser auto-contenido, es decir, no debería de ser necesario leer otras fuentes para poder entenderlo y realizar las actividades. De cualquier manera es importante comentar que el curso está basado en los siguientes libros de texto:\n\nSpeech and Language Processing. An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition. Third Edition draft. Daniel Jurafsky and James H. Martin. pdf\nIntroduction to machine learning, Third Edition. Ethem Alpaydin. MIT Press.\nAn Introduction to Statistical Learning with Applications in R. Gareth James, Daniela Witten, Trevor Hastie, and Robert Tibshirani. Springer Texts in Statistics.\nAll of Statistics. A Concise Course in Statistical Inference. Larry Wasserman. MIT Press.\nAn Introduction to the Bootstrap. Bradley Efron and Robert J. Tibshirani. Monographs on Statistics and Applied Probability 57. Springer-Science+Business Media.\nUnderstanding Machine Learning: From Theory to Algorithms. Shai Shalev-Shwartz and Shai Ben-David. Cambridge University Press.\n\n\n\nNotación\nLa Tabla 1.1 muestra la notación que se seguirá en este documento.\n\n\nTabla 1.1: Notación\n\n\n\n\n\n\nSímbolo\nSignificado\n\n\n\n\n\\(x\\)\nVariable usada comunmente como entrada\n\n\n\\(y\\)\nVariable usada comunmente como salida\n\n\n\\(\\mathbb R\\)\nNúmeros reales\n\n\n\\(\\mathbf x\\)\nVector Columna \\(\\mathbf x \\in \\mathbb R^d\\)\n\n\n\\(d\\)\nDimensión\n\n\n\\(\\mathbf w \\cdot \\mathbf x\\)\nProducto punto donde \\(\\mathbf w\\) y \\(\\mathbf x \\in \\mathbb R^d\\)\n\n\n\\(\\mathcal D\\)\nConjunto de datos\n\n\n\\(\\mathcal T\\)\nConjunto de entrenamiento\n\n\n\\(\\mathcal V\\)\nConjunto de validación\n\n\n\\(\\mathcal G\\)\nConjunto de prueba\n\n\n\\(N\\)\nNúmero de ejemplos\n\n\n\\(K\\)\nNúmero de clases\n\n\n\\(\\mathbb P(\\cdot)\\)\nProbabilidad\n\n\n\\(\\mathcal X, \\mathcal Y\\)\nVariables aleatorías\n\n\n\\(\\mathcal N(\\mu, \\sigma^2)\\)\nDistribución Normal con parámetros \\(\\mu\\) y \\(\\sigma^2\\)\n\n\n\\(f_{\\mathcal X}\\)\nFunción de densidad de probabilidad de \\(\\mathcal X\\)\n\n\n\\(\\mathbb 1(e)\\)\nFunción para indicar; \\(1\\) only if \\(e\\) is true\n\n\n\\(\\Omega\\)\nEspacio de búsqueda\n\n\n\\(\\mathbb V\\)\nVarianza\n\n\n\\(\\mathbb E\\)\nEsperanza"
   },
   {
-    "objectID": "intro.html",
-    "href": "intro.html",
+    "objectID": "capitulos/01Introduccion.html",
+    "href": "capitulos/01Introduccion.html",
     "title": "1  Introducción",
     "section": "",
-    "text": "This is a book created from markdown and executable code.\nSee Knuth (1984) for additional discussion of literate programming.\n\n\n\n\nKnuth, Donald E. 1984. «Literate Programming». Comput. J. 27 (2): 97-111. https://doi.org/10.1093/comjnl/27.2.97."
+    "text": "El objetivo de la unidad es"
   },
   {
-    "objectID": "references.html",
-    "href": "references.html",
-    "title": "References",
+    "objectID": "capitulos/02ManejandoTexto.html",
+    "href": "capitulos/02ManejandoTexto.html",
+    "title": "2  Manejando Texto",
     "section": "",
-    "text": "Knuth, Donald E. 1984. “Literate Programming.” Comput.\nJ. 27 (2): 97–111. https://doi.org/10.1093/comjnl/27.2.97."
+    "text": "El objetivo de la unidad es"
+  },
+  {
+    "objectID": "capitulos/03ModeladoLenguaje.html",
+    "href": "capitulos/03ModeladoLenguaje.html",
+    "title": "3  Modelado de Lenguaje",
+    "section": "",
+    "text": "El objetivo de la unidad es"
+  },
+  {
+    "objectID": "capitulos/04ClasificacionTexto.html",
+    "href": "capitulos/04ClasificacionTexto.html",
+    "title": "4  Clasificación de Texto",
+    "section": "",
+    "text": "El objetivo de la unidad es"
+  },
+  {
+    "objectID": "capitulos/05RepresentacionTexto.html",
+    "href": "capitulos/05RepresentacionTexto.html",
+    "title": "5  Representación de Texto",
+    "section": "",
+    "text": "El objetivo de la unidad es"
+  },
+  {
+    "objectID": "capitulos/06MezclaModelos.html",
+    "href": "capitulos/06MezclaModelos.html",
+    "title": "6  Mezcla de Modelos",
+    "section": "",
+    "text": "El objetivo de la unidad es"
+  },
+  {
+    "objectID": "capitulos/07TareasClasificacion.html",
+    "href": "capitulos/07TareasClasificacion.html",
+    "title": "7  Tareas de Clasificación de Texto",
+    "section": "",
+    "text": "El objetivo de la unidad es"
+  },
+  {
+    "objectID": "capitulos/08BasesConocimiento.html",
+    "href": "capitulos/08BasesConocimiento.html",
+    "title": "8  Bases de Conocimiento",
+    "section": "",
+    "text": "El objetivo de la unidad es"
+  },
+  {
+    "objectID": "capitulos/09Visualizacion.html",
+    "href": "capitulos/09Visualizacion.html",
+    "title": "9  Visualización",
+    "section": "",
+    "text": "El objetivo de la unidad es"
+  },
+  {
+    "objectID": "capitulos/10Conclusiones.html",
+    "href": "capitulos/10Conclusiones.html",
+    "title": "10  Conclusiones",
+    "section": "",
+    "text": "El objetivo de la unidad es"
   }
 ]
