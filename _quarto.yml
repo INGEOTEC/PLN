@@ -10,8 +10,17 @@ book:
   date: "8/8/2023"
   chapters:
     - index.qmd
-    - intro.qmd
-    - references.qmd
+    - capitulos/01Introduccion.qmd
+    - capitulos/02ManejandoTexto.qmd
+    - capitulos/03ModeladoLenguaje.qmd
+    - capitulos/04ClasificacionTexto.qmd
+    - capitulos/05RepresentacionTexto.qmd
+    - capitulos/06MezclaModelos.qmd
+    - capitulos/07TareasClasificacion.qmd
+    - capitulos/08BasesConocimiento.qmd
+    - capitulos/09Visualizacion.qmd
+    - capitulos/10Conclusiones.qmd
+    - capitulos/11Referencias.qmd    
 
 bibliography: references.bib
 
