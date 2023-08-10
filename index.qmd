@@ -1,4 +1,4 @@
-# Preface {.unnumbered}
+# Prefacio {.unnumbered}
 
 El curso trata de ser auto-contenido, es decir, no debería de ser necesario leer otras fuentes para poder entenderlo y realizar las actividades. De cualquier manera es importante comentar que el curso está basado en los siguientes libros de texto:
 
@@ -10,6 +10,8 @@ El curso trata de ser auto-contenido, es decir, no debería de ser necesario lee
 - Understanding Machine Learning: From Theory to Algorithms. Shai Shalev-Shwartz and Shai Ben-David. Cambridge University Press.
 
 # Notación
+
+La @tbl-notacion muestra la notación que se seguirá en este documento. 
 
 |Símbolo           | Significado                                              |
 |------------------|----------------------------------------------------------|
@@ -34,4 +36,4 @@ El curso trata de ser auto-contenido, es decir, no debería de ser necesario lee
 |$\mathbb V$     | Varianza                                                 |
 |$\mathbb E$     | Esperanza                                                |
 
-xxx adfas $\mathbb E$ dasd
+: Notación {#tbl-notacion}
