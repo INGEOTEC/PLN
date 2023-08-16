@@ -19,7 +19,8 @@ jobs:
       - name: Set up Quarto
         uses: quarto-dev/quarto-actions/setup@v2
         with:
-          tinytex: true        
+          tinytex: true
+          shell: bash -el {0}                
       - name: Set up Python
         uses: conda-incubator/setup-miniconda@v2
         with:
@@ -35,10 +36,10 @@ jobs:
           conda install --yes numpy scipy scikit-learn nltk evomsa jupyter
           python -c "import nltk; nltk.download('stopwords')"
           which python
+          cat ~/.bashrc
       - name: Render and Publish
         uses: quarto-dev/quarto-actions/publish@v2
         with:
-          shell: bash -el {0}
           target: gh-pages
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
