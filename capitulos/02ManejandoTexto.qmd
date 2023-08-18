@@ -11,9 +11,6 @@ from microtc.textmodel import SKIP_SYMBOLS
 from b4msa.textmodel import TextModel
 from b4msa.lang_dependency import LangDependency
 from nltk.stem.porter import PorterStemmer
-from wordcloud import WordCloud as WC
-from matplotlib import pylab as plt
-import numpy as np
 import unicodedata
 import re
 ```
@@ -33,49 +30,50 @@ from IPython.display import Markdown
 
 ## Normalización de Texto
 
-In all the topics covered, the assumption is that the text is well-formatted and spaces nicely surround the words (tokens). However, this is not the general case, and the spelling errors and the procedure used to define the tokens strongly impact the algorithm's performance. Consequently, this part of the course is devoted to presenting standard techniques used to normalize the text and to transform the text into tokens. 
+Se podría suponer que el texto se que se analizará está bien escrito y tiene un formato adecuado para su procesamiento. Desafortunadamente, la realidad es que en la mayoría de aplicaciones el texto que se analiza tiene errores de ortográficos, errores de formato y además no es trivial identificar la unidad mínima de procesamiento que podría ser de manera natural, en el español, las palabras. Por este motivo, esta unidad trata técnicas comunes que se utilizan para normalizar el texto, esta normalización es un proceso previo al desarrollo de los algoritmos de PLN. 
 
-The text normalization described are mainly the ones used in the following research words:
+La normalización descritas en esta unidad se basan principalmente en las utilizadas en los siguientes artículos científicos.
 
 1. [An automated text categorization framework based on hyperparameter optimization](https://www.sciencedirect.com/science/article/pii/S0950705118301217) (@microTC)
 2. [A simple approach to multilingual polarity classification in Twitter](https://www.sciencedirect.com/science/article/abs/pii/S0167865517301721) (@B4MSA)
 3. [A case study of Spanish text transformations for twitter sentiment analysis](https://www.sciencedirect.com/science/article/abs/pii/S0957417417302312) (@TELLEZ2017)
 
-## Entity
+## Entidades
 
-The journey of text normalization starts with handling different entities within a text; the entities could be the mentioned of a user in a tweet, the numbers, or the URL, to mention a few. The actions performed to the entities found are to delete them or replace them for a particular token. 
+La descripción de diferentes técnicas de normalización empieza con el manejo de entidades en el texto. Algunas entidades que se tratarán serán los nombres de usuario, números o URLs mencionados en un texto. Por otro lado están las acciones que se realizarán a las entidades encontradas, estas acciones corresponden a su borrado o remplazo por algún otro toquen. 
 
-### Users
+### Usuarios
 
-The first process is to deal with username following the format of Twitter. In a tweet, the mention of a user is identified with a string starting with the character @. The two actions could be to delete all the users' mentions or change them for a common label.
+En esta sección se trabajará con los nombres de usuarios que siguen el formato usado por Twitter. En un tuit, los nombres de usuarios son aquellas palabras que inician con el caracter @ y terminan con un espacio o caracter terminal. Las acciones que se realizarán con los nombres de usuario encontrados serán su borrado o reemplazo por una etiqueta en particular. 
 
-The procedure uses regular expressions to find the entities; for example, the following code can remove the users' mentions.
+El procedimiento para encontrar los nombres de usuarios es mediante expresiones regulares, en particular se usa la expresión `@\S+`, tal y como se muestra en el siguiente ejemplo.
 
 ```{python}
 #| echo: true
-text = 'Hi @xx, @mm is talking about you.'
+text = 'Hola @xx, @mm te está buscando'
 re.sub(r"@\S+", "", text)
 ```
 
-On the other hand, to replace the username with a shared label can be implemented with the following code, where the label is `_usr`
+La segunda acción es reemplazar cada nombre de usuario por una etiqueta particular, en el siguiente ejemplo se reemplaza por la etiqueta `_usr`.
 
 ```{python}
 #| echo: true
-text = 'Hi @xx, @mm is talking about you.'
+text = 'Hola @xx, @mm te está buscando'
 re.sub(r"@\S+", "_usr", text)
 ```
 
 ### URL
 
-The previous code can be adapted to handle URL; one only needs to define the regular expression to use; see the following code that removes all the appearances of the URL. 
+Los ejemplos anteriores se pueden adaptar para manejar URL; solamente es necesario adecuar la expresión regular que identifica una URL. En el siguiente ejemplo se muestra como se pueden borrar las URLs que aparecen en un texto. 
+
 
 ```{python}
 #| echo: true
-text = "go http://google.com, and find out"
+text = "puedes verificar que http://google.com esté funcionando"
 re.sub(r"https?://\S+", "", text)
 ```
 
-### Numbers
+### Números
 
 The previous code can be modified to deal with numbers and replace the number found with a shared label such as `_num`.
 
@@ -85,29 +83,27 @@ text = "we have won 10 M"
 re.sub(r"\d\d*\.?\d*|\d*\.\d\d*", "_num", text)
 ```
 
-## Spelling
+## Ortografía
 
-The next block of text normalization modifies the writing of the text, removing components that, for particular applications, can be ignored to reduce the vocabulary size, which impacts the complexity of the algorithm and could be reflected in an improvement in the performance.  
+El siguiente bloque de normalizaciones agrupa aquellas modificaciones que se realizan a algún componente de tal manera que aunque impacta en su ortografía puede ser utilizado para reducir la dimensión y se ve reflejado en la complejidad del algoritmo.
 
-### Case sensitive
+### Mayúsculas y Minúsculas
 
-The first of these transformations is the conversion to lower case; transforming all the words to the lower case has the consequence that the vocabulary is reduced, e.g., the word Mexico and mexico would be considered the same token. This operation can be implemented with function `lower` as follows.
+La primera de estas transformaciones es convertir todas los caracteres a minúsculas. Como se puede observar esta transformación hace que el vocabulario se reduzca, por ejemplo, las palabras *México* o *MÉXICO* son representados por la palabra *méxico*. Esta operación se puede realizar con la función `lower` tal y cómo se muestra a continuación. 
 
 ```{python}
 #| echo: true
-text = "Mexico"
+text = "México"
 text.lower()
 ```
 
-### Punctuation
+### Signos de Puntuación
 
-The punctuation symbols are essential to natural language understanding and generation; however, for other applications, such as sentiment analysis or text categorization, its contribution is opaque by the increase in the vocabulary size. Consequently, its removal influences the vocabulary size, which sometimes has a positive result on the performance.
-
-These symbols can be removed by traversing the string and skipping the punctuations.
+Los signos de puntuación son necesarios para tareas como la generación de textos, pero existen otras aplicaciones donde los signos de puntuación tienen un efecto positivo en el rendimiento del algorithm, este es el caso de tareas de categorización de texto. El efecto que tiene el quitar los signos de puntuación es que el vocabulario se reduce. Los símbolos de puntuación se pueden remover teniendo una lista de los mismos, esta lista de signos de puntuación se encuentra en la variable `SKIP_SYMBOLS` y el siguiente código muestra un procedimiento para quitarlos. 
 
 ```{python}
 #| echo: true
-text = "Hi! good morning,"
+text = "¡Hola! buenos días:"
 output = ""
 for x in text:
     if x in SKIP_SYMBOLS:
@@ -116,9 +112,11 @@ for x in text:
 output
 ```
 
-### Diacritic
+### Símbolos Diacríticos
 
-Different languages use diacritic symbols, e.g., México; as expected, this has the consequence of increasing the vocabulary. On the other hand, in informal writing, the misuse of diacritic symbols is common; one particular way to handle this problem is to remove the diacritic symbols and treat them as the same word, e.g., México would be replaced by Mexico. 
+Continuando con la misma idea de reducir el vocabulario, es común eliminar los símbolos diacríticos en las palabras. Esta transformación también tiene el objetivo de normalizar aquellos textos informales donde los símbolos diacríticos son usado con una menor frecuencia, en particular los acentos en el caso del español. Por ejemplo, es común encontrar la palabra *México* escrita como *Mexico*. 
+
+El siguiente código muestra un procedimiento para eliminar los símbolos diacríticos.  
 
 ```{python}
 #| echo: true
