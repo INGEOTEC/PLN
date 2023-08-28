@@ -10,7 +10,7 @@ from microtc.params import OPTION_GROUP, OPTION_DELETE, OPTION_NONE
 from microtc.textmodel import SKIP_SYMBOLS
 from b4msa.textmodel import TextModel
 from b4msa.lang_dependency import LangDependency
-from nltk.stem.porter import PorterStemmer
+from nltk.stem.snowball import SnowballStemmer
 import unicodedata
 import re
 ```
@@ -130,21 +130,23 @@ for x in unicodedata.normalize('NFD', text):
 output
 ```
 
-## Semantic Normalizations
+## Normalización Semántica
 
-The next set of normalization techniques aims to reduce the vocabulary size using the meaning of the words to modify them or remove them from the text.
+Las siguientes normalizaciones comparten el objetivo con las normalizaciones presentadas hasta este momento, el cual es la reducción del vocabulario; la diferencia es que las siguientes utilizan el significado o uso de la palabra. 
 
-### Stop words
+### Palabras Vacías
+
+Las palabras vacías (*stop words*) son palabras utilizadas frecuentemente en el lenguaje, las cuales son necesarias para comunicación, pero no aportan información para discriminar un texto de acuerdo a su significado. 
 
 The stop words are the most frequent words used in the language. These words are essential to communicate but are not so much on tasks where the aim is to discriminate texts according to their meaning. 
 
-The stop words can be stored in a dictionary, and then the process of removing them consists of traversing all the tokens from a text and then removing those in the dictionary. The process is exemplified with the following code.
+Las palabras vacías se pueden guardar en un diccionario y el proceso de identificación consiste en buscar la existencia de la palabra en el diccionario. Una vez que la palabra analizada se encuentra en el diccionario, se procede a quitarla o cambiarla por un token particular. El proceso de borrado se muestra en el siguiente código. 
 
 ```{python}
 #| echo: true
-lang = LangDependency('english')
+lang = LangDependency('spanish')
 
-text = 'Good morning! Today, we have a warm weather.'
+text = '¡Buenos días! El día de hoy tendremos un día cálido.'
 output = []
 for word in text.split():
     if word.lower() in lang.stopwords[len(word)]:
@@ -154,17 +156,17 @@ output = " ".join(output)
 output
 ```
 
-### Stemmming and Lemmatization
+### Lematización y Reducción a la Raíz
 
-The idea of stemming and lemmatization, seen as a normalization process, is to group different words based on their root; for example, the process would associate words like *playing*, *player*, *plays* with the token *play*.
+La idea de lematización y reducción a la raíz es transformar una palabra a su raíz mediante un proceso heurístico o morfológico. Por ejemplo, las palabras *jugando* o *jugaron* se transforman a la palabra *jugar*.
 
-Stemming treats the problem with fewer constraints than lemmatization, having as a consequence that the common word found cannot be the common root of the words; additionally, the algorithms do not consider the role of the word being processed in the sentence. On the other hand, a lemmatization algorithm obtains the root of the word considering the part of the speech of the processed word.
+El siguiente código muestra el proceso de reducción a la raíz utilizando la clase `SnowballStemmer`. 
 
 ```{python}
 #| echo: true
-stemmer = PorterStemmer()
+stemmer = SnowballStemmer('spanish')
 
-text = 'I like playing football'
+text = 'Estoy jugando futbol con mis amigos'
 output = []
 for word in text.split():
     w = stemmer.stem(word)

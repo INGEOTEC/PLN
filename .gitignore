@@ -3,3 +3,6 @@ Gemfile.lock
 
 /.quarto/
 _book/
+_quarto.yml
+.vscode/settings.json
+capitulos/.vdoc.py
