@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.3.450">
+<meta name="generator" content="quarto-1.4.330">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -101,6 +101,11 @@ div.csl-indent {
   "panel-placement": "start",
   "type": "textbox",
   "limit": 20,
+  "keyboard-shortcut": [
+    "f",
+    "/",
+    "s"
+  ],
   "language": {
     "search-no-results-text": "Sin resultados",
     "search-matching-documents-text": "documentos encontrados",
@@ -129,9 +134,9 @@ div.csl-indent {
       <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
-      <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/02ManejandoTexto.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Manejando Texto</span></a></li></ol></nav>
-      <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
-      </a>
+        <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/02ManejandoTexto.html"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Manejando Texto</span></a></li></ol></nav>
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
       </button>
@@ -146,8 +151,8 @@ div.csl-indent {
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Procesamiento de Lenguaje Natural</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/INGEOTEC/PLN" rel="" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <a href="../Procesamiento-de-Lenguaje-Natural.pdf" rel="" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="https://github.com/INGEOTEC/PLN" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
+    <a href="../Procesamiento-de-Lenguaje-Natural.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
       </div>
@@ -254,10 +259,10 @@ div.csl-indent {
   <li><a href="#signos-de-puntuación" id="toc-signos-de-puntuación" class="nav-link" data-scroll-target="#signos-de-puntuación"><span class="header-section-number">2.3.2</span> Signos de Puntuación</a></li>
   <li><a href="#símbolos-diacríticos" id="toc-símbolos-diacríticos" class="nav-link" data-scroll-target="#símbolos-diacríticos"><span class="header-section-number">2.3.3</span> Símbolos Diacríticos</a></li>
   </ul></li>
-  <li><a href="#semantic-normalizations" id="toc-semantic-normalizations" class="nav-link" data-scroll-target="#semantic-normalizations"><span class="header-section-number">2.4</span> Semantic Normalizations</a>
+  <li><a href="#normalización-semántica" id="toc-normalización-semántica" class="nav-link" data-scroll-target="#normalización-semántica"><span class="header-section-number">2.4</span> Normalización Semántica</a>
   <ul class="collapse">
-  <li><a href="#stop-words" id="toc-stop-words" class="nav-link" data-scroll-target="#stop-words"><span class="header-section-number">2.4.1</span> Stop words</a></li>
-  <li><a href="#stemmming-and-lemmatization" id="toc-stemmming-and-lemmatization" class="nav-link" data-scroll-target="#stemmming-and-lemmatization"><span class="header-section-number">2.4.2</span> Stemmming and Lemmatization</a></li>
+  <li><a href="#palabras-vacías" id="toc-palabras-vacías" class="nav-link" data-scroll-target="#palabras-vacías"><span class="header-section-number">2.4.1</span> Palabras Vacías</a></li>
+  <li><a href="#lematización-y-reducción-a-la-raíz" id="toc-lematización-y-reducción-a-la-raíz" class="nav-link" data-scroll-target="#lematización-y-reducción-a-la-raíz"><span class="header-section-number">2.4.2</span> Lematización y Reducción a la Raíz</a></li>
   </ul></li>
   <li><a href="#tokenization" id="toc-tokenization" class="nav-link" data-scroll-target="#tokenization"><span class="header-section-number">2.5</span> Tokenization</a>
   <ul class="collapse">
@@ -286,17 +291,18 @@ div.csl-indent {
   </div>
   
 
+
 </header>
 
 <p>El <strong>objetivo</strong> de la unidad es</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div class="cell" data-execution_count="1">
+<div id="326ee69f" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> microtc.params <span class="im">import</span> OPTION_GROUP, OPTION_DELETE, OPTION_NONE</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> microtc.textmodel <span class="im">import</span> SKIP_SYMBOLS</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> b4msa.textmodel <span class="im">import</span> TextModel</span>
 <span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> b4msa.lang_dependency <span class="im">import</span> LangDependency</span>
-<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk.stem.porter <span class="im">import</span> PorterStemmer</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk.stem.snowball <span class="im">import</span> SnowballStemmer</span>
 <span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> unicodedata</span>
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -321,7 +327,7 @@ div.csl-indent {
 <h3 data-number="2.2.1" class="anchored" data-anchor-id="usuarios"><span class="header-section-number">2.2.1</span> Usuarios</h3>
 <p>En esta sección se trabajará con los nombres de usuarios que siguen el formato usado por Twitter. En un tuit, los nombres de usuarios son aquellas palabras que inician con el caracter @ y terminan con un espacio o caracter terminal. Las acciones que se realizarán con los nombres de usuario encontrados serán su borrado o reemplazo por una etiqueta en particular.</p>
 <p>El procedimiento para encontrar los nombres de usuarios es mediante expresiones regulares, en particular se usa la expresión <code>@\S+</code>, tal y como se muestra en el siguiente ejemplo.</p>
-<div class="cell" data-execution_count="3">
+<div id="6081e153" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'Hola @xx, @mm te está buscando'</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>re.sub(<span class="vs">r"@\S+"</span>, <span class="st">""</span>, text)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
@@ -329,7 +335,7 @@ div.csl-indent {
 </div>
 </div>
 <p>La segunda acción es reemplazar cada nombre de usuario por una etiqueta particular, en el siguiente ejemplo se reemplaza por la etiqueta <code>_usr</code>.</p>
-<div class="cell" data-execution_count="4">
+<div id="e7ee4867" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'Hola @xx, @mm te está buscando'</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>re.sub(<span class="vs">r"@\S+"</span>, <span class="st">"_usr"</span>, text)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
@@ -340,7 +346,7 @@ div.csl-indent {
 <section id="url" class="level3" data-number="2.2.2">
 <h3 data-number="2.2.2" class="anchored" data-anchor-id="url"><span class="header-section-number">2.2.2</span> URL</h3>
 <p>Los ejemplos anteriores se pueden adaptar para manejar URL; solamente es necesario adecuar la expresión regular que identifica una URL. En el siguiente ejemplo se muestra como se pueden borrar las URLs que aparecen en un texto.</p>
-<div class="cell" data-execution_count="5">
+<div id="64af986c" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"puedes verificar que http://google.com esté funcionando"</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>re.sub(<span class="vs">r"https?://\S+"</span>, <span class="st">""</span>, text)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
@@ -351,7 +357,7 @@ div.csl-indent {
 <section id="números" class="level3" data-number="2.2.3">
 <h3 data-number="2.2.3" class="anchored" data-anchor-id="números"><span class="header-section-number">2.2.3</span> Números</h3>
 <p>The previous code can be modified to deal with numbers and replace the number found with a shared label such as <code>_num</code>.</p>
-<div class="cell" data-execution_count="6">
+<div id="d6ce2543" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"we have won 10 M"</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>re.sub(<span class="vs">r"\d\d*\.?\d*|\d*\.\d\d*"</span>, <span class="st">"_num"</span>, text)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
@@ -366,7 +372,7 @@ div.csl-indent {
 <section id="mayúsculas-y-minúsculas" class="level3" data-number="2.3.1">
 <h3 data-number="2.3.1" class="anchored" data-anchor-id="mayúsculas-y-minúsculas"><span class="header-section-number">2.3.1</span> Mayúsculas y Minúsculas</h3>
 <p>La primera de estas transformaciones es convertir todas los caracteres a minúsculas. Como se puede observar esta transformación hace que el vocabulario se reduzca, por ejemplo, las palabras <em>México</em> o <em>MÉXICO</em> son representados por la palabra <em>méxico</em>. Esta operación se puede realizar con la función <code>lower</code> tal y cómo se muestra a continuación.</p>
-<div class="cell" data-execution_count="7">
+<div id="ac1570b6" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"México"</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>text.lower()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
@@ -377,7 +383,7 @@ div.csl-indent {
 <section id="signos-de-puntuación" class="level3" data-number="2.3.2">
 <h3 data-number="2.3.2" class="anchored" data-anchor-id="signos-de-puntuación"><span class="header-section-number">2.3.2</span> Signos de Puntuación</h3>
 <p>Los signos de puntuación son necesarios para tareas como la generación de textos, pero existen otras aplicaciones donde los signos de puntuación tienen un efecto positivo en el rendimiento del algorithm, este es el caso de tareas de categorización de texto. El efecto que tiene el quitar los signos de puntuación es que el vocabulario se reduce. Los símbolos de puntuación se pueden remover teniendo una lista de los mismos, esta lista de signos de puntuación se encuentra en la variable <code>SKIP_SYMBOLS</code> y el siguiente código muestra un procedimiento para quitarlos.</p>
-<div class="cell" data-execution_count="8">
+<div id="d18cd0b0" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"¡Hola! buenos días:"</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> <span class="st">""</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x <span class="kw">in</span> text:</span>
@@ -394,7 +400,7 @@ div.csl-indent {
 <h3 data-number="2.3.3" class="anchored" data-anchor-id="símbolos-diacríticos"><span class="header-section-number">2.3.3</span> Símbolos Diacríticos</h3>
 <p>Continuando con la misma idea de reducir el vocabulario, es común eliminar los símbolos diacríticos en las palabras. Esta transformación también tiene el objetivo de normalizar aquellos textos informales donde los símbolos diacríticos son usado con una menor frecuencia, en particular los acentos en el caso del español. Por ejemplo, es común encontrar la palabra <em>México</em> escrita como <em>Mexico</em>.</p>
 <p>El siguiente código muestra un procedimiento para eliminar los símbolos diacríticos.</p>
-<div class="cell" data-execution_count="9">
+<div id="9a88978f" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'México'</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> <span class="st">""</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x <span class="kw">in</span> unicodedata.normalize(<span class="st">'NFD'</span>, text):</span>
@@ -409,17 +415,18 @@ div.csl-indent {
 </div>
 </section>
 </section>
-<section id="semantic-normalizations" class="level2" data-number="2.4">
-<h2 data-number="2.4" class="anchored" data-anchor-id="semantic-normalizations"><span class="header-section-number">2.4</span> Semantic Normalizations</h2>
-<p>The next set of normalization techniques aims to reduce the vocabulary size using the meaning of the words to modify them or remove them from the text.</p>
-<section id="stop-words" class="level3" data-number="2.4.1">
-<h3 data-number="2.4.1" class="anchored" data-anchor-id="stop-words"><span class="header-section-number">2.4.1</span> Stop words</h3>
+<section id="normalización-semántica" class="level2" data-number="2.4">
+<h2 data-number="2.4" class="anchored" data-anchor-id="normalización-semántica"><span class="header-section-number">2.4</span> Normalización Semántica</h2>
+<p>Las siguientes normalizaciones comparten el objetivo con las normalizaciones presentadas hasta este momento, el cual es la reducción del vocabulario; la diferencia es que las siguientes utilizan el significado o uso de la palabra.</p>
+<section id="palabras-vacías" class="level3" data-number="2.4.1">
+<h3 data-number="2.4.1" class="anchored" data-anchor-id="palabras-vacías"><span class="header-section-number">2.4.1</span> Palabras Vacías</h3>
+<p>Las palabras vacías (<em>stop words</em>) son palabras utilizadas frecuentemente en el lenguaje, las cuales son necesarias para comunicación, pero no aportan información para discriminar un texto de acuerdo a su significado.</p>
 <p>The stop words are the most frequent words used in the language. These words are essential to communicate but are not so much on tasks where the aim is to discriminate texts according to their meaning.</p>
-<p>The stop words can be stored in a dictionary, and then the process of removing them consists of traversing all the tokens from a text and then removing those in the dictionary. The process is exemplified with the following code.</p>
-<div class="cell" data-execution_count="10">
-<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>lang <span class="op">=</span> LangDependency(<span class="st">'english'</span>)</span>
+<p>Las palabras vacías se pueden guardar en un diccionario y el proceso de identificación consiste en buscar la existencia de la palabra en el diccionario. Una vez que la palabra analizada se encuentra en el diccionario, se procede a quitarla o cambiarla por un token particular. El proceso de borrado se muestra en el siguiente código.</p>
+<div id="ab9eb51f" class="cell" data-execution_count="10">
+<div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>lang <span class="op">=</span> LangDependency(<span class="st">'spanish'</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'Good morning! Today, we have a warm weather.'</span></span>
+<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'¡Buenos días! El día de hoy tendremos un día cálido.'</span></span>
 <span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> []</span>
 <span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> word <span class="kw">in</span> text.split():</span>
 <span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> word.lower() <span class="kw">in</span> lang.stopwords[<span class="bu">len</span>(word)]:</span>
@@ -428,18 +435,18 @@ div.csl-indent {
 <span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> <span class="st">" "</span>.join(output) </span>
 <span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>output</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="10">
-<pre><code>'Good morning! Today, warm weather.'</code></pre>
+<pre><code>'¡Buenos días! día hoy día cálido.'</code></pre>
 </div>
 </div>
 </section>
-<section id="stemmming-and-lemmatization" class="level3" data-number="2.4.2">
-<h3 data-number="2.4.2" class="anchored" data-anchor-id="stemmming-and-lemmatization"><span class="header-section-number">2.4.2</span> Stemmming and Lemmatization</h3>
-<p>The idea of stemming and lemmatization, seen as a normalization process, is to group different words based on their root; for example, the process would associate words like <em>playing</em>, <em>player</em>, <em>plays</em> with the token <em>play</em>.</p>
-<p>Stemming treats the problem with fewer constraints than lemmatization, having as a consequence that the common word found cannot be the common root of the words; additionally, the algorithms do not consider the role of the word being processed in the sentence. On the other hand, a lemmatization algorithm obtains the root of the word considering the part of the speech of the processed word.</p>
-<div class="cell" data-execution_count="11">
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>stemmer <span class="op">=</span> PorterStemmer()</span>
+<section id="lematización-y-reducción-a-la-raíz" class="level3" data-number="2.4.2">
+<h3 data-number="2.4.2" class="anchored" data-anchor-id="lematización-y-reducción-a-la-raíz"><span class="header-section-number">2.4.2</span> Lematización y Reducción a la Raíz</h3>
+<p>La idea de lematización y reducción a la raíz es transformar una palabra a su raíz mediante un proceso heurístico o morfológico. Por ejemplo, las palabras <em>jugando</em> o <em>jugaron</em> se transforman a la palabra <em>jugar</em>.</p>
+<p>El siguiente código muestra el proceso de reducción a la raíz utilizando la clase <code>SnowballStemmer</code>.</p>
+<div id="d657dfae" class="cell" data-execution_count="11">
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>stemmer <span class="op">=</span> SnowballStemmer(<span class="st">'spanish'</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'I like playing football'</span></span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'Estoy jugando futbol con mis amigos'</span></span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> []</span>
 <span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> word <span class="kw">in</span> text.split():</span>
 <span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> stemmer.stem(word)</span>
@@ -447,7 +454,7 @@ div.csl-indent {
 <span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> <span class="st">" "</span>.join(output) </span>
 <span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>output</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="11">
-<pre><code>'i like play footbal'</code></pre>
+<pre><code>'estoy jug futbol con mis amig'</code></pre>
 </div>
 </div>
 </section>
@@ -458,7 +465,7 @@ div.csl-indent {
 <section id="n-grams" class="level3" data-number="2.5.1">
 <h3 data-number="2.5.1" class="anchored" data-anchor-id="n-grams"><span class="header-section-number">2.5.1</span> n-grams</h3>
 <p>The first tokenizer review corresponds to transforming the text into words, bigrams, and in general, n-grams. The case of words is straightforward using the function <code>split</code>; once the words have been obtained, these can be combined to form an n-gram of any size, as shown below.</p>
-<div class="cell" data-execution_count="12">
+<div id="70f82ff9" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'I like playing football on Saturday'</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>words <span class="op">=</span> text.split()</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">3</span></span>
@@ -478,7 +485,7 @@ div.csl-indent {
 <h3 data-number="2.5.2" class="anchored" data-anchor-id="q-grams"><span class="header-section-number">2.5.2</span> q-grams</h3>
 <p>The q-gram tokenizer complements the n-grams one; it is defined as the substring of length <span class="math inline">\(q\)</span>. The q-grams have two relevant features; the first one is that they are language agnostic consequently can be applied to any language, and the second is that they tackle the misspelling problem from an approximate matching perspective.</p>
 <p>The code is equivalent to the one used to compute n-grams, being the difference that the iteration is on characters instead of words.</p>
-<div class="cell" data-execution_count="13">
+<div id="253bbc16" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'I like playing'</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>q <span class="op">=</span> <span class="dv">4</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>q_grams <span class="op">=</span> []</span>
@@ -530,7 +537,7 @@ div.csl-indent {
 </ul>
 <p>Finally, the tokenizer is configured with the <code>token_list</code> parameter, which has the following format; negative numbers indicate <span class="math inline">\(n\)</span>-grams and positive numbers <span class="math inline">\(q\)</span>-grams.</p>
 <p>For example, the following code invokes the text normalization algorithm; the only difference is that spaces are replaced with <code>~</code>.</p>
-<div class="cell" data-execution_count="14">
+<div id="f935fb49" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'I like playing football with @mgraffg'</span></span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(token_list<span class="op">=</span>[<span class="op">-</span><span class="dv">1</span>, <span class="dv">3</span>], lang<span class="op">=</span><span class="st">'english'</span>, </span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>               usr_option<span class="op">=</span>OPTION_GROUP,</span>
@@ -541,7 +548,7 @@ div.csl-indent {
 </div>
 </div>
 <p>On the other hand, the tokenizer is used as follows.</p>
-<div class="cell" data-execution_count="15">
+<div id="7981502d" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'I like playing football with @mgraffg'</span></span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(token_list<span class="op">=</span>[<span class="op">-</span><span class="dv">1</span>, <span class="dv">5</span>], lang<span class="op">=</span><span class="st">'english'</span>, </span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>               usr_option<span class="op">=</span>OPTION_GROUP,</span>
@@ -731,10 +738,9 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
   if (showAllCode) {
     showAllCode.addEventListener("click", toggleCodeHandler(true));
   }
-  function tippyHover(el, contentFn) {
+  function tippyHover(el, contentFn, onTriggerFn, onUntriggerFn) {
     const config = {
       allowHTML: true,
-      content: contentFn,
       maxWidth: 500,
       delay: 100,
       arrow: false,
@@ -744,8 +750,17 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       interactive: true,
       interactiveBorder: 10,
       theme: 'quarto',
-      placement: 'bottom-start'
+      placement: 'bottom-start',
     };
+    if (contentFn) {
+      config.content = contentFn;
+    }
+    if (onTriggerFn) {
+      config.onTrigger = onTriggerFn;
+    }
+    if (onUntriggerFn) {
+      config.onUntrigger = onUntriggerFn;
+    }
     window.tippy(el, config); 
   }
   const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
@@ -758,6 +773,81 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       const id = href.replace(/^#\/?/, "");
       const note = window.document.getElementById(id);
       return note.innerHTML;
+    });
+  }
+  const xrefs = window.document.querySelectorAll('a.quarto-xref');
+  const processXRef = (id, note) => {
+    // Strip column container classes
+    const stripColumnClz = (el) => {
+      el.classList.remove("page-full", "page-columns");
+      if (el.children) {
+        for (const child of el.children) {
+          stripColumnClz(child);
+        }
+      }
+    }
+    stripColumnClz(note)
+    if (id.startsWith('sec-')) {
+      // Special case sections, only their first couple elements
+      const container = document.createElement("div");
+      if (note.children && note.children.length > 2) {
+        for (let i = 0; i < 2; i++) {
+          container.appendChild(note.children[i].cloneNode(true));
+        }
+        return container.innerHTML
+      } else {
+        return note.innerHTML;
+      }
+    } else {
+      // Remove any anchor links if they are present
+      const anchorLink = note.querySelector('a.anchorjs-link');
+      if (anchorLink) {
+        anchorLink.remove();
+      }
+      return note.innerHTML;
+    }
+  }
+  for (var i=0; i<xrefs.length; i++) {
+    const xref = xrefs[i];
+    tippyHover(xref, undefined, function(instance) {
+      instance.disable();
+      let url = xref.getAttribute('href');
+      let hash = undefined; 
+      if (url.startsWith('#')) {
+        hash = url;
+      } else {
+        try { hash = new URL(url).hash; } catch {}
+      }
+      if (hash) {
+        const id = hash.replace(/^#\/?/, "");
+        const note = window.document.getElementById(id);
+        if (note !== null) {
+          try {
+            const html = processXRef(id, note.cloneNode(true));
+            instance.setContent(html);
+          } finally {
+            instance.enable();
+            instance.show();
+          }
+        } else {
+          // See if we can fetch this
+          fetch(url.split('#')[0])
+          .then(res => res.text())
+          .then(html => {
+            const parser = new DOMParser();
+            const htmlDoc = parser.parseFromString(html, "text/html");
+            const note = htmlDoc.getElementById(id);
+            if (note !== null) {
+              const html = processXRef(id, note);
+              instance.setContent(html);
+            } 
+          }).finally(() => {
+            instance.enable();
+            instance.show();
+          });
+        }
+      }
+    }, function(instance) {
     });
   }
       let selectedAnnoteEl;
@@ -801,6 +891,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
             }
             div.style.top = top - 2 + "px";
             div.style.height = height + 4 + "px";
+            div.style.left = 0;
             let gutterDiv = window.document.getElementById("code-annotation-line-highlight-gutter");
             if (gutterDiv === null) {
               gutterDiv = window.document.createElement("div");
@@ -826,6 +917,33 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
         });
         selectedAnnoteEl = undefined;
       };
+        // Handle positioning of the toggle
+    window.addEventListener(
+      "resize",
+      throttle(() => {
+        console.log("RESIZE");
+        elRect = undefined;
+        if (selectedAnnoteEl) {
+          selectCodeLines(selectedAnnoteEl);
+        }
+      }, 10)
+    );
+    function throttle(fn, ms) {
+    let throttle = false;
+    let timer;
+      return (...args) => {
+        if(!throttle) { // first call gets through
+            fn.apply(this, args);
+            throttle = true;
+        } else { // all the others get throttled
+            if(timer) clearTimeout(timer); // cancel #2
+            timer = setTimeout(() => {
+              fn.apply(this, args);
+              timer = throttle = false;
+            }, ms);
+        }
+      };
+    }
       // Attach click handler to the DT
       const annoteDls = window.document.querySelectorAll('dt[data-target-cell]');
       for (const annoteDlNode of annoteDls) {
@@ -909,7 +1027,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb28-12"><a href="#cb28-12" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> microtc.textmodel <span class="im">import</span> SKIP_SYMBOLS</span>
 <span id="cb28-13"><a href="#cb28-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> b4msa.textmodel <span class="im">import</span> TextModel</span>
 <span id="cb28-14"><a href="#cb28-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> b4msa.lang_dependency <span class="im">import</span> LangDependency</span>
-<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk.stem.porter <span class="im">import</span> PorterStemmer</span>
+<span id="cb28-15"><a href="#cb28-15" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> nltk.stem.snowball <span class="im">import</span> SnowballStemmer</span>
 <span id="cb28-16"><a href="#cb28-16" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> unicodedata</span>
 <span id="cb28-17"><a href="#cb28-17" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> re</span>
 <span id="cb28-18"><a href="#cb28-18" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
@@ -1029,141 +1147,144 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb28-148"><a href="#cb28-148" aria-hidden="true" tabindex="-1"></a>output</span>
 <span id="cb28-149"><a href="#cb28-149" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-150"><a href="#cb28-150" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-151"><a href="#cb28-151" aria-hidden="true" tabindex="-1"></a><span class="fu">## Semantic Normalizations</span></span>
+<span id="cb28-151"><a href="#cb28-151" aria-hidden="true" tabindex="-1"></a><span class="fu">## Normalización Semántica</span></span>
 <span id="cb28-152"><a href="#cb28-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-153"><a href="#cb28-153" aria-hidden="true" tabindex="-1"></a>The next set of normalization techniques aims to reduce the vocabulary size using the meaning of the words to modify them or remove them from the text.</span>
+<span id="cb28-153"><a href="#cb28-153" aria-hidden="true" tabindex="-1"></a>Las siguientes normalizaciones comparten el objetivo con las normalizaciones presentadas hasta este momento, el cual es la reducción del vocabulario; la diferencia es que las siguientes utilizan el significado o uso de la palabra. </span>
 <span id="cb28-154"><a href="#cb28-154" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-155"><a href="#cb28-155" aria-hidden="true" tabindex="-1"></a><span class="fu">### Stop words</span></span>
+<span id="cb28-155"><a href="#cb28-155" aria-hidden="true" tabindex="-1"></a><span class="fu">### Palabras Vacías</span></span>
 <span id="cb28-156"><a href="#cb28-156" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-157"><a href="#cb28-157" aria-hidden="true" tabindex="-1"></a>The stop words are the most frequent words used in the language. These words are essential to communicate but are not so much on tasks where the aim is to discriminate texts according to their meaning. </span>
+<span id="cb28-157"><a href="#cb28-157" aria-hidden="true" tabindex="-1"></a>Las palabras vacías (*stop words*) son palabras utilizadas frecuentemente en el lenguaje, las cuales son necesarias para comunicación, pero no aportan información para discriminar un texto de acuerdo a su significado. </span>
 <span id="cb28-158"><a href="#cb28-158" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-159"><a href="#cb28-159" aria-hidden="true" tabindex="-1"></a>The stop words can be stored in a dictionary, and then the process of removing them consists of traversing all the tokens from a text and then removing those in the dictionary. The process is exemplified with the following code.</span>
+<span id="cb28-159"><a href="#cb28-159" aria-hidden="true" tabindex="-1"></a>The stop words are the most frequent words used in the language. These words are essential to communicate but are not so much on tasks where the aim is to discriminate texts according to their meaning. </span>
 <span id="cb28-160"><a href="#cb28-160" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-163"><a href="#cb28-163" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb28-164"><a href="#cb28-164" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb28-165"><a href="#cb28-165" aria-hidden="true" tabindex="-1"></a>lang <span class="op">=</span> LangDependency(<span class="st">'english'</span>)</span>
-<span id="cb28-166"><a href="#cb28-166" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-167"><a href="#cb28-167" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'Good morning! Today, we have a warm weather.'</span></span>
-<span id="cb28-168"><a href="#cb28-168" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> []</span>
-<span id="cb28-169"><a href="#cb28-169" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> word <span class="kw">in</span> text.split():</span>
-<span id="cb28-170"><a href="#cb28-170" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> word.lower() <span class="kw">in</span> lang.stopwords[<span class="bu">len</span>(word)]:</span>
-<span id="cb28-171"><a href="#cb28-171" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span></span>
-<span id="cb28-172"><a href="#cb28-172" aria-hidden="true" tabindex="-1"></a>    output.append(word)</span>
-<span id="cb28-173"><a href="#cb28-173" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> <span class="st">" "</span>.join(output) </span>
-<span id="cb28-174"><a href="#cb28-174" aria-hidden="true" tabindex="-1"></a>output</span>
-<span id="cb28-175"><a href="#cb28-175" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-176"><a href="#cb28-176" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-177"><a href="#cb28-177" aria-hidden="true" tabindex="-1"></a><span class="fu">### Stemmming and Lemmatization</span></span>
+<span id="cb28-161"><a href="#cb28-161" aria-hidden="true" tabindex="-1"></a>Las palabras vacías se pueden guardar en un diccionario y el proceso de identificación consiste en buscar la existencia de la palabra en el diccionario. Una vez que la palabra analizada se encuentra en el diccionario, se procede a quitarla o cambiarla por un token particular. El proceso de borrado se muestra en el siguiente código. </span>
+<span id="cb28-162"><a href="#cb28-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-165"><a href="#cb28-165" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-166"><a href="#cb28-166" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb28-167"><a href="#cb28-167" aria-hidden="true" tabindex="-1"></a>lang <span class="op">=</span> LangDependency(<span class="st">'spanish'</span>)</span>
+<span id="cb28-168"><a href="#cb28-168" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-169"><a href="#cb28-169" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'¡Buenos días! El día de hoy tendremos un día cálido.'</span></span>
+<span id="cb28-170"><a href="#cb28-170" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> []</span>
+<span id="cb28-171"><a href="#cb28-171" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> word <span class="kw">in</span> text.split():</span>
+<span id="cb28-172"><a href="#cb28-172" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> word.lower() <span class="kw">in</span> lang.stopwords[<span class="bu">len</span>(word)]:</span>
+<span id="cb28-173"><a href="#cb28-173" aria-hidden="true" tabindex="-1"></a>        <span class="cf">continue</span></span>
+<span id="cb28-174"><a href="#cb28-174" aria-hidden="true" tabindex="-1"></a>    output.append(word)</span>
+<span id="cb28-175"><a href="#cb28-175" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> <span class="st">" "</span>.join(output) </span>
+<span id="cb28-176"><a href="#cb28-176" aria-hidden="true" tabindex="-1"></a>output</span>
+<span id="cb28-177"><a href="#cb28-177" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-178"><a href="#cb28-178" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-179"><a href="#cb28-179" aria-hidden="true" tabindex="-1"></a>The idea of stemming and lemmatization, seen as a normalization process, is to group different words based on their root; for example, the process would associate words like *playing*, *player*, *plays* with the token *play*.</span>
+<span id="cb28-179"><a href="#cb28-179" aria-hidden="true" tabindex="-1"></a><span class="fu">### Lematización y Reducción a la Raíz</span></span>
 <span id="cb28-180"><a href="#cb28-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-181"><a href="#cb28-181" aria-hidden="true" tabindex="-1"></a>Stemming treats the problem with fewer constraints than lemmatization, having as a consequence that the common word found cannot be the common root of the words; additionally, the algorithms do not consider the role of the word being processed in the sentence. On the other hand, a lemmatization algorithm obtains the root of the word considering the part of the speech of the processed word.</span>
+<span id="cb28-181"><a href="#cb28-181" aria-hidden="true" tabindex="-1"></a>La idea de lematización y reducción a la raíz es transformar una palabra a su raíz mediante un proceso heurístico o morfológico. Por ejemplo, las palabras *jugando* o *jugaron* se transforman a la palabra *jugar*.</span>
 <span id="cb28-182"><a href="#cb28-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-185"><a href="#cb28-185" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb28-186"><a href="#cb28-186" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb28-187"><a href="#cb28-187" aria-hidden="true" tabindex="-1"></a>stemmer <span class="op">=</span> PorterStemmer()</span>
-<span id="cb28-188"><a href="#cb28-188" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-189"><a href="#cb28-189" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'I like playing football'</span></span>
-<span id="cb28-190"><a href="#cb28-190" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> []</span>
-<span id="cb28-191"><a href="#cb28-191" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> word <span class="kw">in</span> text.split():</span>
-<span id="cb28-192"><a href="#cb28-192" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> stemmer.stem(word)</span>
-<span id="cb28-193"><a href="#cb28-193" aria-hidden="true" tabindex="-1"></a>    output.append(w)</span>
-<span id="cb28-194"><a href="#cb28-194" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> <span class="st">" "</span>.join(output) </span>
-<span id="cb28-195"><a href="#cb28-195" aria-hidden="true" tabindex="-1"></a>output</span>
-<span id="cb28-196"><a href="#cb28-196" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-197"><a href="#cb28-197" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-198"><a href="#cb28-198" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tokenization</span></span>
+<span id="cb28-183"><a href="#cb28-183" aria-hidden="true" tabindex="-1"></a>El siguiente código muestra el proceso de reducción a la raíz utilizando la clase <span class="in">`SnowballStemmer`</span>. </span>
+<span id="cb28-184"><a href="#cb28-184" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-187"><a href="#cb28-187" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-188"><a href="#cb28-188" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb28-189"><a href="#cb28-189" aria-hidden="true" tabindex="-1"></a>stemmer <span class="op">=</span> SnowballStemmer(<span class="st">'spanish'</span>)</span>
+<span id="cb28-190"><a href="#cb28-190" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-191"><a href="#cb28-191" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'Estoy jugando futbol con mis amigos'</span></span>
+<span id="cb28-192"><a href="#cb28-192" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> []</span>
+<span id="cb28-193"><a href="#cb28-193" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> word <span class="kw">in</span> text.split():</span>
+<span id="cb28-194"><a href="#cb28-194" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> stemmer.stem(word)</span>
+<span id="cb28-195"><a href="#cb28-195" aria-hidden="true" tabindex="-1"></a>    output.append(w)</span>
+<span id="cb28-196"><a href="#cb28-196" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> <span class="st">" "</span>.join(output) </span>
+<span id="cb28-197"><a href="#cb28-197" aria-hidden="true" tabindex="-1"></a>output</span>
+<span id="cb28-198"><a href="#cb28-198" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-199"><a href="#cb28-199" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-200"><a href="#cb28-200" aria-hidden="true" tabindex="-1"></a>Once the text has been normalized, it is time to transform it into its fundamental elements, which could be words, bigrams, n-grams, substrings, or a combination of them; this process is known as tokenization. Different methods can be applied to tokenize a text, the one used is so far is to transform a text into a list of words where the word is surrounded by space or non-printable characters. The decision of which tokenizer to use depends on the application; for example, in order to generate text, it is crucial to learn the punctuation symbols, so these symbols are tokens. On the other hand, in the text categorization problem, where the task is to classify a text, it might be irrelevant to keep the order of the words. </span>
+<span id="cb28-200"><a href="#cb28-200" aria-hidden="true" tabindex="-1"></a><span class="fu">## Tokenization</span></span>
 <span id="cb28-201"><a href="#cb28-201" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-202"><a href="#cb28-202" aria-hidden="true" tabindex="-1"></a><span class="fu">### n-grams</span></span>
+<span id="cb28-202"><a href="#cb28-202" aria-hidden="true" tabindex="-1"></a>Once the text has been normalized, it is time to transform it into its fundamental elements, which could be words, bigrams, n-grams, substrings, or a combination of them; this process is known as tokenization. Different methods can be applied to tokenize a text, the one used is so far is to transform a text into a list of words where the word is surrounded by space or non-printable characters. The decision of which tokenizer to use depends on the application; for example, in order to generate text, it is crucial to learn the punctuation symbols, so these symbols are tokens. On the other hand, in the text categorization problem, where the task is to classify a text, it might be irrelevant to keep the order of the words. </span>
 <span id="cb28-203"><a href="#cb28-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-204"><a href="#cb28-204" aria-hidden="true" tabindex="-1"></a>The first tokenizer review corresponds to transforming the text into words, bigrams, and in general, n-grams. The case of words is straightforward using the function <span class="in">`split`</span>; once the words have been obtained, these can be combined to form an n-gram of any size, as shown below. </span>
+<span id="cb28-204"><a href="#cb28-204" aria-hidden="true" tabindex="-1"></a><span class="fu">### n-grams</span></span>
 <span id="cb28-205"><a href="#cb28-205" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-208"><a href="#cb28-208" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb28-209"><a href="#cb28-209" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb28-210"><a href="#cb28-210" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'I like playing football on Saturday'</span></span>
-<span id="cb28-211"><a href="#cb28-211" aria-hidden="true" tabindex="-1"></a>words <span class="op">=</span> text.split()</span>
-<span id="cb28-212"><a href="#cb28-212" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">3</span></span>
-<span id="cb28-213"><a href="#cb28-213" aria-hidden="true" tabindex="-1"></a>n_grams <span class="op">=</span> []</span>
-<span id="cb28-214"><a href="#cb28-214" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[words[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n)]):</span>
-<span id="cb28-215"><a href="#cb28-215" aria-hidden="true" tabindex="-1"></a>    n_grams.append(<span class="st">"~"</span>.join(a))</span>
-<span id="cb28-216"><a href="#cb28-216" aria-hidden="true" tabindex="-1"></a>n_grams</span>
-<span id="cb28-217"><a href="#cb28-217" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-218"><a href="#cb28-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-219"><a href="#cb28-219" aria-hidden="true" tabindex="-1"></a><span class="fu">### q-grams</span></span>
+<span id="cb28-206"><a href="#cb28-206" aria-hidden="true" tabindex="-1"></a>The first tokenizer review corresponds to transforming the text into words, bigrams, and in general, n-grams. The case of words is straightforward using the function <span class="in">`split`</span>; once the words have been obtained, these can be combined to form an n-gram of any size, as shown below. </span>
+<span id="cb28-207"><a href="#cb28-207" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-210"><a href="#cb28-210" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-211"><a href="#cb28-211" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb28-212"><a href="#cb28-212" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'I like playing football on Saturday'</span></span>
+<span id="cb28-213"><a href="#cb28-213" aria-hidden="true" tabindex="-1"></a>words <span class="op">=</span> text.split()</span>
+<span id="cb28-214"><a href="#cb28-214" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">3</span></span>
+<span id="cb28-215"><a href="#cb28-215" aria-hidden="true" tabindex="-1"></a>n_grams <span class="op">=</span> []</span>
+<span id="cb28-216"><a href="#cb28-216" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[words[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(n)]):</span>
+<span id="cb28-217"><a href="#cb28-217" aria-hidden="true" tabindex="-1"></a>    n_grams.append(<span class="st">"~"</span>.join(a))</span>
+<span id="cb28-218"><a href="#cb28-218" aria-hidden="true" tabindex="-1"></a>n_grams</span>
+<span id="cb28-219"><a href="#cb28-219" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-220"><a href="#cb28-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-221"><a href="#cb28-221" aria-hidden="true" tabindex="-1"></a>The q-gram tokenizer complements the n-grams one; it is defined as the substring of length $q$. The q-grams have two relevant features; the first one is that they are language agnostic consequently can be applied to any language, and the second is that they tackle the misspelling problem from an approximate matching perspective.  </span>
+<span id="cb28-221"><a href="#cb28-221" aria-hidden="true" tabindex="-1"></a><span class="fu">### q-grams</span></span>
 <span id="cb28-222"><a href="#cb28-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-223"><a href="#cb28-223" aria-hidden="true" tabindex="-1"></a>The code is equivalent to the one used to compute n-grams, being the difference that the iteration is on characters instead of words.</span>
+<span id="cb28-223"><a href="#cb28-223" aria-hidden="true" tabindex="-1"></a>The q-gram tokenizer complements the n-grams one; it is defined as the substring of length $q$. The q-grams have two relevant features; the first one is that they are language agnostic consequently can be applied to any language, and the second is that they tackle the misspelling problem from an approximate matching perspective.  </span>
 <span id="cb28-224"><a href="#cb28-224" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-227"><a href="#cb28-227" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb28-228"><a href="#cb28-228" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb28-229"><a href="#cb28-229" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'I like playing'</span></span>
-<span id="cb28-230"><a href="#cb28-230" aria-hidden="true" tabindex="-1"></a>q <span class="op">=</span> <span class="dv">4</span></span>
-<span id="cb28-231"><a href="#cb28-231" aria-hidden="true" tabindex="-1"></a>q_grams <span class="op">=</span> []</span>
-<span id="cb28-232"><a href="#cb28-232" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[text[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(q)]):</span>
-<span id="cb28-233"><a href="#cb28-233" aria-hidden="true" tabindex="-1"></a>    q_grams.append(<span class="st">""</span>.join(a))</span>
-<span id="cb28-234"><a href="#cb28-234" aria-hidden="true" tabindex="-1"></a>q_grams</span>
-<span id="cb28-235"><a href="#cb28-235" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-236"><a href="#cb28-236" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-237"><a href="#cb28-237" aria-hidden="true" tabindex="-1"></a><span class="fu">## TextModel</span></span>
+<span id="cb28-225"><a href="#cb28-225" aria-hidden="true" tabindex="-1"></a>The code is equivalent to the one used to compute n-grams, being the difference that the iteration is on characters instead of words.</span>
+<span id="cb28-226"><a href="#cb28-226" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-229"><a href="#cb28-229" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-230"><a href="#cb28-230" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb28-231"><a href="#cb28-231" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'I like playing'</span></span>
+<span id="cb28-232"><a href="#cb28-232" aria-hidden="true" tabindex="-1"></a>q <span class="op">=</span> <span class="dv">4</span></span>
+<span id="cb28-233"><a href="#cb28-233" aria-hidden="true" tabindex="-1"></a>q_grams <span class="op">=</span> []</span>
+<span id="cb28-234"><a href="#cb28-234" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> a <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[text[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(q)]):</span>
+<span id="cb28-235"><a href="#cb28-235" aria-hidden="true" tabindex="-1"></a>    q_grams.append(<span class="st">""</span>.join(a))</span>
+<span id="cb28-236"><a href="#cb28-236" aria-hidden="true" tabindex="-1"></a>q_grams</span>
+<span id="cb28-237"><a href="#cb28-237" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-238"><a href="#cb28-238" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-239"><a href="#cb28-239" aria-hidden="true" tabindex="-1"></a>The class <span class="in">`TextModel`</span> of the library <span class="co">[</span><span class="ot">B4MSA</span><span class="co">](https://b4msa.readthedocs.io/en/latest/)</span> contains the text normalization and tokenizers described and can be used as follows. </span>
+<span id="cb28-239"><a href="#cb28-239" aria-hidden="true" tabindex="-1"></a><span class="fu">## TextModel</span></span>
 <span id="cb28-240"><a href="#cb28-240" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-241"><a href="#cb28-241" aria-hidden="true" tabindex="-1"></a>The first step is to instantiate the class given the desired parameters. The <span class="co">[</span><span class="ot">Entity</span><span class="co">](#entity)</span> parameters have three options to delete (<span class="in">`OPTION_DELETE`</span>) the entity, replace (<span class="in">`OPTION_GROUP`</span>) it with a predefined token, or do not apply that operation (<span class="in">`OPTION_NONE`</span>). These parameters are:</span>
+<span id="cb28-241"><a href="#cb28-241" aria-hidden="true" tabindex="-1"></a>The class <span class="in">`TextModel`</span> of the library <span class="co">[</span><span class="ot">B4MSA</span><span class="co">](https://b4msa.readthedocs.io/en/latest/)</span> contains the text normalization and tokenizers described and can be used as follows. </span>
 <span id="cb28-242"><a href="#cb28-242" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-243"><a href="#cb28-243" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>usr_option</span>
-<span id="cb28-244"><a href="#cb28-244" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>url_option</span>
-<span id="cb28-245"><a href="#cb28-245" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>num_option</span>
-<span id="cb28-246"><a href="#cb28-246" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-247"><a href="#cb28-247" aria-hidden="true" tabindex="-1"></a>The class has three additional transformation which are:</span>
+<span id="cb28-243"><a href="#cb28-243" aria-hidden="true" tabindex="-1"></a>The first step is to instantiate the class given the desired parameters. The <span class="co">[</span><span class="ot">Entity</span><span class="co">](#entity)</span> parameters have three options to delete (<span class="in">`OPTION_DELETE`</span>) the entity, replace (<span class="in">`OPTION_GROUP`</span>) it with a predefined token, or do not apply that operation (<span class="in">`OPTION_NONE`</span>). These parameters are:</span>
+<span id="cb28-244"><a href="#cb28-244" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-245"><a href="#cb28-245" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>usr_option</span>
+<span id="cb28-246"><a href="#cb28-246" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>url_option</span>
+<span id="cb28-247"><a href="#cb28-247" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>num_option</span>
 <span id="cb28-248"><a href="#cb28-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-249"><a href="#cb28-249" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>emo_option</span>
-<span id="cb28-250"><a href="#cb28-250" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>hashtag_option</span>
-<span id="cb28-251"><a href="#cb28-251" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>ent_option</span>
-<span id="cb28-252"><a href="#cb28-252" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-253"><a href="#cb28-253" aria-hidden="true" tabindex="-1"></a>The <span class="co">[</span><span class="ot">Spelling</span><span class="co">](#spelling)</span> transformations can be triggered with the following keywords:</span>
+<span id="cb28-249"><a href="#cb28-249" aria-hidden="true" tabindex="-1"></a>The class has three additional transformation which are:</span>
+<span id="cb28-250"><a href="#cb28-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-251"><a href="#cb28-251" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>emo_option</span>
+<span id="cb28-252"><a href="#cb28-252" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>hashtag_option</span>
+<span id="cb28-253"><a href="#cb28-253" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>ent_option</span>
 <span id="cb28-254"><a href="#cb28-254" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-255"><a href="#cb28-255" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>lc </span>
-<span id="cb28-256"><a href="#cb28-256" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>del_punc</span>
-<span id="cb28-257"><a href="#cb28-257" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>del_diac</span>
-<span id="cb28-258"><a href="#cb28-258" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-259"><a href="#cb28-259" aria-hidden="true" tabindex="-1"></a>which corresponds to lower case, punctuation, and diacritic.</span>
+<span id="cb28-255"><a href="#cb28-255" aria-hidden="true" tabindex="-1"></a>The <span class="co">[</span><span class="ot">Spelling</span><span class="co">](#spelling)</span> transformations can be triggered with the following keywords:</span>
+<span id="cb28-256"><a href="#cb28-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-257"><a href="#cb28-257" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>lc </span>
+<span id="cb28-258"><a href="#cb28-258" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>del_punc</span>
+<span id="cb28-259"><a href="#cb28-259" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>del_diac</span>
 <span id="cb28-260"><a href="#cb28-260" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-261"><a href="#cb28-261" aria-hidden="true" tabindex="-1"></a>The <span class="co">[</span><span class="ot">Semantic</span><span class="co">](#semantic-normalizations)</span> normalizations are set up with the parameters:</span>
+<span id="cb28-261"><a href="#cb28-261" aria-hidden="true" tabindex="-1"></a>which corresponds to lower case, punctuation, and diacritic.</span>
 <span id="cb28-262"><a href="#cb28-262" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-263"><a href="#cb28-263" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>stopwords</span>
-<span id="cb28-264"><a href="#cb28-264" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>stemming</span>
-<span id="cb28-265"><a href="#cb28-265" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-266"><a href="#cb28-266" aria-hidden="true" tabindex="-1"></a>Finally, the tokenizer is configured with the <span class="in">`token_list`</span> parameter, which has the following format; negative numbers indicate $n$-grams and positive numbers $q$-grams.</span>
+<span id="cb28-263"><a href="#cb28-263" aria-hidden="true" tabindex="-1"></a>The <span class="co">[</span><span class="ot">Semantic</span><span class="co">](#semantic-normalizations)</span> normalizations are set up with the parameters:</span>
+<span id="cb28-264"><a href="#cb28-264" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-265"><a href="#cb28-265" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>stopwords</span>
+<span id="cb28-266"><a href="#cb28-266" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>stemming</span>
 <span id="cb28-267"><a href="#cb28-267" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-268"><a href="#cb28-268" aria-hidden="true" tabindex="-1"></a>For example, the following code invokes the text normalization algorithm; the only difference is that spaces are replaced with <span class="in">`~`</span>.</span>
+<span id="cb28-268"><a href="#cb28-268" aria-hidden="true" tabindex="-1"></a>Finally, the tokenizer is configured with the <span class="in">`token_list`</span> parameter, which has the following format; negative numbers indicate $n$-grams and positive numbers $q$-grams.</span>
 <span id="cb28-269"><a href="#cb28-269" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-272"><a href="#cb28-272" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb28-273"><a href="#cb28-273" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb28-274"><a href="#cb28-274" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'I like playing football with @mgraffg'</span></span>
-<span id="cb28-275"><a href="#cb28-275" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(token_list<span class="op">=</span>[<span class="op">-</span><span class="dv">1</span>, <span class="dv">3</span>], lang<span class="op">=</span><span class="st">'english'</span>, </span>
-<span id="cb28-276"><a href="#cb28-276" aria-hidden="true" tabindex="-1"></a>               usr_option<span class="op">=</span>OPTION_GROUP,</span>
-<span id="cb28-277"><a href="#cb28-277" aria-hidden="true" tabindex="-1"></a>               stemming<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb28-278"><a href="#cb28-278" aria-hidden="true" tabindex="-1"></a>tm.text_transformations(text)</span>
-<span id="cb28-279"><a href="#cb28-279" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-280"><a href="#cb28-280" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-281"><a href="#cb28-281" aria-hidden="true" tabindex="-1"></a>On the other hand, the tokenizer is used as follows.</span>
+<span id="cb28-270"><a href="#cb28-270" aria-hidden="true" tabindex="-1"></a>For example, the following code invokes the text normalization algorithm; the only difference is that spaces are replaced with <span class="in">`~`</span>.</span>
+<span id="cb28-271"><a href="#cb28-271" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-274"><a href="#cb28-274" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-275"><a href="#cb28-275" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb28-276"><a href="#cb28-276" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'I like playing football with @mgraffg'</span></span>
+<span id="cb28-277"><a href="#cb28-277" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(token_list<span class="op">=</span>[<span class="op">-</span><span class="dv">1</span>, <span class="dv">3</span>], lang<span class="op">=</span><span class="st">'english'</span>, </span>
+<span id="cb28-278"><a href="#cb28-278" aria-hidden="true" tabindex="-1"></a>               usr_option<span class="op">=</span>OPTION_GROUP,</span>
+<span id="cb28-279"><a href="#cb28-279" aria-hidden="true" tabindex="-1"></a>               stemming<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb28-280"><a href="#cb28-280" aria-hidden="true" tabindex="-1"></a>tm.text_transformations(text)</span>
+<span id="cb28-281"><a href="#cb28-281" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb28-282"><a href="#cb28-282" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-285"><a href="#cb28-285" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb28-286"><a href="#cb28-286" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb28-287"><a href="#cb28-287" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'I like playing football with @mgraffg'</span></span>
-<span id="cb28-288"><a href="#cb28-288" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(token_list<span class="op">=</span>[<span class="op">-</span><span class="dv">1</span>, <span class="dv">5</span>], lang<span class="op">=</span><span class="st">'english'</span>, </span>
-<span id="cb28-289"><a href="#cb28-289" aria-hidden="true" tabindex="-1"></a>               usr_option<span class="op">=</span>OPTION_GROUP,</span>
-<span id="cb28-290"><a href="#cb28-290" aria-hidden="true" tabindex="-1"></a>               stemming<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb28-291"><a href="#cb28-291" aria-hidden="true" tabindex="-1"></a>tm.tokenize(text)</span>
-<span id="cb28-292"><a href="#cb28-292" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb28-293"><a href="#cb28-293" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb28-294"><a href="#cb28-294" aria-hidden="true" tabindex="-1"></a> It can be observed that all $q$-grams start with the prefix *q:*.</span>
+<span id="cb28-283"><a href="#cb28-283" aria-hidden="true" tabindex="-1"></a>On the other hand, the tokenizer is used as follows.</span>
+<span id="cb28-284"><a href="#cb28-284" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-287"><a href="#cb28-287" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb28-288"><a href="#cb28-288" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb28-289"><a href="#cb28-289" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'I like playing football with @mgraffg'</span></span>
+<span id="cb28-290"><a href="#cb28-290" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(token_list<span class="op">=</span>[<span class="op">-</span><span class="dv">1</span>, <span class="dv">5</span>], lang<span class="op">=</span><span class="st">'english'</span>, </span>
+<span id="cb28-291"><a href="#cb28-291" aria-hidden="true" tabindex="-1"></a>               usr_option<span class="op">=</span>OPTION_GROUP,</span>
+<span id="cb28-292"><a href="#cb28-292" aria-hidden="true" tabindex="-1"></a>               stemming<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb28-293"><a href="#cb28-293" aria-hidden="true" tabindex="-1"></a>tm.tokenize(text)</span>
+<span id="cb28-294"><a href="#cb28-294" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb28-295"><a href="#cb28-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb28-296"><a href="#cb28-296" aria-hidden="true" tabindex="-1"></a> It can be observed that all $q$-grams start with the prefix *q:*.</span>
 </code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
+
 
 
 
