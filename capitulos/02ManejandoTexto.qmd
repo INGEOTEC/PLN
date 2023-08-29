@@ -181,11 +181,11 @@ Una vez que el texto ha sido normalizado es necesario segmentarlo (*tokenize*) a
 
 ### Gramas de Palabras (n-grams)
 
-The first tokenizer review corresponds to transforming the text into words, bigrams, and in general, n-grams. The case of words is straightforward using the function `split`; once the words have been obtained, these can be combined to form an n-gram of any size, as shown below. 
+El primer método de segmentación revisado es la creación de los gramas de palabras. El primer paso es encontrar las palabras las cuales se pueden encontrar mediante la función `split`; una vez que las palabras están definidas estás se pueden unir para generar los gramas de palabras del tamaño deseado, tal y como se muestra en el siguiente código. 
 
 ```{python}
 #| echo: true
-text = 'I like playing football on Saturday'
+text = 'Estoy jugando futbol con mis amigos'
 words = text.split()
 n = 3
 n_grams = []
