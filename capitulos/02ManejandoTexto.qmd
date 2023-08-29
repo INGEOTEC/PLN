@@ -28,6 +28,16 @@ from IPython.display import Markdown
 ---
 :::
 
+## Introducción 
+
+```{mermaid}
+%%| echo: false
+
+flowchart LR
+  A[Normalización de Texto] --> B[Segmentación]
+  B --> C(Modelado de Lenguaje)
+```
+
 ## Normalización de Texto
 
 Se podría suponer que el texto se que se analizará está bien escrito y tiene un formato adecuado para su procesamiento. Desafortunadamente, la realidad es que en la mayoría de aplicaciones el texto que se analiza tiene errores de ortográficos, errores de formato y además no es trivial identificar la unidad mínima de procesamiento que podría ser de manera natural, en el español, las palabras. Por este motivo, esta unidad trata técnicas comunes que se utilizan para normalizar el texto, esta normalización es un proceso previo al desarrollo de los algoritmos de PLN. 
@@ -194,15 +204,15 @@ for a in zip(*[words[i:] for i in range(n)]):
 n_grams
 ```
 
-### q-grams
+### Gramas de Caracteres (q-grams)
 
-The q-gram tokenizer complements the n-grams one; it is defined as the substring of length $q$. The q-grams have two relevant features; the first one is that they are language agnostic consequently can be applied to any language, and the second is that they tackle the misspelling problem from an approximate matching perspective.  
+La segmentación de gramas de caracteres complementa los gramas de palabras. Los gramas de caracteres están definidos como la subcadena de longitud $q$. Este tipo de segmentación tiene la característica de que es agnóstica al lenguaje, es decir, se puede aplicar en cualquier idioma; contrastando, los gramas de palabras se pueden aplicar solo a los lenguajes que tienen definido el concepto de palabra, por ejemplo en el idioma chino las palabras no se pueden identificar como se pueden identificar en el español o inglés. La segunda característica importante es que ayuda en el problema de errores ortográficos, siguiendo una perspectiva de similitud aproximada. 
 
-The code is equivalent to the one used to compute n-grams, being the difference that the iteration is on characters instead of words.
+El código para realizar los gramas de caracteres es similar a la presentada anteriormente, siendo la diferencia que el ciclo está por los caracteres en lugar de la palabras como se había realizado. El siguiente código muestra una implementación para realizar gramas de caracteres. 
 
 ```{python}
 #| echo: true
-text = 'I like playing'
+text = 'Estoy jugando'
 q = 4
 q_grams = []
 for a in zip(*[text[i:] for i in range(q)]):
