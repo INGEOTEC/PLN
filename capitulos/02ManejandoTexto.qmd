@@ -30,29 +30,40 @@ from IPython.display import Markdown
 
 ## Introducción 
 
-```{mermaid}
-%%| echo: false
-
-flowchart LR
-  A[Normalización de Texto] --> B[Segmentación]
-  B --> C(Modelado de Lenguaje)
-```
-
-## Normalización de Texto
 
 Se podría suponer que el texto se que se analizará está bien escrito y tiene un formato adecuado para su procesamiento. Desafortunadamente, la realidad es que en la mayoría de aplicaciones el texto que se analiza tiene errores de ortográficos, errores de formato y además no es trivial identificar la unidad mínima de procesamiento que podría ser de manera natural, en el español, las palabras. Por este motivo, esta unidad trata técnicas comunes que se utilizan para normalizar el texto, esta normalización es un proceso previo al desarrollo de los algoritmos de PLN. 
 
-La normalización descritas en esta unidad se basan principalmente en las utilizadas en los siguientes artículos científicos.
+La @fig-pre-procesamiento esquematiza el procedimiento que se presenta en esta unidad, la idea es que se un texto pasa primeramente a un proceso de normalización (@sec-normalizacion y @sec-normalizacion-semantica), para después ser segmentado (ver @sec-segmentacion) y el resultado es lo que se utiliza para modelar el lenguaje. 
+
+```{mermaid}
+%%| echo: false
+%%| fig-cap: Diagrama de Pre-procesamiento
+%%| label: fig-pre-procesamiento
+
+flowchart LR
+    I([Texto]) -->  A[Normalización de Texto]
+    A --> B[Segmentación]
+    B --> C(Modelado de Lenguaje)
+```
+
+
+
+Las normalizaciones y segmentaciones descritas en esta unidad se basan principalmente en las utilizadas en los siguientes artículos científicos.
 
 1. [An automated text categorization framework based on hyperparameter optimization](https://www.sciencedirect.com/science/article/pii/S0950705118301217) (@microTC)
 2. [A simple approach to multilingual polarity classification in Twitter](https://www.sciencedirect.com/science/article/abs/pii/S0167865517301721) (@B4MSA)
 3. [A case study of Spanish text transformations for twitter sentiment analysis](https://www.sciencedirect.com/science/article/abs/pii/S0957417417302312) (@TELLEZ2017)
 
-## Entidades
+## Normalización de Texto Sintáctica {#sec-normalizacion}
+
+La descripción de las normalizaciones empieza presentando las que se puede aplicar a nivel de caracteres, sin la necesidad de conocer el significado de las palabras. También se agrupan en este conjunto aquellas transformaciones que se realizan mediante expresiones regulares o su búsqueda en una lista de palabras previamente definidas. 
+
+
+### Entidades {#sec-normalizacion-entidades}
 
 La descripción de diferentes técnicas de normalización empieza con el manejo de entidades en el texto. Algunas entidades que se tratarán serán los nombres de usuario, números o URLs mencionados en un texto. Por otro lado están las acciones que se realizarán a las entidades encontradas, estas acciones corresponden a su borrado o remplazo por algún otro toquen. 
 
-### Usuarios
+#### Usuarios
 
 En esta sección se trabajará con los nombres de usuarios que siguen el formato usado por Twitter. En un tuit, los nombres de usuarios son aquellas palabras que inician con el caracter @ y terminan con un espacio o caracter terminal. Las acciones que se realizarán con los nombres de usuario encontrados serán su borrado o reemplazo por una etiqueta en particular. 
 
@@ -72,7 +83,7 @@ text = 'Hola @xx, @mm te está buscando'
 re.sub(r"@\S+", "_usr", text)
 ```
 
-### URL
+#### URL
 
 Los ejemplos anteriores se pueden adaptar para manejar URL; solamente es necesario adecuar la expresión regular que identifica una URL. En el siguiente ejemplo se muestra como se pueden borrar las URLs que aparecen en un texto. 
 
@@ -83,7 +94,7 @@ text = "puedes verificar que http://google.com esté funcionando"
 re.sub(r"https?://\S+", "", text)
 ```
 
-### Números
+#### Números
 
 The previous code can be modified to deal with numbers and replace the number found with a shared label such as `_num`.
 
@@ -93,11 +104,11 @@ text = "acabamos de ganar 10 M"
 re.sub(r"\d\d*\.?\d*|\d*\.\d\d*", "_num", text)
 ```
 
-## Ortografía
+### Ortografía {#sec-normalizacion-ortografia}
 
 El siguiente bloque de normalizaciones agrupa aquellas modificaciones que se realizan a algún componente de tal manera que aunque impacta en su ortografía puede ser utilizado para reducir la dimensión y se ve reflejado en la complejidad del algoritmo.
 
-### Mayúsculas y Minúsculas
+#### Mayúsculas y Minúsculas
 
 La primera de estas transformaciones es convertir todas los caracteres a minúsculas. Como se puede observar esta transformación hace que el vocabulario se reduzca, por ejemplo, las palabras *México* o *MÉXICO* son representados por la palabra *méxico*. Esta operación se puede realizar con la función `lower` tal y cómo se muestra a continuación. 
 
@@ -107,7 +118,7 @@ text = "México"
 text.lower()
 ```
 
-### Signos de Puntuación
+#### Signos de Puntuación
 
 Los signos de puntuación son necesarios para tareas como la generación de textos, pero existen otras aplicaciones donde los signos de puntuación tienen un efecto positivo en el rendimiento del algorithm, este es el caso de tareas de categorización de texto. El efecto que tiene el quitar los signos de puntuación es que el vocabulario se reduce. Los símbolos de puntuación se pueden remover teniendo una lista de los mismos, esta lista de signos de puntuación se encuentra en la variable `SKIP_SYMBOLS` y el siguiente código muestra un procedimiento para quitarlos. 
 
@@ -122,7 +133,7 @@ for x in text:
 output
 ```
 
-### Símbolos Diacríticos
+#### Símbolos Diacríticos
 
 Continuando con la misma idea de reducir el vocabulario, es común eliminar los símbolos diacríticos en las palabras. Esta transformación también tiene el objetivo de normalizar aquellos textos informales donde los símbolos diacríticos son usado con una menor frecuencia, en particular los acentos en el caso del español. Por ejemplo, es común encontrar la palabra *México* escrita como *Mexico*. 
 
@@ -140,7 +151,7 @@ for x in unicodedata.normalize('NFD', text):
 output
 ```
 
-## Normalización Semántica
+## Normalización Semántica {#sec-normalizacion-semantica}
 
 Las siguientes normalizaciones comparten el objetivo con las normalizaciones presentadas hasta este momento, el cual es la reducción del vocabulario; la diferencia es que las siguientes utilizan el significado o uso de la palabra. 
 
@@ -185,7 +196,7 @@ output = " ".join(output)
 output
 ```
 
-## Segmentación 
+## Segmentación {#sec-segmentacion}
 
 Una vez que el texto ha sido normalizado es necesario segmentarlo (*tokenize*) a sus componentes fundamentales, e.g., palabras o gramas de caracteres (q-grams) o de palabras (n-grams). Existen diferentes métodos para segmentar un texto, probablemente una de las más sencillas es asumir que una palabra está limitada entre dos espacios o signos de puntuación. Partiendo de el encontrar la palabra se empieza a generar los gramas de palabras, e.g., bigramas, o los gramas de caracteres si se desea solo generarlos a partir de las palabras. 
 
@@ -221,6 +232,8 @@ q_grams
 ```
 
 ## TextModel
+
+Habiendo descrito 
 
 The class `TextModel` of the library [B4MSA](https://b4msa.readthedocs.io/en/latest/) contains the text normalization and tokenizers described and can be used as follows. 
 
