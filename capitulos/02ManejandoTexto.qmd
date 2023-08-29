@@ -79,7 +79,7 @@ The previous code can be modified to deal with numbers and replace the number fo
 
 ```{python}
 #| echo: true
-text = "we have won 10 M"
+text = "acabamos de ganar 10 M"
 re.sub(r"\d\d*\.?\d*|\d*\.\d\d*", "_num", text)
 ```
 
@@ -158,7 +158,7 @@ output
 
 ### Lematización y Reducción a la Raíz
 
-La idea de lematización y reducción a la raíz es transformar una palabra a su raíz mediante un proceso heurístico o morfológico. Por ejemplo, las palabras *jugando* o *jugaron* se transforman a la palabra *jugar*.
+La idea de lematización y reducción a la raíz (*stemming*) es transformar una palabra a su raíz mediante un proceso heurístico o morfológico. Por ejemplo, las palabras *jugando* o *jugaron* se transforman a la palabra *jugar*.
 
 El siguiente código muestra el proceso de reducción a la raíz utilizando la clase `SnowballStemmer`. 
 
@@ -175,17 +175,17 @@ output = " ".join(output)
 output
 ```
 
-## Tokenization
+## Segmentación 
 
-Once the text has been normalized, it is time to transform it into its fundamental elements, which could be words, bigrams, n-grams, substrings, or a combination of them; this process is known as tokenization. Different methods can be applied to tokenize a text, the one used is so far is to transform a text into a list of words where the word is surrounded by space or non-printable characters. The decision of which tokenizer to use depends on the application; for example, in order to generate text, it is crucial to learn the punctuation symbols, so these symbols are tokens. On the other hand, in the text categorization problem, where the task is to classify a text, it might be irrelevant to keep the order of the words. 
+Una vez que el texto ha sido normalizado es necesario segmentarlo (*tokenize*) a sus componentes fundamentales, e.g., palabras o gramas de caracteres (q-grams) o de palabras (n-grams). Existen diferentes métodos para segmentar un texto, probablemente una de las más sencillas es asumir que una palabra está limitada entre dos espacios o signos de puntuación. Partiendo de el encontrar la palabra se empieza a generar los gramas de palabras, e.g., bigramas, o los gramas de caracteres si se desea solo generarlos a partir de las palabras. 
 
-### n-grams
+### Gramas de Palabras (n-grams)
 
-The first tokenizer review corresponds to transforming the text into words, bigrams, and in general, n-grams. The case of words is straightforward using the function `split`; once the words have been obtained, these can be combined to form an n-gram of any size, as shown below. 
+El primer método de segmentación revisado es la creación de los gramas de palabras. El primer paso es encontrar las palabras las cuales se pueden encontrar mediante la función `split`; una vez que las palabras están definidas estás se pueden unir para generar los gramas de palabras del tamaño deseado, tal y como se muestra en el siguiente código. 
 
 ```{python}
 #| echo: true
-text = 'I like playing football on Saturday'
+text = 'Estoy jugando futbol con mis amigos'
 words = text.split()
 n = 3
 n_grams = []
