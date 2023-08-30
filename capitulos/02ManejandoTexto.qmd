@@ -6,7 +6,8 @@ El **objetivo** de la unidad es
 
 ```{python}
 #| echo: true
-from microtc.params import OPTION_GROUP, OPTION_DELETE, OPTION_NONE
+from microtc.params import OPTION_GROUP, OPTION_DELETE,\
+                           OPTION_NONE
 from microtc.textmodel import SKIP_SYMBOLS
 from b4msa.textmodel import TextModel
 from b4msa.lang_dependency import LangDependency
@@ -43,7 +44,7 @@ La @fig-pre-procesamiento esquematiza el procedimiento que se presenta en esta u
 flowchart LR
     I([Texto]) -->  A[Normalización de Texto]
     A --> B[Segmentación]
-    B --> C(Modelado de Lenguaje)
+    B --> C(...)
 ```
 
 
@@ -155,9 +156,9 @@ output
 
 Las siguientes normalizaciones comparten el objetivo con las normalizaciones presentadas hasta este momento, el cual es la reducción del vocabulario; la diferencia es que las siguientes utilizan el significado o uso de la palabra. 
 
-### Palabras Vacías
+### Palabras Comunes
 
-Las palabras vacías (*stop words*) son palabras utilizadas frecuentemente en el lenguaje, las cuales son necesarias para comunicación, pero no aportan información para discriminar un texto de acuerdo a su significado. 
+Las palabras comunes (*stop words*) son palabras utilizadas frecuentemente en el lenguaje, las cuales son necesarias para comunicación, pero no aportan información para discriminar un texto de acuerdo a su significado. 
 
 The stop words are the most frequent words used in the language. These words are essential to communicate but are not so much on tasks where the aim is to discriminate texts according to their meaning. 
 
@@ -233,57 +234,94 @@ q_grams
 
 ## TextModel
 
-Habiendo descrito 
+Habiendo descrito diferentes tipos de normalización (sintáctica y semántica) y el proceso de segmentación es momento para describir la librería [B4MSA](https://b4msa.readthedocs.io/) (@B4MSA) que implementa estos procedimientos; específicamente, el punto de acceso de estos procedimientos corresponde a la clase `TextModel`. El método `TextModel.text_transformations` es el que realiza todos los métodos de normalización (@sec-normalizacion y @sec-normalizacion-semantica) y el método `TextModel.tokenize` es el encargado de realizar la segmentación (@sec-segmentacion) siguiendo el flujo mostrado en la @fig-pre-procesamiento.
 
-The class `TextModel` of the library [B4MSA](https://b4msa.readthedocs.io/en/latest/) contains the text normalization and tokenizers described and can be used as follows. 
+### Normalizaciones
 
-The first step is to instantiate the class given the desired parameters. The [Entity](#entity) parameters have three options to delete (`OPTION_DELETE`) the entity, replace (`OPTION_GROUP`) it with a predefined token, or do not apply that operation (`OPTION_NONE`). These parameters are:
+El primer conjunto de parámetros que se describen son los que corresponden a las entidades (@sec-normalizacion-entidades). Estos parámetros tiene tres opciones, borrar (`OPTION_DELETE`), remplazar (`OPTION_GROUP`) o ignorar. Los nombres de los parámetros son:
 
-* usr_option
+* usr_option 
 * url_option
 * num_option
 
-The class has three additional transformation which are:
+que corresponden al procesamiento de usuarios, URL y números respectivamente. Adicionalmente, `TextModel` trata los emojis, hashtags y nombres, mediante los siguientes parámetros:
 
 * emo_option
 * hashtag_option
 * ent_option
 
-The [Spelling](#spelling) transformations can be triggered with the following keywords:
+Por ejemplo, el siguiente código muestra como se borra el usuario y se reemplaza un hashtag; se puede observar que en la respuesta se cambian todos los espacios por el caracter `~` y se incluye ese mismo al inicio y final del texto. 
+
+```{python}
+#| echo: true
+tm = TextModel(hashtag_option=OPTION_GROUP,
+               usr_option=OPTION_DELETE)
+texto = 'mira @xyz estoy triste. #UnDiaLluvioso'
+tm.text_transformations(texto)
+```
+
+Siguiendo con las transformaciones sintácticas, toca el tiempo a describir aquellas que relacionadas a la ortografía (@sec-normalizacion-ortografia) las cuales corresponden a la conversión a minúsculas, borrado de signos de puntuación y símbolos diacríticos. Estas normalizaciones se activan con los siguiente parámetros. 
 
 * lc 
 * del_punc
 * del_diac
 
-which corresponds to lower case, punctuation, and diacritic.
+En el siguiente ejemplo se transforman el texto a minúscula y se remueven los signos de puntuación. 
 
-The [Semantic](#semantic-normalizations) normalizations are set up with the parameters:
+```{python}
+#| echo: true
+tm = TextModel(lc=True,
+               del_punc=True,
+               del_diac=False)
+texto = 'Hoy está despejado.'
+tm.text_transformations(texto)
+```
+
+Las normalizaciones semánticas (@sec-normalizacion-semantica) que se tienen implementadas en la librería corresponden al borrado de palabras comunes y reducción a la raíz; estás se pueden activar con los siguientes parámetros. 
 
 * stopwords
 * stemming
 
-Finally, the tokenizer is configured with the `token_list` parameter, which has the following format; negative numbers indicate $n$-grams and positive numbers $q$-grams.
-
-For example, the following code invokes the text normalization algorithm; the only difference is that spaces are replaced with `~`.
+Por ejemplo, las siguientes instrucciones quitan las palabras comunes y realizan una reducción a la raíz. 
 
 ```{python}
 #| echo: true
-text = 'I like playing football with @mgraffg'
-tm = TextModel(token_list=[-1, 3], lang='english', 
-               usr_option=OPTION_GROUP,
+tm = TextModel(lang='es',
+               stopwords=OPTION_DELETE,
                stemming=True)
-tm.text_transformations(text)
+texto = 'el clima es perfecto'
+tm.text_transformations(texto)
 ```
 
-On the other hand, the tokenizer is used as follows.
+### Segmentación 
+
+El paso final es describir el uso de la segmentación. La librería utiliza el parámetro `token_list` para indicar el tipo de segmentación que se desea realizar. El formato es una lista de número, donde el valor indica el tipo de segmentación. El número $1$ indica que se realizará una segmentación por palabras, los número positivo corresponden a los gramas de caracteres y los números negativos a los gramas de palabras. 
+
+Por ejemplo, utilizando las normalizaciones que se tienen por defecto, el siguiente código segmenta utilizando gramas de caracteres de tamañan $4.$
 
 ```{python}
 #| echo: true
-text = 'I like playing football with @mgraffg'
-tm = TextModel(token_list=[-1, 5], lang='english', 
-               usr_option=OPTION_GROUP,
-               stemming=True)
-tm.tokenize(text)
+
+tm = TextModel(token_list=[4])
+tm.tokenize('buenos días')
 ```
 
- It can be observed that all $q$-grams start with the prefix *q:*.
+para poder identificar cuando se trata de un segmento que corresponde a una palabra o un grama de caracteres, a los últimos se les agrega el prefijo `q:`. Cabe mencionar que por defecto se remueven los símbolos diacríticos.
+
+El ejemplo anterior, se utiliza para generar un grama de palabras de tamaño $2.$ Como se ha mencionado los gramas de palabras se especifican con números negativos siendo el valor absoluto el tamaño del grama. 
+
+```{python}
+#| echo: true
+
+tm = TextModel(token_list=[-2])
+tm.tokenize('buenos días')
+```
+
+Para completar la explicación, se combinan la segmentación de gramas de caracteres y palabras además de incluir las palabras en la segmentación. 
+
+```{python}
+#| echo: true
+
+tm = TextModel(token_list=[4, -2, -1])
+tm.tokenize('buenos días')
+```
