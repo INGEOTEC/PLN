@@ -4,7 +4,14 @@
     "href": "index.html",
     "title": "Procesamiento de Lenguaje Natural",
     "section": "",
-    "text": "Prefacio\nEl curso trata de ser auto-contenido, es decir, no debería de ser necesario leer otras fuentes para poder entenderlo y realizar las actividades. De cualquier manera es importante comentar que el curso está basado en los siguientes libros de texto:\n\nSpeech and Language Processing. An Introduction to Natural Language Processing, Computational Linguistics, and Speech Recognition. Third Edition draft. Daniel Jurafsky and James H. Martin. pdf\nIntroduction to machine learning, Third Edition. Ethem Alpaydin. MIT Press.\nAn Introduction to Statistical Learning with Applications in R. Gareth James, Daniela Witten, Trevor Hastie, and Robert Tibshirani. Springer Texts in Statistics.\nAll of Statistics. A Concise Course in Statistical Inference. Larry Wasserman. MIT Press.\nAn Introduction to the Bootstrap. Bradley Efron and Robert J. Tibshirani. Monographs on Statistics and Applied Probability 57. Springer-Science+Business Media.\nUnderstanding Machine Learning: From Theory to Algorithms. Shai Shalev-Shwartz and Shai Ben-David. Cambridge University Press.\n\n\n\nNotación\nLa Tabla 1.1 muestra la notación que se seguirá en este documento.\n\n\nTabla 1.1: Notación\n\n\n\n\n\n\nSímbolo\nSignificado\n\n\n\n\n\\(x\\)\nVariable usada comunmente como entrada\n\n\n\\(y\\)\nVariable usada comunmente como salida\n\n\n\\(\\mathbb R\\)\nNúmeros reales\n\n\n\\(\\mathbf x\\)\nVector Columna \\(\\mathbf x \\in \\mathbb R^d\\)\n\n\n\\(d\\)\nDimensión\n\n\n\\(\\mathbf w \\cdot \\mathbf x\\)\nProducto punto donde \\(\\mathbf w\\) y \\(\\mathbf x \\in \\mathbb R^d\\)\n\n\n\\(\\mathcal D\\)\nConjunto de datos\n\n\n\\(\\mathcal T\\)\nConjunto de entrenamiento\n\n\n\\(\\mathcal V\\)\nConjunto de validación\n\n\n\\(\\mathcal G\\)\nConjunto de prueba\n\n\n\\(N\\)\nNúmero de ejemplos\n\n\n\\(K\\)\nNúmero de clases\n\n\n\\(\\mathbb P(\\cdot)\\)\nProbabilidad\n\n\n\\(\\mathcal X, \\mathcal Y\\)\nVariables aleatorías\n\n\n\\(\\mathcal N(\\mu, \\sigma^2)\\)\nDistribución Normal con parámetros \\(\\mu\\) y \\(\\sigma^2\\)\n\n\n\\(f_{\\mathcal X}\\)\nFunción de densidad de probabilidad de \\(\\mathcal X\\)\n\n\n\\(\\mathbb 1(e)\\)\nFunción para indicar; \\(1\\) only if \\(e\\) is true\n\n\n\\(\\Omega\\)\nEspacio de búsqueda\n\n\n\\(\\mathbb V\\)\nVarianza\n\n\n\\(\\mathbb E\\)\nEsperanza"
+    "text": "Prefacio\nEl curso trata de ser auto-contenido, es decir, no debería de ser necesario leer otras fuentes para poder entenderlo y realizar las actividades. De cualquier manera es importante comentar que el curso está basado en los siguientes libros de texto:\nLa Tabla 1.1 muestra la notación que se seguirá en este documento."
+  },
+  {
+    "objectID": "index.html#licencia",
+    "href": "index.html#licencia",
+    "title": "Procesamiento de Lenguaje Natural",
+    "section": "Licencia",
+    "text": "Licencia\n\n\n\n\n\nEsta obra está bajo una Licencia Creative Commons Atribución-CompartirIgual 4.0 Internacional"
   },
   {
     "objectID": "capitulos/01Introduccion.html",
