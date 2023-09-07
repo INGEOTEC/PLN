@@ -6,8 +6,11 @@ El **objetivo** de la unidad es
 
 ```{python}
 #| echo: true
-from EvoMSA import BoW
+from EvoMSA import BoW, DenseBoW
 from microtc.utils import tweet_iterator
+from IngeoML import CI, SelectFromModelCV
+from sklearn.metrics import f1_score
+import numpy as np
 ```
 
 ```{python}
@@ -17,6 +20,7 @@ from IPython.display import Markdown
 
 ```{python}
 #| echo: false
+#| output: false
 from os.path import isfile, isdir
 from EvoMSA.utils import Download
 from EvoMSA import utils
@@ -58,4 +62,67 @@ D[81]
 ```
 
 ## Bolsa de Palabras Dispersa 
+
+```{python}
+#| echo: true
+bow = BoW(lang='es').fit(D)
+```
+
+```{python}
+#| echo: true
+txt = 'me golpearon y robaron la bicicleta en la noche'
+bow.predict([txt])
+```
+
+```{python}
+#| echo: true
+hy = bow.predict(Dtest)
+```
+
+```{python}
+#| echo: true
+y = np.r_[[x['klass'] for x in Dtest]]
+f1_score(y, hy, average=None)
+```
+
+```{python}
+#| echo: true
+ci = CI(statistic=lambda y, hy: f1_score(y, hy, 
+                                         average=None))
+ci_izq, ci_der = ci(y, hy)
+```
+
+```{python}
+#| echo: false
+ci_izq_f = ', '.join([f'{v:0.4f}' for v in ci_izq])
+ci_izq_f = Markdown(f'$[{ci_izq_f}]$')
+ci_der_f = ', '.join([f'{v:0.4f}' for v in ci_der])
+ci_der_f = Markdown(f'$[{ci_der_f}]$')
+```
+
+El intervalo izquierdo es `{python} ci_izq_f` y el derecho tiene los valores `{python} ci_der_f`.
+
+## Bolsa de Palabras Densas 
+
+```{python}
+#| echo: true
+dense = DenseBoW(lang='es', 
+                 voc_size_exponent=15,
+                 dataset=False)
+```
+
+```{python}
+#| echo: true
+#| output: false
+macro_f1 = lambda y, hy: f1_score(y, hy, average='macro')
+kwargs = dense.estimator_kwargs
+estimator = dense.estimator_class(**kwargs)
+kwargs = dict(estimator=estimator,
+              scoring=macro_f1)
+dense.select(D=D,
+             feature_selection=SelectFromModelCV,
+             feature_selection_kwargs=kwargs)
+dense.fit(D)
+```
+
 
