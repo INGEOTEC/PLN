@@ -105,11 +105,25 @@
     "text": "El objetivo de la unidad es"
   },
   {
-    "objectID": "capitulos/06MezclaModelos.html",
-    "href": "capitulos/06MezclaModelos.html",
+    "objectID": "capitulos/06MezclaModelos.html#paquetes-usados",
+    "href": "capitulos/06MezclaModelos.html#paquetes-usados",
     "title": "6  Mezcla de Modelos",
-    "section": "",
-    "text": "El objetivo de la unidad es"
+    "section": "Paquetes usados",
+    "text": "Paquetes usados\n\nfrom EvoMSA import BoW\nfrom microtc.utils import tweet_iterator\n\n\n\nArchive:  delitos.zip\n   creating: delitos/\n  inflating: delitos/delitos_ingeotec_Es_test.json  \n  inflating: delitos/delitos_ingeotec_Es_train.json  \n\n\n\nVideo explicando la unidad"
+  },
+  {
+    "objectID": "capitulos/06MezclaModelos.html#conjunto-de-datos",
+    "href": "capitulos/06MezclaModelos.html#conjunto-de-datos",
+    "title": "6  Mezcla de Modelos",
+    "section": "6.1 Conjunto de Datos",
+    "text": "6.1 Conjunto de Datos\nEl conjunto de datos se puede conseguir en la página de Delitos aunque en esta dirección es necesario poblar los textos dado que solamente se encuentra el identificador del Tweet.\nPara leer los datos del conjunto de entrenamiento y prueba se utilizan las siguientes instrucciones. En la variable D se tiene los datos que se utilizarán para entrenar el clasificador basado en la bolsa de palabras y en Dtest los datos del conjunto de prueba, que son usados para medir el rendimiento del clasificador.\n\nfname = 'delitos/delitos_ingeotec_Es_train.json'\nfname_test = 'delitos/delitos_ingeotec_Es_test.json'\nD = list(tweet_iterator(fname))\nDtest = list(tweet_iterator(fname_test))\n\nEn la siguiente instrucción se observa el primer elemento del conjunto de entrenamiento. Se puede observar que en el campo text se encuentra el texto, el campo klass representa la etiqueta o clase, donde \\(0\\) representa la clase negativa y \\(1\\) la clase positiva, es decir, la presencia de un delito. El campo id es el identificador del Tweet y annotations son las clases dadas por los etiquetadores a ese ejemplo.\n\nD[81]\n\n{'annotations': [0, 0, 0],\n 'id': 1107040319986696195,\n 'klass': 0,\n 'text': 'To loco'}"
+  },
+  {
+    "objectID": "capitulos/06MezclaModelos.html#bolsa-de-palabras-dispersa",
+    "href": "capitulos/06MezclaModelos.html#bolsa-de-palabras-dispersa",
+    "title": "6  Mezcla de Modelos",
+    "section": "6.2 Bolsa de Palabras Dispersa",
+    "text": "6.2 Bolsa de Palabras Dispersa"
   },
   {
     "objectID": "capitulos/07TareasClasificacion.html",
