@@ -9,8 +9,14 @@ El **objetivo** de la unidad es
 from EvoMSA import BoW, DenseBoW
 from microtc.utils import tweet_iterator
 from IngeoML import CI, SelectFromModelCV
-from sklearn.metrics import f1_score
+from sklearn.metrics import f1_score,\
+                            recall_score,\
+                            precision_score
+from wordcloud import WordCloud                            
 import numpy as np
+import pandas as pd
+from matplotlib import pylab as plt
+import seaborn as sns
 ```
 
 ```{python}
@@ -76,20 +82,20 @@ bow.predict([txt])
 
 ```{python}
 #| echo: true
-hy = bow.predict(Dtest)
+hy_bow = bow.predict(Dtest)
 ```
 
 ```{python}
 #| echo: true
 y = np.r_[[x['klass'] for x in Dtest]]
-f1_score(y, hy, average=None)
+f1_score(y, hy_bow, average=None)
 ```
 
 ```{python}
 #| echo: true
 ci = CI(statistic=lambda y, hy: f1_score(y, hy, 
                                          average=None))
-ci_izq, ci_der = ci(y, hy)
+ci_izq, ci_der = ci(y, hy_bow)
 ```
 
 ```{python}
@@ -102,11 +108,56 @@ ci_der_f = Markdown(f'$[{ci_der_f}]$')
 
 El intervalo izquierdo es `{python} ci_izq_f` y el derecho tiene los valores `{python} ci_der_f`.
 
+```{python}
+#| code-fold: true
+#| fig-cap: Histograma de f1 por clase
+#| label: hist-f1-bow
+df_bow = pd.DataFrame(ci.statistic_samples, columns=['f1-neg', 'f1-pos'])
+df_bow['Tipo'] = 'BoW'
+sns.set_style('whitegrid')
+sns.displot(df_bow, kde=True)
+```
+
+```{python}
+#| echo: true
+ws = bow.estimator_instance.coef_[0]
+idfs = bow.weights
+```
+
+```{python}
+#| echo: true
+tokens_pos = {name: w * idf
+              for name, idf, w in zip(bow.names, idfs, ws)
+              if w > 0}
+tokens_neg = {name: w * idf
+              for name, idf, w in zip(bow.names, idfs, ws)
+              if w < 0}
+```
+
+
+```{python}
+#| code-fold: true
+#| fig-cap: Nube de tokens positivos
+#| label: fig-nube-tokens-pos
+word_cloud = WordCloud().generate_from_frequencies(tokens_pos)
+_ = plt.imshow(word_cloud, interpolation='bilinear')
+```
+
+
+```{python}
+#| code-fold: true
+#| fig-cap: Nube de tokens negativas
+#| label: fig-nube-tokens-neg
+word_cloud = WordCloud().generate_from_frequencies(tokens_neg)
+_ = plt.imshow(word_cloud, interpolation='bilinear')
+```
+
+
 ## Bolsa de Palabras Densas 
 
 ```{python}
 #| echo: true
-dense = DenseBoW(lang='es', 
+dense = DenseBoW(lang='es',
                  voc_size_exponent=15,
                  dataset=False)
 ```
@@ -125,4 +176,67 @@ dense.select(D=D,
 dense.fit(D)
 ```
 
+```{python}
+#| echo: true
+select = dense.feature_selection
+perf = select.cv_results_
+```
 
+```{python}
+#| code-fold: true
+#| fig-cap: Rendimiento Variando el Número de Características
+#| label: fig-dense-k
+_ = [{'d': k, 'macro-f1': v} for k, v in perf.items()]
+df = pd.DataFrame(_)
+ax = sns.lineplot(df, x='d', y='macro-f1')
+sns.set_style('whitegrid')
+```
+
+```{python}
+#| echo: true
+hy_dense = dense.predict(Dtest)
+```
+
+```{python}
+#| echo: true
+f1_score(y, hy_dense, average=None)
+```
+
+```{python}
+#| code-fold: true
+#| fig-cap: Histogramas de f1 por clase
+#| label: hist-f1-bow-dense
+ci(y, hy_dense)
+df_dense = pd.DataFrame(ci.statistic_samples, columns=['f1-neg', 'f1-pos'])
+df_dense['Tipo'] = 'Dense'
+
+_ = df_bow.melt(id_vars=['Tipo'], value_name='value', var_name='f1')
+_2 = df_dense.melt(id_vars=['Tipo'], value_name='value', var_name='f1')
+_ = pd.concat((_, _2))
+sns.set_style("whitegrid")
+fig = sns.displot(_, x='value', hue='f1', kde=True, col='Tipo')
+# plt.grid()
+```
+
+
+```{python}
+#| label: tbl-performance-bow-dense
+#| tbl-cap: Rendimiento
+#| echo: false
+headers = '|              |   Recall neg | Recall pos | Precision neg | Precision pos |'
+linea =   '|--------------|--------------|------------|---------------|---------------|'
+
+recall_bow = recall_score(y, hy_bow, average=None)
+recall_dense = recall_score(y, hy_dense, average=None)
+pr_bow = precision_score(y, hy_bow, average=None)
+pr_dense = precision_score(y, hy_dense, average=None)
+
+
+recall_bow_f = ' | '.join([f'${x:0.4f}$' for x in np.r_[recall_bow, pr_bow]])
+recall_dense_f = ' | '.join([f'${x:0.4f}$' for x in np.r_[recall_dense, pr_dense]])
+
+tab = '\n'.join(([headers, linea,
+                  f'|`BoW`|{recall_bow_f}|',
+                  f'|`DenseBoW`|{recall_dense_f}|']))
+Markdown(tab)
+```
