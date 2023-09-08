@@ -33,8 +33,9 @@ jobs:
           show-channel-urls: true
       - name: Install dependencies
         run: |
-          conda install --yes numpy scipy scikit-learn nltk evomsa jupyter wordcloud
+          conda install --yes numpy scipy scikit-learn nltk evomsa jupyter wordcloud pip
           python -c "import nltk; nltk.download('stopwords')"
+          pip install IngeoML
       - name: Render and Publish
         run: |
           git config --global user.email "mgraffg@ieee.org"
