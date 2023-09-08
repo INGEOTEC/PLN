@@ -159,6 +159,9 @@ plt.grid(False)
 ```
 
 
+
+
+
 ## Bolsa de Palabras Densas 
 
 ```{python}
@@ -246,3 +249,162 @@ tab = '\n'.join(([headers, linea,
                   f'|`DenseBoW`|{recall_dense_f}|']))
 Markdown(tab)
 ```
+
+```{python}
+#| echo: true
+w = dense.estimator_instance.coef_[0]
+names = np.array(dense.names)
+carac_pos = {k: v for k, v in zip(names, w) if v > 0}
+carac_neg = {k: v * -1 for k, v in zip(names, w) if v < 0}
+```
+
+```{python}
+#| code-fold: true
+#| fig-cap: Nube de características positivas
+#| label: fig-nube-dense-pos
+word_cloud = WordCloud().generate_from_frequencies(carac_pos)
+plt.imshow(word_cloud, interpolation='bilinear')
+plt.tick_params(left=False, right=False, labelleft=False,
+                labelbottom=False, bottom=False)
+plt.grid(False)
+```
+
+
+```{python}
+#| code-fold: true
+#| fig-cap: Nube de características negativas
+#| label: fig-nube-dense-neg
+word_cloud = WordCloud().generate_from_frequencies(carac_neg)
+plt.imshow(word_cloud, interpolation='bilinear')
+plt.tick_params(left=False, right=False, labelleft=False,
+                labelbottom=False, bottom=False)
+plt.grid(False)                
+```
+
+## Análisis Mediante Ejemplos 
+
+```{python}
+bow_norm = np.linalg.norm(bow.estimator_instance.coef_[0])
+txt = 'Asesinan a persona en Jalisco.'
+bow.decision_function([txt]) / bow_norm
+```
+
+```{python}
+dense_norm = np.linalg.norm(dense.estimator_instance.coef_[0])
+dense.decision_function([txt]) / dense_norm
+```
+
+```{python}
+txt = 'La asesina vivía en Jalisco.'
+bow.decision_function([txt]) / bow_norm
+```
+
+```{python}
+dense.decision_function([txt]) / dense_norm
+```
+
+```{python}
+txt = 'Asesinan a persona en Jalisco.'
+bow.decision_function([txt]) / bow_norm
+```
+
+```{python}
+w = bow.estimator_instance.coef_[0]
+vec = bow.bow[txt]
+sorted([(bow.names[k], w[k] * v) for k, v in vec],
+       key=lambda x: np.fabs(x[1]), reverse=True)[:5]
+```
+
+```{python}
+dense.decision_function([txt]) / dense_norm
+```
+
+```{python}
+w = dense.estimator_instance.coef_[0]
+vec = dense.transform([txt])[0] * w
+sorted([(dense.names[k], v) for k, v in enumerate(vec)],
+       key=lambda x: np.fabs(x[1]), reverse=True)[:5]
+```
+
+
+```{python}
+#| code-fold: true
+#| fig-cap: Nube de características ejemplo positivo
+#| label: fig-nube-ej-pos
+def codifica(names, vec):
+    carac_pos = dict()
+    for k, v in zip(names, vec):
+        if v > 0:
+            key = f'{k.upper()}'
+        else:
+            key = k
+        carac_pos[key] = np.fabs(v)
+    return carac_pos
+txt = 'Asesinan a persona en Jalisco.'
+_ = dense.transform([txt])[0] * dense.estimator_instance.coef_[0]
+word_cloud_dense = WordCloud().generate_from_frequencies(codifica(dense.names, _))
+ 
+w = bow.estimator_instance.coef_[0]
+vec = bow.bow[txt]
+carac_pos = dict()
+for k, v in vec:
+    if w[k] > 0:
+        key = f'{bow.names[k].upper()}'
+    else:
+        key = bow.names[k]
+    carac_pos[key] = np.fabs(v * w[k])
+
+word_cloud = WordCloud().generate_from_frequencies(carac_pos)
+
+fig, (ax1, ax2) = plt.subplots(1, 2)
+ax1.imshow(word_cloud, interpolation='bilinear')
+ax2.imshow(word_cloud_dense, interpolation='bilinear')
+for ax, title in zip([ax1, ax2], ['BoW', 'DenseBoW']):
+    ax.grid(False)
+    ax.tick_params(left=False, right=False, labelleft=False,
+                   labelbottom=False, bottom=False)
+    ax.set_title(title)
+```
+
+
+```{python}
+#| code-fold: true
+#| fig-cap: Nube de características ejemplo negativo
+#| label: fig-nube-ej-neg
+txt = 'La asesina vivía en Jalisco.'
+_ = dense.transform([txt])[0] * dense.estimator_instance.coef_[0]
+word_cloud_dense = WordCloud().generate_from_frequencies(codifica(dense.names, _))
+ 
+w = bow.estimator_instance.coef_[0]
+vec = bow.bow[txt]
+carac_pos = dict()
+for k, v in vec:
+    if w[k] > 0:
+        key = f'{bow.names[k].upper()}'
+    else:
+        key = bow.names[k]
+    carac_pos[key] = np.fabs(v * w[k])
+
+word_cloud = WordCloud().generate_from_frequencies(carac_pos)
+
+fig, (ax1, ax2) = plt.subplots(1, 2)
+ax1.imshow(word_cloud, interpolation='bilinear')
+ax2.imshow(word_cloud_dense, interpolation='bilinear')
+for ax, title in zip([ax1, ax2], ['BoW', 'DenseBoW']):
+    ax.grid(False)
+    ax.tick_params(left=False, right=False, labelleft=False,
+                   labelbottom=False, bottom=False)
+    ax.set_title(title)
+```
+
+
+<!-- 
+```{python}
+txt = 'Los detenidos asesinan en tiroteo a joven.'
+bow.decision_function([txt]) / bow_norm
+```
+
+```{python}
+txt = 'Los detenidos asesinan en tiroteo a joven.'
+dense.decision_function([txt]) / dense_norm
+``` -->
