@@ -129,7 +129,7 @@ idfs = bow.weights
 tokens_pos = {name: w * idf
               for name, idf, w in zip(bow.names, idfs, ws)
               if w > 0}
-tokens_neg = {name: w * idf
+tokens_neg = {name: w * idf * -1
               for name, idf, w in zip(bow.names, idfs, ws)
               if w < 0}
 ```
@@ -140,7 +140,10 @@ tokens_neg = {name: w * idf
 #| fig-cap: Nube de tokens positivos
 #| label: fig-nube-tokens-pos
 word_cloud = WordCloud().generate_from_frequencies(tokens_pos)
-_ = plt.imshow(word_cloud, interpolation='bilinear')
+plt.imshow(word_cloud, interpolation='bilinear')
+plt.tick_params(left=False, right=False, labelleft=False,
+                labelbottom=False, bottom=False)
+plt.grid(False)
 ```
 
 
@@ -149,7 +152,10 @@ _ = plt.imshow(word_cloud, interpolation='bilinear')
 #| fig-cap: Nube de tokens negativas
 #| label: fig-nube-tokens-neg
 word_cloud = WordCloud().generate_from_frequencies(tokens_neg)
-_ = plt.imshow(word_cloud, interpolation='bilinear')
+plt.imshow(word_cloud, interpolation='bilinear')
+plt.tick_params(left=False, right=False, labelleft=False,
+                labelbottom=False, bottom=False)
+plt.grid(False)                
 ```
 
 
