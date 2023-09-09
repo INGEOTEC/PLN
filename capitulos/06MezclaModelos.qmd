@@ -6,7 +6,7 @@ El **objetivo** de la unidad es
 
 ```{python}
 #| echo: true
-from EvoMSA import BoW, DenseBoW
+from EvoMSA import BoW, DenseBoW, StackGeneralization
 from microtc.utils import tweet_iterator
 from IngeoML import CI, SelectFromModelCV
 from sklearn.metrics import f1_score,\
@@ -127,39 +127,34 @@ idfs = bow.weights
 ```{python}
 #| echo: true
 tokens_pos = {name: w * idf
-              for name, idf, w in zip(bow.names, idfs, ws)
+              for name, idf, w in zip(bow.names,
+                                      idfs, ws)
               if w > 0}
 tokens_neg = {name: w * idf * -1
-              for name, idf, w in zip(bow.names, idfs, ws)
+              for name, idf, w in zip(bow.names,
+                                      idfs, ws)
               if w < 0}
 ```
 
 
 ```{python}
 #| code-fold: true
-#| fig-cap: Nube de tokens positivos
-#| label: fig-nube-tokens-pos
-word_cloud = WordCloud().generate_from_frequencies(tokens_pos)
-plt.imshow(word_cloud, interpolation='bilinear')
-plt.tick_params(left=False, right=False, labelleft=False,
-                labelbottom=False, bottom=False)
-plt.grid(False)
+#| fig-cap: Nubes de tokens positivos y negativos
+#| label: fig-nube-tokens
+word_pos = WordCloud().generate_from_frequencies(tokens_pos)
+word_neg = WordCloud().generate_from_frequencies(tokens_neg)
+
+fig, (ax1, ax2) = plt.subplots(1, 2)
+
+for cloud, ax, title in zip([word_pos, word_neg],
+                     [ax1, ax2],
+                     ['Positivas', 'Negativas']):
+    ax.imshow(cloud, interpolation='bilinear')
+    ax.grid(False)
+    ax.tick_params(left=False, right=False, labelleft=False,
+                   labelbottom=False, bottom=False)
+    ax.set_title(title)
 ```
-
-
-```{python}
-#| code-fold: true
-#| fig-cap: Nube de tokens negativas
-#| label: fig-nube-tokens-neg
-word_cloud = WordCloud().generate_from_frequencies(tokens_neg)
-plt.imshow(word_cloud, interpolation='bilinear')
-plt.tick_params(left=False, right=False, labelleft=False,
-                labelbottom=False, bottom=False)
-plt.grid(False)                
-```
-
-
-
 
 
 ## Bolsa de Palabras Densas 
@@ -227,29 +222,6 @@ fig = sns.displot(_, x='value', hue='f1', kde=True, col='Tipo')
 # plt.grid()
 ```
 
-
-```{python}
-#| label: tbl-performance-bow-dense
-#| tbl-cap: Rendimiento
-#| echo: false
-headers = '|              |   Recall neg | Recall pos | Precision neg | Precision pos |'
-linea =   '|--------------|--------------|------------|---------------|---------------|'
-
-recall_bow = recall_score(y, hy_bow, average=None)
-recall_dense = recall_score(y, hy_dense, average=None)
-pr_bow = precision_score(y, hy_bow, average=None)
-pr_dense = precision_score(y, hy_dense, average=None)
-
-
-recall_bow_f = ' | '.join([f'${x:0.4f}$' for x in np.r_[recall_bow, pr_bow]])
-recall_dense_f = ' | '.join([f'${x:0.4f}$' for x in np.r_[recall_dense, pr_dense]])
-
-tab = '\n'.join(([headers, linea,
-                  f'|`BoW`|{recall_bow_f}|',
-                  f'|`DenseBoW`|{recall_dense_f}|']))
-Markdown(tab)
-```
-
 ```{python}
 #| echo: true
 w = dense.estimator_instance.coef_[0]
@@ -258,27 +230,24 @@ carac_pos = {k: v for k, v in zip(names, w) if v > 0}
 carac_neg = {k: v * -1 for k, v in zip(names, w) if v < 0}
 ```
 
-```{python}
-#| code-fold: true
-#| fig-cap: Nube de características positivas
-#| label: fig-nube-dense-pos
-word_cloud = WordCloud().generate_from_frequencies(carac_pos)
-plt.imshow(word_cloud, interpolation='bilinear')
-plt.tick_params(left=False, right=False, labelleft=False,
-                labelbottom=False, bottom=False)
-plt.grid(False)
-```
-
 
 ```{python}
 #| code-fold: true
-#| fig-cap: Nube de características negativas
-#| label: fig-nube-dense-neg
-word_cloud = WordCloud().generate_from_frequencies(carac_neg)
-plt.imshow(word_cloud, interpolation='bilinear')
-plt.tick_params(left=False, right=False, labelleft=False,
-                labelbottom=False, bottom=False)
-plt.grid(False)                
+#| fig-cap: Nube de características positivas y negativas
+#| label: fig-nube-densa
+word_pos = WordCloud().generate_from_frequencies(carac_pos)
+word_neg = WordCloud().generate_from_frequencies(carac_neg)
+
+fig, (ax1, ax2) = plt.subplots(1, 2)
+
+for cloud, ax, title in zip([word_pos, word_neg],
+                     [ax1, ax2],
+                     ['Positivas', 'Negativas']):
+    ax.imshow(cloud, interpolation='bilinear')
+    ax.grid(False)
+    ax.tick_params(left=False, right=False, labelleft=False,
+                   labelbottom=False, bottom=False)
+    ax.set_title(title)
 ```
 
 ## Análisis Mediante Ejemplos 
@@ -370,7 +339,7 @@ for ax, title in zip([ax1, ax2], ['BoW', 'DenseBoW']):
 ```{python}
 #| code-fold: true
 #| fig-cap: Nube de características ejemplo negativo
-#| label: fig-nube-ej-neg
+#| label: fig-nube-ej
 txt = 'La asesina vivía en Jalisco.'
 _ = dense.transform([txt])[0] * dense.estimator_instance.coef_[0]
 word_cloud_dense = WordCloud().generate_from_frequencies(codifica(dense.names, _))
@@ -398,13 +367,75 @@ for ax, title in zip([ax1, ax2], ['BoW', 'DenseBoW']):
 ```
 
 
-<!-- 
 ```{python}
-txt = 'Los detenidos asesinan en tiroteo a joven.'
-bow.decision_function([txt]) / bow_norm
+#| code-fold: true
+#| fig-cap: Nube de características en un ejemplo positivo con predicción negativa
+#| label: fig-nube-ej-error
+txt = 'Le acaban de robar la bicicleta a mi hijo.'
+_ = dense.transform([txt])[0] * dense.estimator_instance.coef_[0]
+word_cloud_dense = WordCloud().generate_from_frequencies(codifica(dense.names, _))
+ 
+w = bow.estimator_instance.coef_[0]
+vec = bow.bow[txt]
+carac_pos = dict()
+for k, v in vec:
+    if w[k] > 0:
+        key = f'{bow.names[k].upper()}'
+    else:
+        key = bow.names[k]
+    carac_pos[key] = np.fabs(v * w[k])
+
+word_cloud = WordCloud().generate_from_frequencies(carac_pos)
+
+fig, (ax1, ax2) = plt.subplots(1, 2)
+ax1.imshow(word_cloud, interpolation='bilinear')
+ax2.imshow(word_cloud_dense, interpolation='bilinear')
+for ax, title in zip([ax1, ax2], ['BoW', 'DenseBoW']):
+    ax.grid(False)
+    ax.tick_params(left=False, right=False, labelleft=False,
+                   labelbottom=False, bottom=False)
+    ax.set_title(title)
+```
+
+## Combinando Modelos
+
+```{python}
+#| echo: true
+stack = StackGeneralization([bow, dense]).fit(D)
 ```
 
 ```{python}
-txt = 'Los detenidos asesinan en tiroteo a joven.'
-dense.decision_function([txt]) / dense_norm
-``` -->
+#| echo: true
+hy_stack = stack.predict(Dtest)
+```
+
+```{python}
+#| echo: true
+f1_score(y, hy_stack, average=None)
+```
+
+
+```{python}
+#| label: tbl-performance-bow-dense
+#| tbl-cap: Rendimiento
+#| echo: false
+headers = '|              |   Recall neg | Recall pos | Precision neg | Precision pos |'
+linea =   '|--------------|--------------|------------|---------------|---------------|'
+
+recall_bow = recall_score(y, hy_bow, average=None)
+recall_dense = recall_score(y, hy_dense, average=None)
+recall_stack = recall_score(y, hy_stack, average=None)
+pr_bow = precision_score(y, hy_bow, average=None)
+pr_dense = precision_score(y, hy_dense, average=None)
+pr_stack = precision_score(y, hy_stack, average=None)
+
+recall_bow_f = ' | '.join([f'${x:0.4f}$' for x in np.r_[recall_bow, pr_bow]])
+recall_dense_f = ' | '.join([f'${x:0.4f}$' for x in np.r_[recall_dense, pr_dense]])
+recall_stack_f = ' | '.join([f'${x:0.4f}$' for x in np.r_[recall_stack, pr_stack]])
+
+tab = '\n'.join(([headers, linea,
+                  f'|`bow`|{recall_bow_f}|',
+                  f'|`dense`|{recall_dense_f}|',
+                  f'|`stack`|{recall_stack_f}|']))
+Markdown(tab)
+```
