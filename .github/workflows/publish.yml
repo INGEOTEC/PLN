@@ -33,7 +33,7 @@ jobs:
           show-channel-urls: true
       - name: Install dependencies
         run: |
-          conda install --yes numpy scipy scikit-learn nltk evomsa jupyter wordcloud IngeoML
+          conda install --yes numpy scipy scikit-learn nltk evomsa jupyter wordcloud IngeoML pandas
           python -c "import nltk; nltk.download('stopwords')"
       - name: Render and Publish
         run: |
