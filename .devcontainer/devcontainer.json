@@ -5,5 +5,5 @@
     "ghcr.io/rocker-org/devcontainer-features/apt-packages:1": 
         {"packages": "libnss3,libxss1,libasound2,libxshmfence-dev"}
     },
-"postStartCommand": "conda install --yes numpy scipy scikit-learn nltk evomsa jupyter wordcloud IngeoML pandas seaborn"
+"postCreateCommand": "conda install -c conda-forge --yes numpy scipy scikit-learn nltk evomsa jupyter wordcloud IngeoML pandas seaborn"
 }
