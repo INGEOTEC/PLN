@@ -69,6 +69,8 @@ D[81]
 
 ## Bolsa de Palabras Dispersa 
 
+Se inicia con la creación de un clasificador basado en una bolsa de palabras dispersa, el clasificador es una máquina de soporte vectorial lineal (`LinearSVC`). La siguiente instrucción usa la clase `BoW` para crear este clasificador de texto. El primer paso es seleccionar el lenguaje, en este caso español (es) y después se entrena usando el método `fit`.
+
 ```{python}
 #| echo: true
 bow = BoW(lang='es').fit(D)
