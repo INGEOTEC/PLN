@@ -418,7 +418,7 @@ f1_score(y, hy_stack, average=None)
 
 
 ```{python}
-#| label: tbl-performance-bow-dense
+#| label: tbl-performance-recall-precision-delitos
 #| tbl-cap: Rendimiento
 #| echo: false
 headers = '|              |   Recall neg | Recall pos | Precision neg | Precision pos |'
@@ -434,6 +434,33 @@ pr_stack = precision_score(y, hy_stack, average=None)
 recall_bow_f = ' | '.join([f'${x:0.4f}$' for x in np.r_[recall_bow, pr_bow]])
 recall_dense_f = ' | '.join([f'${x:0.4f}$' for x in np.r_[recall_dense, pr_dense]])
 recall_stack_f = ' | '.join([f'${x:0.4f}$' for x in np.r_[recall_stack, pr_stack]])
+
+tab = '\n'.join(([headers, linea,
+                  f'|`bow`|{recall_bow_f}|',
+                  f'|`dense`|{recall_dense_f}|',
+                  f'|`stack`|{recall_stack_f}|']))
+Markdown(tab)
+```
+
+```{python}
+#| label: tbl-performance-f1-delitos
+#| tbl-cap: Rendimiento
+#| echo: false
+headers = '|              | f1 neg | f1 pos | macro-f1 |'
+linea =   '|--------------|--------|--------|----------|'
+
+f1_bow =   f1_score(y, hy_bow, average=None)
+f1_dense = f1_score(y, hy_dense, average=None)
+f1_stack = f1_score(y, hy_stack, average=None)
+
+f1_macro_bow =   f1_score(y, hy_bow,   average="macro")
+f1_macro_dense = f1_score(y, hy_dense, average="macro")
+f1_macro_stack = f1_score(y, hy_stack, average="macro")
+
+
+recall_bow_f = ' | '.join([f'${x:0.4f}$' for x in   np.r_[f1_bow, f1_macro_bow]])
+recall_dense_f = ' | '.join([f'${x:0.4f}$' for x in np.r_[f1_dense, f1_macro_dense]])
+recall_stack_f = ' | '.join([f'${x:0.4f}$' for x in np.r_[f1_stack, f1_macro_stack]])
 
 tab = '\n'.join(([headers, linea,
                   f'|`bow`|{recall_bow_f}|',
