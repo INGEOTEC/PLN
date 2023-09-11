@@ -76,16 +76,27 @@ Se inicia con la creación de un clasificador basado en una bolsa de palabras di
 bow = BoW(lang='es').fit(D)
 ```
 
+Habiendo entrenado el clasificador de texto es momento de utilizarlo para predecir, las siguientes dos instrucciones muestra el uso de la instancia `bow` para predecir clase del texto *me golpearon y robaron la bicicleta en la noche.* Se puede observar que la clase es $1$, lo cual indica que el texto describe la presencia de un delito.
+
 ```{python}
 #| echo: true
 txt = 'me golpearon y robaron la bicicleta en la noche'
 bow.predict([txt])
 ```
 
+Se observa que el método `predict` recibe una lista de textos a predecir, en la siguiente instrucción se predicen todas las clases del conjunto de prueba (`Dtest`), la predicciones se guardar en la variable `hy_bow`.
+
 ```{python}
 #| echo: true
 hy_bow = bow.predict(Dtest)
 ```
+
+```python
+#| echo: false
+
+```
+
+Habiendo realizado la predicciones en el conjunto de prueba ($\mathcal D$), es momento de utilizar estas para medir el rendimiento, en esta ocasión se mide el valor $f_1$ para cada clase. 
 
 ```{python}
 #| echo: true
