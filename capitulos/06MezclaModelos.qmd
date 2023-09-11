@@ -6,7 +6,9 @@ El **objetivo** de la unidad es
 
 ```{python}
 #| echo: true
-from EvoMSA import BoW, DenseBoW, StackGeneralization
+from EvoMSA import BoW,\
+                   DenseBoW,\
+                   StackGeneralization
 from microtc.utils import tweet_iterator
 from IngeoML import CI, SelectFromModelCV
 from sklearn.metrics import f1_score,\
@@ -46,7 +48,7 @@ if not isdir('delitos'):
 ---
 :::
 
-## Conjunto de Datos 
+## Introducción 
 
 El conjunto de datos se puede conseguir en la página de [Delitos](https://ingeotec.github.io/Delitos) aunque en esta dirección es necesario poblar los textos dado que solamente se encuentra el identificador del Tweet.
 
@@ -107,8 +109,8 @@ y = np.r_[[x['klass'] for x in Dtest]]
 f1_score(y, hy_bow, average=None)
 ```
 
-Con el objetivo de conocer la variabilidad del rendimiento del clasificador en este conjunto de datos, la siguientes instrucciones calcula el intervalo de confianza de la medida. 
-
+Con el objetivo de conocer la variabilidad del rendimiento del clasificador en este conjunto de datos, la siguientes instrucciones calcula el intervalo de confianza; para realizarlo se utiliza la clase `CI` la cual recibe la estadística a calcular, en este caso medida $f_1$. El siguiente paso es llamar a la clase con las entradas para calcular el intervalo, estas corresponden a las mediciones y predicciones del conjunto de prueba. 
+ 
 ```{python}
 #| echo: true
 ci = CI(statistic=lambda y, hy: f1_score(y, hy, 
@@ -124,23 +126,27 @@ ci_der_f = ', '.join([f'{v:0.4f}' for v in ci_der])
 ci_der_f = Markdown(f'$[{ci_der_f}]$')
 ```
 
-El intervalo izquierdo es `{python} ci_izq_f` y el derecho tiene los valores `{python} ci_der_f`.
+El intervalo izquierdo es `{python} ci_izq_f` y el derecho tiene los valores `{python} ci_der_f`. Para complementar la información del intervalo de confianza, la @fig-hist-f1-bow muestra el histograma y la densidad estimada para calcular el intervalo de confianza. Se ve que la varianza en la clase negativa es menor además de que tiene un rendimiento mejor que en la clase positiva. 
 
 ```{python}
 #| code-fold: true
 #| fig-cap: Histograma de f1 por clase
-#| label: hist-f1-bow
+#| label: fig-hist-f1-bow
 df_bow = pd.DataFrame(ci.statistic_samples, columns=['f1-neg', 'f1-pos'])
 df_bow['Tipo'] = 'BoW'
 sns.set_style('whitegrid')
 sns.displot(df_bow, kde=True)
 ```
 
+Una manera de poder analizar el comportamiento del clasificador de texto implementado es visualizar en una nube de palabras las características que tienen el mayor peso en la decisión. Esto se realiza en las siguientes instrucciones siendo el primer paso obtener los coeficientes de la máquina de soporte vectorial lineal, los cuales se guardan en la variable `ws`. El segundo componente es el valor de IDF que tiene cada uno de los tokens, esto se encuentran en el atributo `BoW.weights` tal y como se muestra en la segunda instrucción del siguiente código. 
+
 ```{python}
 #| echo: true
 ws = bow.estimator_instance.coef_[0]
 idfs = bow.weights
 ```
+
+Teniendo los valores del clasificador y del IDF, solamente es necesario obtener su producto y separar los tokens positivos de los negativos, tal y como se muestra en el siguiente código. La @fig-nube-tokens muestra las nubes de palabras generadas, cabe mencionar que aquellos tokens que tienen como prefijo `q:` corresponden a q-gramas de caracteres y los tokens que tienen el caracter `~` corresponden a bigramas de palabras. 
 
 ```{python}
 #| echo: true
@@ -154,6 +160,7 @@ tokens_neg = {name: w * idf * -1
               if w < 0}
 ```
 
+En la figura se puede observar que las características más importantes corresponden a la presencia de *asesinan*, *asesinan a*, *tiroteo* entre otras y por el lado de palabras relacionadas a la clase negativa se observan *secuestrado*, *asesina*, *un asesino*, entre otras. En @sec-analisis-ejemplo se muestran ejemplos que ayudan a comprender el hecho de que la palabra *asesinan* sea considerada como positiva y por otro lado *asesina* se en la clase negativa.
 
 ```{python}
 #| code-fold: true
@@ -164,9 +171,9 @@ word_neg = WordCloud().generate_from_frequencies(tokens_neg)
 
 fig, (ax1, ax2) = plt.subplots(1, 2)
 
-for cloud, ax, title in zip([word_pos, word_neg],
+for cloud, ax, title in zip([word_neg, word_pos],
                      [ax1, ax2],
-                     ['Positivas', 'Negativas']):
+                     ['Negativas', 'Positivas']):
     ax.imshow(cloud, interpolation='bilinear')
     ax.grid(False)
     ax.tick_params(left=False, right=False, labelleft=False,
@@ -177,12 +184,17 @@ for cloud, ax, title in zip([word_pos, word_neg],
 
 ## Bolsa de Palabras Densas 
 
+Es ahora el turno de hacer el análisis del clasificador de texto que se basado en bolsa de palabras densas. La siguiente instrucción muestra el uso de este clasificador donde se usa una bolsa de palabras con un vocabulario de $2^{15}$ (parámetro `voc_size_exponent=15`) y además se seleccionan como representaciones aquellos entrenados en los conjuntos de emojis (`emoji=True`) y las palabras claves (`keyword=True`). En esta caso, los parámetros del clasificador no son estimados, es decir, no se llama al método `fit`. Esto es porque en este ejemplo se van a seleccionar aquellas representaciones que mejor representan al problema de Delitos utilizando una máquina de soporte vectorial lineal. 
+
 ```{python}
 #| echo: true
 dense = DenseBoW(lang='es',
                  voc_size_exponent=15,
+                 emoji=True, keyword=True,
                  dataset=False)
 ```
+
+Para seleccionar las características que mejor representan al problema de delitos se utiliza la clase `SelectFromModelCV` la cual usa los coeficientes de la máquina de soporte vectorial para seleccionar las características más representativas, estas corresponden aquellas que tienen los coeficientes más grandes tomando su valor absoluto. La selección se realiza llamando al método `DenseBoW.select` con los parámetros que se observan en las siguientes instrucciones. En particular `SelectFromModelCV` es un método supervisado entonces se utilizarán las clase del conjunto de entrenamiento, y para poder medir el rendimiento de cada conjunto de características seleccionadas se usa una validación cruzada. La última instrucción estima los valores del clasificador con las características seleccionadas. 
 
 ```{python}
 #| echo: true
@@ -197,6 +209,8 @@ dense.select(D=D,
              feature_selection_kwargs=kwargs)
 dense.fit(D)
 ```
+
+Como se mencionó la clase `SelectFromModelCV` selecciona aquellas características que mejor rendimiento dan, la clase mantiene los valores estimados en cada selección, las siguientes instrucciones ejemplifican como obtener los valores de rendimiento en las selecciones. La variable `perf` es una diccionario donde la llave es el número de características y el valor es el rendimiento correspondiente. La @fig-dense-k muestra es rendimiento se puede observar la dinámica donde con un poco menos de $1000$ características se tiene un valor de rendimiento cercano a $0.9$.
 
 ```{python}
 #| echo: true
@@ -214,10 +228,14 @@ ax = sns.lineplot(df, x='d', y='macro-f1')
 sns.set_style('whitegrid')
 ```
 
+Después de haber seleccionado el número de características, se utiliza un código equivalente al usado en `BoW` para predecir las clases del conjunto de prueba ($\mathcal G$), tal y como se muestra en la siguiente instrucción. 
+
 ```{python}
 #| echo: true
 hy_dense = dense.predict(Dtest)
 ```
+
+El rendimiento en $f_1$ del clasificador basado en una bolsa se muestra con el siguiente código. Este valor puntual se complementa con la @fig-hist-f1-bow-dense donde se muestra la distribución de esta medición y se compara con la obtenida con el clasificador de bolsa de palabras dispersa (i.e., `bow`).
 
 ```{python}
 #| echo: true
@@ -227,7 +245,7 @@ f1_score(y, hy_dense, average=None)
 ```{python}
 #| code-fold: true
 #| fig-cap: Histogramas de f1 por clase
-#| label: hist-f1-bow-dense
+#| label: fig-hist-f1-bow-dense
 ci(y, hy_dense)
 df_dense = pd.DataFrame(ci.statistic_samples, columns=['f1-neg', 'f1-pos'])
 df_dense['Tipo'] = 'Dense'
@@ -240,6 +258,8 @@ fig = sns.displot(_, x='value', hue='f1', kde=True, col='Tipo')
 # plt.grid()
 ```
 
+En un clasificador basado en palabras densas también se puede comprender su comportamiento mostrando aquellas características que tiene un mayor peso al momento de decidir la clase. En las siguientes instrucciones se agrupan las características positivas y las negativas, utilizando el valor estimado por la máquina de soporte vectorial lineal (`w`). Considerando que cada característica está asociada a una palabra o emoji, entonces se pueden visualizar mediante una nube de palabras.
+
 ```{python}
 #| echo: true
 w = dense.estimator_instance.coef_[0]
@@ -248,6 +268,7 @@ carac_pos = {k: v for k, v in zip(names, w) if v > 0}
 carac_neg = {k: v * -1 for k, v in zip(names, w) if v < 0}
 ```
 
+La @fig-nube-densa muestra las nubes de palabras de las características positivas y negativas, se puede observar que una característica significativa de la clase positiva corresponde al modelo **robo**, **muere**, entre otros y de la clase negativa se observa **comentando**, **ocurrir*, entre otras. 
 
 ```{python}
 #| code-fold: true
@@ -258,9 +279,9 @@ word_neg = WordCloud().generate_from_frequencies(carac_neg)
 
 fig, (ax1, ax2) = plt.subplots(1, 2)
 
-for cloud, ax, title in zip([word_pos, word_neg],
+for cloud, ax, title in zip([word_neg, word_pos],
                      [ax1, ax2],
-                     ['Positivas', 'Negativas']):
+                     ['Negativas', 'Positivas']):
     ax.imshow(cloud, interpolation='bilinear')
     ax.grid(False)
     ax.tick_params(left=False, right=False, labelleft=False,
@@ -268,43 +289,58 @@ for cloud, ax, title in zip([word_pos, word_neg],
     ax.set_title(title)
 ```
 
-## Análisis Mediante Ejemplos 
+## Análisis Mediante Ejemplos {#sec-analisis-ejemplo}
+
+Hasta el momento se ha presentado un análisis global de los clasificadores dispersos (`bow`) y densos (`dense`), en esta sección se especializa el análisis al nivel de ejemplos. Lo primero que se realiza es ver el valor de la función de decisión, el signo de este valor indica la clase, un valor positivo indica clase positiva y el signo negativo corresponde a la clase negativa. El valor absoluto de la función indica de manera proporcional la distancia que existe al hiperplano que define las clases. Dado que se está utilizando este valor para contrastar el comportamiento de los algoritmos entonces la distancia entre el ejemplo al hiperplano está dado por la función de decisión dividida entre la norma de los coeficientes. La primera línea calcula la norma de los coeficientes estimados tanto para el clasificador disperso (`bow_norm`) y el denso (`dense_norm`)
 
 ```{python}
+#| echo: true
 bow_norm = np.linalg.norm(bow.estimator_instance.coef_[0])
+dense_norm = np.linalg.norm(dense.estimator_instance.coef_[0])
+```
+
+Con las normas se procederá a calcular la función de decisión para el ejemplo *Asesinan a persona en Jalisco*, este ejemplo es positivo dado que menciona la ocurrencia de un delito. En las siguientes instrucciones se calcula la distancia al hiperplano la cual se puede observar que es positiva indicando que el texto es positivo. 
+
+```{python}
 txt = 'Asesinan a persona en Jalisco.'
 bow.decision_function([txt]) / bow_norm
 ```
 
+Complementando la distancia del clasificador disperso se presenta la distancia del clasificador denso en el siguiente código. También se puede observar que su valor es positivo, pero este se encuentre más cercano al hiperplano de decisión, lo cual indica que existe una mayor incertidumbre en su clase. 
+
 ```{python}
-dense_norm = np.linalg.norm(dense.estimator_instance.coef_[0])
 dense.decision_function([txt]) / dense_norm
 ```
+
+Realizando el mismo procedimiento pero para texto *La asesina vivía en Jalisco.* Lo primero que se debe de notar es que el texto es negativo dado que se menciona que existe una asesina, pero el texto no indica que se haya cometido algún delito, esta fue una de las reglas que se siguió para etiquetar los textos tanto del conjunto de entrenamiento ($\mathcal T$) como del conjunto de prueba ($\mathcal G$). Pero es evidente que el texto anterior y el actual son sintácticamente muy similares, pero con una semántica diferente. 
+
+El siguiente código predice la función de decisión del clasificador disperso, la distancia es el valor absoluto del número presentado y el signo indica el lado del hiperplano, se observa que es negativo, entonces el clasificador indica que pertenece a la clase negativa. 
+
 
 ```{python}
 txt = 'La asesina vivía en Jalisco.'
 bow.decision_function([txt]) / bow_norm
 ```
 
+El mismo procedimiento se realiza para el clasificador denso como se indica a continuación, obteniendo también un valor negativo y con una magnitud similar al encontrado por el clasificador disperso. 
+
 ```{python}
 dense.decision_function([txt]) / dense_norm
 ```
 
-```{python}
-txt = 'Asesinan a persona en Jalisco.'
-bow.decision_function([txt]) / bow_norm
-```
+Continuando con el análisis, se puede visualizar los coeficientes más significativos para realizar la predicción. Por ejemplo, las siguientes instrucciones muestran los 5 coeficientes más significativos para predecir el texto *Asesinan a persona en Jalisco.*
+
 
 ```{python}
+txt = 'Asesinan a persona en Jalisco.'
 w = bow.estimator_instance.coef_[0]
 vec = bow.bow[txt]
 sorted([(bow.names[k], w[k] * v) for k, v in vec],
        key=lambda x: np.fabs(x[1]), reverse=True)[:5]
 ```
 
-```{python}
-dense.decision_function([txt]) / dense_norm
-```
+Un procedimiento equivalente se realiza para el clasificador denso, tal y como se muestra en el siguiente código. 
+
 
 ```{python}
 w = dense.estimator_instance.coef_[0]
@@ -312,6 +348,8 @@ vec = dense.transform([txt])[0] * w
 sorted([(dense.names[k], v) for k, v in enumerate(vec)],
        key=lambda x: np.fabs(x[1]), reverse=True)[:5]
 ```
+
+La @fig-nube-ej-pos muestra la nube de palabras de los tokens y características más significativas para la predicción del ejemplo positivo (*Asesinan a persona en Jalisco*). La nube de palabras para el ejemplo negativo (*La asesina vivía en Jalisco*) se muestra en la @fig-nube-ej. La nube de palabras está codificada de la siguiente manera, las palabras que corresponden a la clase positiva está en mayúsculas y las de la clase negativa en minúsculas. Por ejemplo, en @fig-nube-ej-pos se observa que la palabra *asesinan* es relevante para la clasificación del ejemplo así como la característica **ocurrir**.
 
 
 ```{python}
@@ -353,6 +391,7 @@ for ax, title in zip([ax1, ax2], ['BoW', 'DenseBoW']):
     ax.set_title(title)
 ```
 
+En el caso del ejemplo negativo, la @fig-nube-ej muestra q-gramas de caracteres asociados a la clase positiva y también es evidente la palabra *asesina*. En el caso del clasificador denso también se observan características positivas como **ocurrir** y características negativas como **critican** y **empleados**. 
 
 ```{python}
 #| code-fold: true
@@ -384,6 +423,16 @@ for ax, title in zip([ax1, ax2], ['BoW', 'DenseBoW']):
     ax.set_title(title)
 ```
 
+```{python}
+#| echo: false
+txt = 'Le acaban de robar la bicicleta a mi hijo.'
+df_bow = bow.decision_function([txt])[0, 0] / bow_norm
+df_dense = dense.decision_function([txt])[0, 0] / dense_norm
+bow_f = Markdown(f'${df_bow:0.4f}$')
+dense_f = Markdown(f'${df_dense:0.4f}$')
+```
+
+Complementando los ejemplos anteriores, la @fig-nube-ej-error muestra la nube de palabras obtenidas al calcular la función de decisión del texto *Le acaban de robar la bicicleta a mi hijo.* Se observa que este texto corresponde a la clase positiva y la función de decisión normalizada del clasificador disperso es `{python} bow_f` y del clasificador denso corresponde a `{python} dense_f`. Ambas funciones de decisión indican que la clase es negativa, lo cual es un error. La figura muestra que los q-gramas de caracteres y las características positivas dominan las nubes, pero estas no tienen el peso suficiente para realizar una predicción correcta. 
 
 ```{python}
 #| code-fold: true
@@ -417,21 +466,23 @@ for ax, title in zip([ax1, ax2], ['BoW', 'DenseBoW']):
 
 ## Combinando Modelos
 
+La siguiente pregunta es conocer si los modelos anteriores se pueden combinar para realizar una mejor predicción. En esta sección se utiliza la técnica de Stack Generalization (@Wolpert1992StackedGeneralization, @EvoMSA) para combinar los dos modelos. La siguiente linea entrena el clasificador, el cual recibe como parámetros los clasificador a juntar. 
+
 ```{python}
 #| echo: true
 stack = StackGeneralization([bow, dense]).fit(D)
 ```
 
+Siguiendo el procedimiento de los clasificadores dispersos y densos, la siguiente linea predice la clase de los ejemplos del conjunto de prueba y calcula su rendimiento en términos de la medida $f_1$.
+
+
 ```{python}
 #| echo: true
 hy_stack = stack.predict(Dtest)
-```
-
-```{python}
-#| echo: true
 f1_score(y, hy_stack, average=None)
 ```
 
+Para poder comparar el rendimiento de los tres clasificadores desarrollados, la @tbl-performance-recall-precision-delitos presenta el rendimiento con las medidas recall y precision en las dos clases. Se puede observar que el `bow` tiene el mejor recall en la clase negativa y mejor precision en la clase positiva. Por otro lado el mejor recall en la clase positiva y precision en la clase negativa lo tiene `stack`.
 
 ```{python}
 #| label: tbl-performance-recall-precision-delitos
@@ -457,6 +508,9 @@ tab = '\n'.join(([headers, linea,
                   f'|`stack`|{recall_stack_f}|']))
 Markdown(tab)
 ```
+
+Con respecto al rendimiento en términos de $f_1$, la @tbl-performance-f1-delitos presenta la información con respecto a cada clase y la última columna contiene el macro-$f_1$. Los valores indican que en la clase positiva el mejor valor corresponde a `stack` lo cual se ve reflejado en el macro-$f_1$. El algoritmo de Stack Generalization nos indica que se hizo una mejora en la predicción de la clase positiva y la clase negativa se mantuvo constante al menos con respecto de la medida $f_1$.
+
 
 ```{python}
 #| label: tbl-performance-f1-delitos
