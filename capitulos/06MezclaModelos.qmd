@@ -76,7 +76,7 @@ Se inicia con la creación de un clasificador basado en una bolsa de palabras di
 bow = BoW(lang='es').fit(D)
 ```
 
-Habiendo entrenado el clasificador de texto es momento de utilizarlo para predecir, las siguientes dos instrucciones muestra el uso de la instancia `bow` para predecir clase del texto *me golpearon y robaron la bicicleta en la noche.* Se puede observar que la clase es $1$, lo cual indica que el texto describe la presencia de un delito.
+Habiendo entrenado el clasificador de texto es momento de utilizarlo para predecir, las siguientes dos instrucciones muestra el uso de la instancia `bow` para predecir clase del texto *me golpearon y robaron la bicicleta en la noche.* Se puede observar que la clase es $1$, lo cual indica que el texto menciona la ejecución de un delito.
 
 ```{python}
 #| echo: true
@@ -84,25 +84,30 @@ txt = 'me golpearon y robaron la bicicleta en la noche'
 bow.predict([txt])
 ```
 
-Se observa que el método `predict` recibe una lista de textos a predecir, en la siguiente instrucción se predicen todas las clases del conjunto de prueba (`Dtest`), la predicciones se guardar en la variable `hy_bow`.
+El método `predict` recibe una lista de textos a predecir, en la siguiente instrucción se predicen todas las clases del conjunto de prueba (`Dtest`), la predicciones se guardar en la variable `hy_bow`.
 
 ```{python}
 #| echo: true
 hy_bow = bow.predict(Dtest)
 ```
 
-```python
+```{python} 
 #| echo: false
-
+y = np.r_[[x['klass'] for x in Dtest]]
+a = f1_score(y, hy_bow, average=None)
+f1_0 = Markdown(f'${a[0]:0.4f}$')
+f1_1 = Markdown(f'${a[1]:0.4f}$')
 ```
 
-Habiendo realizado la predicciones en el conjunto de prueba ($\mathcal D$), es momento de utilizar estas para medir el rendimiento, en esta ocasión se mide el valor $f_1$ para cada clase. 
+Habiendo realizado la predicciones en el conjunto de prueba ($\mathcal D$), es momento de utilizar estas para medir el rendimiento, en esta ocasión se mide el valor $f_1$ para cada clase. El primer valor (`{python} f1_0`) corresponde a la medida $f_1$ en la clase negativa y el segundo (`{python} f1_1`) corresponde al valor en la clase positiva.
 
 ```{python}
 #| echo: true
 y = np.r_[[x['klass'] for x in Dtest]]
 f1_score(y, hy_bow, average=None)
 ```
+
+Con el objetivo de conocer la variabilidad del rendimiento del clasificador en este conjunto de datos, la siguientes instrucciones calcula el intervalo de confianza de la medida. 
 
 ```{python}
 #| echo: true
