@@ -80,7 +80,7 @@ Antes de iniciar la descripción detallada del proceso de representación utiliz
 
 Como se había mencionado el valor que tiene la componente $i$-ésima del vector $\mathbf{v_t}_i$ corresponde a una característica del término asociado, este procedimiento se le conoce como el **esquema de pesado**. Por ejemplo, si el valor es $1$ (i.e., $\mathbf{v_{t_i}} = 1$) entonces el valor está indicando solo la presencia del término, este es el caso más simple. Considerando la @eq-bolsa-palabras se observa que el resultado, $\mathbf x$, cuenta las repeticiones de cada término, por esta característica a este esquema se le conoce como **frecuencia de términos** (*term frequency (TF)*). 
 
-Una manera de pesar los términos que ha sido muy efectiva en recuperación de información es considerar además la frecuencia de los términos en los diferentes documentos. En particular, el método conocido como **TFIDF** descrito por @Salton1973 propone considerar el producto de la frecuencia del término y el inverso de la frecuencia del término (*Inverse Document Frequency (IDF)* ) en la colección. 
+Una medida que complementa la información que tiene la frecuencia de términos es el inverso de la frecuencia del término (*Inverse Document Frequency (IDF)*) en la colección, esta medida propuesta por @Jones1972 se usa en un método de pesado descrito por @Salton1973 el cual es conocido como **TFIDF**. Este método de pesado propone el considerar el producto de la frecuencia del término y el inverso de la frecuencia del término (*Inverse Document Frequency (IDF)* ) en la colección como el peso del término.
 
 
 ### Ejemplos 
