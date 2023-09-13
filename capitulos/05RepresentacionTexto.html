@@ -285,7 +285,7 @@ div.csl-indent {
 <p>El <strong>objetivo</strong> de la unidad es</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="fa33547d" class="cell" data-execution_count="1">
+<div id="7120e859" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> EvoMSA <span class="im">import</span> BoW,<span class="op">\</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                   DenseBoW</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> microtc.utils <span class="im">import</span> tweet_iterator</span>
@@ -333,34 +333,34 @@ div.csl-indent {
 <section id="pesado-de-términos" class="level3" data-number="5.2.1">
 <h3 data-number="5.2.1" class="anchored" data-anchor-id="pesado-de-términos"><span class="header-section-number">5.2.1</span> Pesado de Términos</h3>
 <p>Como se había mencionado el valor que tiene la componente <span class="math inline">\(i\)</span>-ésima del vector <span class="math inline">\(\mathbf{v_t}_i\)</span> corresponde a una característica del término asociado, este procedimiento se le conoce como el <strong>esquema de pesado</strong>. Por ejemplo, si el valor es <span class="math inline">\(1\)</span> (i.e., <span class="math inline">\(\mathbf{v_{t_i}} = 1\)</span>) entonces el valor está indicando solo la presencia del término, este es el caso más simple. Considerando la <a href="#eq-bolsa-palabras" class="quarto-xref">Ecuación&nbsp;<span>5.1</span></a> se observa que el resultado, <span class="math inline">\(\mathbf x\)</span>, cuenta las repeticiones de cada término, por esta característica a este esquema se le conoce como <strong>frecuencia de términos</strong> (<em>term frequency (TF)</em>).</p>
-<p>Una manera de pesar los términos que ha sido muy efectiva en recuperación de información es considerar además la frecuencia de los términos en los diferentes documentos. En particular, el método conocido como <strong>TFIDF</strong> descrito por <span class="citation" data-cites="Salton1973">Salton y Yang (<a href="11Referencias.html#ref-Salton1973" role="doc-biblioref">1973</a>)</span> propone considerar el producto de la frecuencia del término y el inverso de la frecuencia del término (<em>Inverse Document Frequency (IDF)</em> ) en la colección.</p>
+<p>Una medida que complementa la información que tiene la frecuencia de términos es el inverso de la frecuencia del término (<em>Inverse Document Frequency (IDF)</em>) en la colección, esta medida propuesta por <span class="citation" data-cites="Jones1972">Sparck Jones (<a href="11Referencias.html#ref-Jones1972" role="doc-biblioref">1972</a>)</span> se usa en un método de pesado descrito por <span class="citation" data-cites="Salton1973">Salton y Yang (<a href="11Referencias.html#ref-Salton1973" role="doc-biblioref">1973</a>)</span> el cual es conocido como <strong>TFIDF</strong>. Este método de pesado propone el considerar el producto de la frecuencia del término y el inverso de la frecuencia del término (<em>Inverse Document Frequency (IDF)</em> ) en la colección como el peso del término.</p>
 </section>
 <section id="ejemplos" class="level3" data-number="5.2.2">
 <h3 data-number="5.2.2" class="anchored" data-anchor-id="ejemplos"><span class="header-section-number">5.2.2</span> Ejemplos</h3>
-<div id="27c4437d" class="cell" data-execution_count="5">
+<div id="55c5af15" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> BoW(lang<span class="op">=</span><span class="st">'es'</span>).bow</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>vec <span class="op">=</span> tm[<span class="st">'Buen día'</span>]</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>vec[:<span class="dv">3</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="5">
+<div class="cell-output cell-output-display" data-execution_count="22">
 <pre><code>[(11219, 0.3984336285263178),
  (11018, 0.3245843730253675),
  (24409, 0.2377856890280623)]</code></pre>
 </div>
 </div>
-<div id="e9a6fe7e" class="cell" data-execution_count="6">
+<div id="2e22e0c8" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>[(tm.id2token[k], v)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a> <span class="cf">for</span> k, v <span class="kw">in</span> vec[:<span class="dv">3</span>]]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="6">
+<div class="cell-output cell-output-display" data-execution_count="23">
 <pre><code>[('buen~dia', 0.3984336285263178),
  ('buen', 0.3245843730253675),
  ('dia', 0.2377856890280623)]</code></pre>
 </div>
 </div>
-<div id="e8b9dca1" class="cell" data-execution_count="7">
+<div id="bdc60be7" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'Buen día colegas'</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>[(tm.id2token[k], v)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a> <span class="cf">for</span> k, v <span class="kw">in</span> tm[txt][:<span class="dv">4</span>]]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="7">
+<div class="cell-output cell-output-display" data-execution_count="24">
 <pre><code>[('buen~dia', 0.24862785236357487),
  ('buen', 0.20254494048246244),
  ('dia', 0.1483814139998851),
@@ -389,33 +389,33 @@ div.csl-indent {
 </div>
 </div>
 </div>
-<div id="3f7dfa7e" class="cell" data-execution_count="10">
+<div id="2d67e85f" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>txt1 <span class="op">=</span> <span class="st">'Es un placer estar platicando con ustedes.'</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>txt2 <span class="op">=</span> <span class="st">'La lluvia genera un caos en la ciudad'</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>vec1 <span class="op">=</span> tm[txt1]</span>
 <span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a>vec2 <span class="op">=</span> tm[txt2]</span>
 <span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> {k: v <span class="cf">for</span> k, v <span class="kw">in</span> vec1}</span>
 <span id="cb9-6"><a href="#cb9-6" aria-hidden="true" tabindex="-1"></a>np.<span class="bu">sum</span>([f[k] <span class="op">*</span> v <span class="cf">for</span> k, v <span class="kw">in</span> vec2 <span class="cf">if</span> k <span class="kw">in</span> f])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="10">
+<div class="cell-output cell-output-display" data-execution_count="27">
 <pre><code>0.01645519294478695</code></pre>
 </div>
 </div>
-<div id="736b5453" class="cell" data-execution_count="11">
+<div id="22d1d6a2" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>txt1 <span class="op">=</span> <span class="st">'Es un placer estar platicando con ustedes.'</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>txt2 <span class="op">=</span> <span class="st">'Estoy dando una platica en Morelia.'</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>vec1 <span class="op">=</span> tm[txt1]</span>
 <span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>vec2 <span class="op">=</span> tm[txt2]</span>
 <span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a>f <span class="op">=</span> {k: v <span class="cf">for</span> k, v <span class="kw">in</span> vec1}</span>
 <span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a>np.<span class="bu">sum</span>([f[k] <span class="op">*</span> v <span class="cf">for</span> k, v <span class="kw">in</span> vec2 <span class="cf">if</span> k <span class="kw">in</span> f])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="11">
+<div class="cell-output cell-output-display" data-execution_count="28">
 <pre><code>0.2035427118119315</code></pre>
 </div>
 </div>
-<div id="2ee9dd09" class="cell" data-execution_count="12">
+<div id="6e32f73f" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fname <span class="op">=</span> <span class="st">'delitos/delitos_ingeotec_Es_train.json'</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> <span class="bu">list</span>(tweet_iterator(fname))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="45a2b008" class="cell" data-execution_count="13">
+<div id="26b43ac0" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> tm.transform(D)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>dis <span class="op">=</span> np.dot(X, X.T)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -455,7 +455,7 @@ div.csl-indent {
 </section>
 <section id="ejemplos-1" class="level2" data-number="5.4">
 <h2 data-number="5.4" class="anchored" data-anchor-id="ejemplos-1"><span class="header-section-number">5.4</span> Ejemplos</h2>
-<div id="626e7529" class="cell" data-execution_count="15">
+<div id="60ffa5c0" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>dense <span class="op">=</span> DenseBoW(lang<span class="op">=</span><span class="st">'es'</span>,</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                 voc_size_exponent<span class="op">=</span><span class="dv">15</span>,</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                 emoji<span class="op">=</span><span class="va">True</span>, keyword<span class="op">=</span><span class="va">True</span>,</span>
@@ -465,11 +465,11 @@ div.csl-indent {
 <span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>txt3 <span class="op">=</span> <span class="st">'Estoy dando una platica en Morelia.'</span></span>
 <span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> dense.transform([txt1, txt2, txt3])</span>
 <span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>np.dot(X[<span class="dv">0</span>], X[<span class="dv">1</span>]), np.dot(X[<span class="dv">0</span>], X[<span class="dv">2</span>])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-display" data-execution_count="15">
+<div class="cell-output cell-output-display" data-execution_count="32">
 <pre><code>(0.65677629690981, 0.8046113952647478)</code></pre>
 </div>
 </div>
-<div id="cf818688" class="cell" data-execution_count="16">
+<div id="8314a2a8" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> dense.transform(D)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>dis <span class="op">=</span> np.dot(X, X.T)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -493,7 +493,10 @@ div.csl-indent {
 
 <div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-Salton1973" class="csl-entry" role="listitem">
-Salton, Gerard, y Chungshu S. Yang. 1973. <span>«On the specification of term values in automatic indexing»</span>. <em>Journal of Documentation</em> 29 (abril): 351-72. <a href="https://doi.org/10.1108/EB026562/FULL/XML">https://doi.org/10.1108/EB026562/FULL/XML</a>.
+Salton, Gerard, y Chungshu S. Yang. 1973. <span>«On the specification of term values in automatic indexing»</span>. <em>Journal of Documentation</em> 29 (abril): 351-72. <a href="https://doi.org/10.1108/EB026562">https://doi.org/10.1108/EB026562</a>.
+</div>
+<div id="ref-Jones1972" class="csl-entry" role="listitem">
+Sparck Jones, Karen. 1972. <span>«A statistical interpretation of term specificity and its application in retrieval»</span>. <em>Journal of Documentation</em> 28: 11-21. <a href="https://doi.org/10.1108/EB026526">https://doi.org/10.1108/EB026526</a>.
 </div>
 </div>
 </section>
@@ -988,7 +991,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb20-88"><a href="#cb20-88" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-89"><a href="#cb20-89" aria-hidden="true" tabindex="-1"></a>Como se había mencionado el valor que tiene la componente $i$-ésima del vector $\mathbf{v_t}_i$ corresponde a una característica del término asociado, este procedimiento se le conoce como el **esquema de pesado**. Por ejemplo, si el valor es $1$ (i.e., $\mathbf{v_{t_i}} = 1$) entonces el valor está indicando solo la presencia del término, este es el caso más simple. Considerando la @eq-bolsa-palabras se observa que el resultado, $\mathbf x$, cuenta las repeticiones de cada término, por esta característica a este esquema se le conoce como **frecuencia de términos** (*term frequency (TF)*). </span>
 <span id="cb20-90"><a href="#cb20-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb20-91"><a href="#cb20-91" aria-hidden="true" tabindex="-1"></a>Una manera de pesar los términos que ha sido muy efectiva en recuperación de información es considerar además la frecuencia de los términos en los diferentes documentos. En particular, el método conocido como **TFIDF** descrito por @Salton1973 propone considerar el producto de la frecuencia del término y el inverso de la frecuencia del término (*Inverse Document Frequency (IDF)* ) en la colección. </span>
+<span id="cb20-91"><a href="#cb20-91" aria-hidden="true" tabindex="-1"></a>Una medida que complementa la información que tiene la frecuencia de términos es el inverso de la frecuencia del término (*Inverse Document Frequency (IDF)*) en la colección, esta medida propuesta por @Jones1972 se usa en un método de pesado descrito por @Salton1973 el cual es conocido como **TFIDF**. Este método de pesado propone el considerar el producto de la frecuencia del término y el inverso de la frecuencia del término (*Inverse Document Frequency (IDF)* ) en la colección como el peso del término.</span>
 <span id="cb20-92"><a href="#cb20-92" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-93"><a href="#cb20-93" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb20-94"><a href="#cb20-94" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplos </span></span>
