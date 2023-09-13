@@ -50,6 +50,20 @@ if not isdir('delitos'):
 
 ## Introducción 
 
+
+```{mermaid}
+%%| echo: false
+%%| fig-cap: Diagrama de predicción 
+%%| label: fig-prediccion-1-estimador
+
+flowchart LR
+    Repr([Representación]) -- Clasificación --> Clasificador[Clasificador]
+    Repr -- Regresión --> Regresor[Regresor]
+    Clasificador --> Prediccion([Predicción])
+    Regresor --> Prediccion
+```
+
+
 El conjunto de datos se puede conseguir en la página de [Delitos](https://ingeotec.github.io/Delitos) aunque en esta dirección es necesario poblar los textos dado que solamente se encuentra el identificador del Tweet.
 
 Para leer los datos del conjunto de entrenamiento y prueba se utilizan las siguientes instrucciones. En la variable `D` se tiene los datos que se utilizarán para entrenar el clasificador basado en la bolsa de palabras y en `Dtest` los datos del conjunto de prueba, que son usados para medir el rendimiento del clasificador.
@@ -138,7 +152,7 @@ sns.set_style('whitegrid')
 sns.displot(df_bow, kde=True)
 ```
 
-Una manera de poder analizar el comportamiento del clasificador de texto implementado es visualizar en una nube de palabras las características que tienen el mayor peso en la decisión. Esto se realiza en las siguientes instrucciones siendo el primer paso obtener los coeficientes de la máquina de soporte vectorial lineal, los cuales se guardan en la variable `ws`. El segundo componente es el valor de IDF que tiene cada uno de los tokens, esto se encuentran en el atributo `BoW.weights` tal y como se muestra en la segunda instrucción del siguiente código. 
+Una manera de poder analizar el comportamiento del clasificador de texto implementado es visualizar en una nube de palabras las características que tienen el mayor peso en la decisión. Esto se realiza en las siguientes instrucciones siendo el primer paso obtener los coeficientes de la máquina de soporte vectorial lineal, los cuales se guardan en la variable `ws`. El segundo componente es el valor de IDF que tiene cada uno de los términos, esto se encuentran en el atributo `BoW.weights` tal y como se muestra en la segunda instrucción del siguiente código. 
 
 ```{python}
 #| echo: true
@@ -146,7 +160,7 @@ ws = bow.estimator_instance.coef_[0]
 idfs = bow.weights
 ```
 
-Teniendo los valores del clasificador y del IDF, solamente es necesario obtener su producto y separar los tokens positivos de los negativos, tal y como se muestra en el siguiente código. La @fig-nube-tokens muestra las nubes de palabras generadas, cabe mencionar que aquellos tokens que tienen como prefijo `q:` corresponden a q-gramas de caracteres y los tokens que tienen el caracter `~` corresponden a bigramas de palabras. 
+Teniendo los valores del clasificador y del IDF, solamente es necesario obtener su producto y separar los términos positivos de los negativos, tal y como se muestra en el siguiente código. La @fig-nube-tokens muestra las nubes de palabras generadas, cabe mencionar que aquellos términos que tienen como prefijo `q:` corresponden a q-gramas de caracteres y los términos que tienen el caracter `~` corresponden a bigramas de palabras. 
 
 ```{python}
 #| echo: true
@@ -164,7 +178,7 @@ En la figura se puede observar que las características más importantes corresp
 
 ```{python}
 #| code-fold: true
-#| fig-cap: Nubes de tokens positivos y negativos
+#| fig-cap: Nubes de términos positivos y negativos
 #| label: fig-nube-tokens
 word_pos = WordCloud().generate_from_frequencies(tokens_pos)
 word_neg = WordCloud().generate_from_frequencies(tokens_neg)
@@ -349,7 +363,7 @@ sorted([(dense.names[k], v) for k, v in enumerate(vec)],
        key=lambda x: np.fabs(x[1]), reverse=True)[:5]
 ```
 
-La @fig-nube-ej-pos muestra la nube de palabras de los tokens y características más significativas para la predicción del ejemplo positivo (*Asesinan a persona en Jalisco*). La nube de palabras para el ejemplo negativo (*La asesina vivía en Jalisco*) se muestra en la @fig-nube-ej. La nube de palabras está codificada de la siguiente manera, las palabras que corresponden a la clase positiva está en mayúsculas y las de la clase negativa en minúsculas. Por ejemplo, en @fig-nube-ej-pos se observa que la palabra *asesinan* es relevante para la clasificación del ejemplo así como la característica **ocurrir**.
+La @fig-nube-ej-pos muestra la nube de palabras de los términos y características más significativas para la predicción del ejemplo positivo (*Asesinan a persona en Jalisco*). La nube de palabras para el ejemplo negativo (*La asesina vivía en Jalisco*) se muestra en la @fig-nube-ej. La nube de palabras está codificada de la siguiente manera, las palabras que corresponden a la clase positiva está en mayúsculas y las de la clase negativa en minúsculas. Por ejemplo, en @fig-nube-ej-pos se observa que la palabra *asesinan* es relevante para la clasificación del ejemplo así como la característica **ocurrir**.
 
 
 ```{python}
@@ -465,6 +479,41 @@ for ax, title in zip([ax1, ax2], ['BoW', 'DenseBoW']):
 ```
 
 ## Combinando Modelos
+
+
+```{mermaid}
+%%| echo: false
+%%| fig-cap: Diagrama de predicción en mezcla de modelos
+%%| label: fig-prediccion-1-estimador
+
+flowchart TB
+    Conc[Concatenación]
+    Representación --> Estimadores --> Conc
+    Conc --> Predicción
+    subgraph Representación [Representaciones]
+        direction TB
+        Repr1([Representación 1])
+        Repr2([Representación 2])
+        ReprI([...])
+        ReprM([Representación M])
+    end
+    subgraph Estimadores
+        direction TB    
+        Est1[Estimador 1] 
+        Est2[Estimador 2]
+        EstI[...]
+        EstM[Estimador M]
+    end
+    subgraph Predicción [Etapa de Predicción]
+        direction TB
+        Entrada
+        Entrada -- Clasificación --> Clasificador[Clasificador]
+        Entrada -- Regresión --> Regresor[Regresor]
+        Clasificador --> Prediccion([Predicción])
+        Regresor --> Prediccion
+    end
+```
+
 
 La siguiente pregunta es conocer si los modelos anteriores se pueden combinar para realizar una mejor predicción. En esta sección se utiliza la técnica de Stack Generalization (@Wolpert1992StackedGeneralization, @EvoMSA) para combinar los dos modelos. La siguiente linea entrena el clasificador, el cual recibe como parámetros los clasificador a juntar. 
 

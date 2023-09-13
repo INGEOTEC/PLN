@@ -42,9 +42,9 @@ La @fig-pre-procesamiento esquematiza el procedimiento que se presenta en esta u
 %%| label: fig-pre-procesamiento
 
 flowchart LR
-    I([Texto]) -->  A[Normalización de Texto]
-    A --> B[Segmentación]
-    B --> C(...)
+    Entrada([Texto]) -->  Norm[Normalización de Texto]
+    Norm --> Seg[Segmentación]
+    Seg --> Terminos(...)
 ```
 
 
@@ -199,7 +199,7 @@ output
 
 ## Segmentación {#sec-segmentacion}
 
-Una vez que el texto ha sido normalizado es necesario segmentarlo (*tokenize*) a sus componentes fundamentales, e.g., palabras o gramas de caracteres (q-grams) o de palabras (n-grams). Existen diferentes métodos para segmentar un texto, probablemente una de las más sencillas es asumir que una palabra está limitada entre dos espacios o signos de puntuación. Partiendo de el encontrar la palabra se empieza a generar los gramas de palabras, e.g., bigramas, o los gramas de caracteres si se desea solo generarlos a partir de las palabras. 
+Una vez que el texto ha sido normalizado es necesario segmentarlo (*tokenize*) a sus componentes fundamentales, e.g., palabras o gramas de caracteres (q-grams) o de palabras (n-grams). Existen diferentes métodos para segmentar un texto, probablemente una de las más sencillas es asumir que una palabra está limitada entre dos espacios o signos de puntuación. Partiendo de las palabras encontradas se empiezan a generar los gramas de palabras, e.g., bigramas, o los gramas de caracteres si se desea solo generarlos a partir de las palabras. 
 
 ### Gramas de Palabras (n-grams)
 
