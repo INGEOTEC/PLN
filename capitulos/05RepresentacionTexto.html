@@ -102,6 +102,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   }
 }</script>
 
+  <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 </head>
 
@@ -221,7 +223,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
-        
+        <nav id="TOC" role="doc-toc" class="toc-active">
+    <h2 id="toc-title">Tabla de contenidos</h2>
+   
+  <ul>
+  <li><a href="#paquetes-usados" id="toc-paquetes-usados" class="nav-link active" data-scroll-target="#paquetes-usados">Paquetes usados</a></li>
+  <li><a href="#bolsa-de-palabras-dispersa" id="toc-bolsa-de-palabras-dispersa" class="nav-link" data-scroll-target="#bolsa-de-palabras-dispersa"><span class="header-section-number">5.1</span> Bolsa de Palabras Dispersa</a></li>
+  </ul>
+</nav>
     </div>
 <!-- main -->
 <main class="content" id="quarto-document-content">
@@ -245,10 +254,36 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 <p>El <strong>objetivo</strong> de la unidad es</p>
+<section id="paquetes-usados" class="level2 unnumbered">
+<h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
+<div id="602d36a4" class="cell" data-execution_count="1">
+<div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> EvoMSA <span class="im">import</span> BoW,<span class="op">\</span></span>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                   DenseBoW</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> microtc.utils <span class="im">import</span> tweet_iterator</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> wordcloud <span class="im">import</span> WordCloud                            </span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<hr>
+<p><strong>Video explicando la unidad</strong></p>
+<hr>
+</section>
+<section id="bolsa-de-palabras-dispersa" class="level2" data-number="5.1">
+<h2 data-number="5.1" class="anchored" data-anchor-id="bolsa-de-palabras-dispersa"><span class="header-section-number">5.1</span> Bolsa de Palabras Dispersa</h2>
+<p>La idea de una bolsa de palabras discretas es que después de haber normalizado y segmentado el texto (<a href="02ManejandoTexto.html" class="quarto-xref"><span>Capítulo&nbsp;2</span></a>), cada token <span class="math inline">\(t\)</span> sea asociado a un vector único <span class="math inline">\(\mathbf{v_t} \in \mathbb R^d\)</span> donde la <span class="math inline">\(i\)</span>-ésima componente, i.e., <span class="math inline">\(\mathbf{v_t}_i\)</span>, es diferente de cero y <span class="math inline">\(\forall_{j \neq i} \mathbf{v_t}_j=0\)</span>. Es decir la <span class="math inline">\(i\)</span>-ésima componente está asociada al token <span class="math inline">\(t\)</span>, se podría pensar que si el vocabulario está ordenado de alguna manera, entonces el token <span class="math inline">\(t\)</span> está en la posición <span class="math inline">\(i\)</span>. Por otro lado el valor que contiene la componente se usa para representar alguna característica del token.</p>
+<p>El conjunto de vectores <span class="math inline">\(\mathbf v\)</span> corresponde al vocabulario, teniendo <span class="math inline">\(d\)</span> diferentes token en el mismo y por definición <span class="math inline">\(\forall_{i \neq j} \mathbf{v_i} \cdot \mathbf{v_j} = 0\)</span>, donde <span class="math inline">\(\mathbf{v_i} \in \mathbb R^d\)</span>, <span class="math inline">\(\mathbf{v_j} \in \mathbb R^d\)</span>, y <span class="math inline">\((\cdot)\)</span> es el producto punto. Cabe mencionar que cualquier token fuera del vocabulario es descartado.</p>
+<p>Usando esta notación, un texto <span class="math inline">\(x\)</span> está representado por una secuencia de tokens, i.e., <span class="math inline">\((t_1, t_2, \ldots)\)</span>; la secuencia puede tener repeticiones es decir, <span class="math inline">\(t_j = t_k\)</span>. Utilizando la característica de que cada token está asociado a un vector <span class="math inline">\(\mathbf v\)</span>, se transforma la secuencia de tokens a una secuencia de vectores (manteniendo las repeticiones), i.e., <span class="math inline">\((\mathbf{v_{t_1}}, \mathbf{v_{t_2}}, \ldots)\)</span>. Finalmente, el texto <span class="math inline">\(x\)</span> se representa como:</p>
+<p><span id="eq-bolsa-palabras"><span class="math display">\[
+\mathbf x = \frac{\sum_t \mathbf{v_t}}{\lVert \sum_t \mathbf{v_t} \rVert},
+\tag{5.1}\]</span></span></p>
+<p>donde la suma se hace para todos los elementos de la secuencia, <span class="math inline">\(\mathbf x \in \mathbb R^d\)</span>, y <span class="math inline">\(\lVert \mathbf w \rVert\)</span> es la norma Euclideana del vector <span class="math inline">\(\mathbf w.\)</span></p>
 
 
 <!-- -->
 
+</section>
 
 </main> <!-- /main -->
 <script id="quarto-html-after-body" type="application/javascript">
@@ -658,9 +693,66 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb1" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Representación de Texto</span></span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es </span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode" id="cb2" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Representación de Texto</span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es </span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paquetes usados {.unnumbered}</span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> EvoMSA <span class="im">import</span> BoW,<span class="op">\</span></span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>                   DenseBoW</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> microtc.utils <span class="im">import</span> tweet_iterator</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> wordcloud <span class="im">import</span> WordCloud                            </span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> matplotlib <span class="im">import</span> pylab <span class="im">as</span> plt</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a><span class="co">#| output: false</span></span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> os.path <span class="im">import</span> isfile, isdir</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> EvoMSA.utils <span class="im">import</span> Download</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> EvoMSA <span class="im">import</span> utils</span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>utils.USE_TQDM <span class="op">=</span> <span class="va">False</span></span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> isfile(<span class="st">'delitos.zip'</span>):</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>    Download(<span class="st">'https://github.com/INGEOTEC/Delitos/releases/download/Datos/delitos.zip'</span>,</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>             <span class="st">'delitos.zip'</span>)</span>
+<span id="cb2-40"><a href="#cb2-40" aria-hidden="true" tabindex="-1"></a><span class="cf">if</span> <span class="kw">not</span> isdir(<span class="st">'delitos'</span>):</span>
+<span id="cb2-41"><a href="#cb2-41" aria-hidden="true" tabindex="-1"></a>    <span class="op">!</span>unzip <span class="op">-</span>Pingeotec delitos.<span class="bu">zip</span></span>
+<span id="cb2-42"><a href="#cb2-42" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb2-43"><a href="#cb2-43" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-44"><a href="#cb2-44" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-45"><a href="#cb2-45" aria-hidden="true" tabindex="-1"></a>::: {.content-visible when-format="html"}</span>
+<span id="cb2-46"><a href="#cb2-46" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-47"><a href="#cb2-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-48"><a href="#cb2-48" aria-hidden="true" tabindex="-1"></a>**Video explicando la unidad**</span>
+<span id="cb2-49"><a href="#cb2-49" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-50"><a href="#cb2-50" aria-hidden="true" tabindex="-1"></a>---</span>
+<span id="cb2-51"><a href="#cb2-51" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb2-52"><a href="#cb2-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-53"><a href="#cb2-53" aria-hidden="true" tabindex="-1"></a><span class="fu">## Bolsa de Palabras Dispersa </span></span>
+<span id="cb2-54"><a href="#cb2-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-55"><a href="#cb2-55" aria-hidden="true" tabindex="-1"></a>La idea de una bolsa de palabras discretas es que después de haber normalizado y segmentado el texto (@sec-manejando-texto), cada token $t$ sea asociado a un vector único $\mathbf{v_t} \in \mathbb R^d$ donde la $i$-ésima componente, i.e., $\mathbf{v_t}_i$, es diferente de cero y $\forall_{j \neq i} \mathbf{v_t}_j=0$. Es decir la $i$-ésima componente está asociada al token $t$, se podría pensar que si el vocabulario está ordenado de alguna manera, entonces el token $t$ está en la posición $i$. Por otro lado el valor que contiene la componente se usa para representar alguna característica del token. </span>
+<span id="cb2-56"><a href="#cb2-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-57"><a href="#cb2-57" aria-hidden="true" tabindex="-1"></a>El conjunto de vectores $\mathbf v$ corresponde al vocabulario, teniendo $d$ diferentes token en el mismo y por definición $\forall_{i \neq j} \mathbf{v_i} \cdot \mathbf{v_j} = 0$, donde $\mathbf{v_i} \in \mathbb R^d$, $\mathbf{v_j} \in \mathbb R^d$, y $(\cdot)$ es el producto punto. Cabe mencionar que cualquier token fuera del vocabulario es descartado. </span>
+<span id="cb2-58"><a href="#cb2-58" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-59"><a href="#cb2-59" aria-hidden="true" tabindex="-1"></a>Usando esta notación, un texto $x$ está representado por una secuencia de tokens, i.e., $(t_1, t_2, \ldots)$; la secuencia puede tener repeticiones es decir, $t_j = t_k$. Utilizando la característica de que cada token está asociado a un vector $\mathbf v$, se transforma la secuencia de tokens a una secuencia de vectores (manteniendo las repeticiones), i.e., $(\mathbf{v_{t_1}}, \mathbf{v_{t_2}}, \ldots)$. Finalmente, el texto $x$ se representa como:</span>
+<span id="cb2-60"><a href="#cb2-60" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-61"><a href="#cb2-61" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb2-62"><a href="#cb2-62" aria-hidden="true" tabindex="-1"></a>\mathbf x = \frac{\sum_t \mathbf{v_t}}{\lVert \sum_t \mathbf{v_t} \rVert},</span>
+<span id="cb2-63"><a href="#cb2-63" aria-hidden="true" tabindex="-1"></a>$$ {#eq-bolsa-palabras}</span>
+<span id="cb2-64"><a href="#cb2-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-65"><a href="#cb2-65" aria-hidden="true" tabindex="-1"></a>donde la suma se hace para todos los elementos de la secuencia, $\mathbf x \in \mathbb R^d$, y $\lVert \mathbf w \rVert$ es la norma Euclideana del vector $\mathbf w.$</span>
+</code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
 <footer class="footer">

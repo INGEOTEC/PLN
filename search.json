@@ -140,11 +140,21 @@
     ]
   },
   {
-    "objectID": "capitulos/05RepresentacionTexto.html",
-    "href": "capitulos/05RepresentacionTexto.html",
+    "objectID": "capitulos/05RepresentacionTexto.html#paquetes-usados",
+    "href": "capitulos/05RepresentacionTexto.html#paquetes-usados",
     "title": "5  Representación de Texto",
-    "section": "",
-    "text": "El objetivo de la unidad es",
+    "section": "Paquetes usados",
+    "text": "Paquetes usados\n\nfrom EvoMSA import BoW,\\\n                   DenseBoW\nfrom microtc.utils import tweet_iterator\nfrom wordcloud import WordCloud                            \nimport numpy as np\nimport pandas as pd\nfrom matplotlib import pylab as plt\nimport seaborn as sns\n\n\nVideo explicando la unidad",
+    "crumbs": [
+      "<span class='chapter-number'>5</span>  <span class='chapter-title'>Representación de Texto</span>"
+    ]
+  },
+  {
+    "objectID": "capitulos/05RepresentacionTexto.html#bolsa-de-palabras-dispersa",
+    "href": "capitulos/05RepresentacionTexto.html#bolsa-de-palabras-dispersa",
+    "title": "5  Representación de Texto",
+    "section": "5.1 Bolsa de Palabras Dispersa",
+    "text": "5.1 Bolsa de Palabras Dispersa\nLa idea de una bolsa de palabras discretas es que después de haber normalizado y segmentado el texto (Capítulo 2), cada token \\(t\\) sea asociado a un vector único \\(\\mathbf{v_t} \\in \\mathbb R^d\\) donde la \\(i\\)-ésima componente, i.e., \\(\\mathbf{v_t}_i\\), es diferente de cero y \\(\\forall_{j \\neq i} \\mathbf{v_t}_j=0\\). Es decir la \\(i\\)-ésima componente está asociada al token \\(t\\), se podría pensar que si el vocabulario está ordenado de alguna manera, entonces el token \\(t\\) está en la posición \\(i\\). Por otro lado el valor que contiene la componente se usa para representar alguna característica del token.\nEl conjunto de vectores \\(\\mathbf v\\) corresponde al vocabulario, teniendo \\(d\\) diferentes token en el mismo y por definición \\(\\forall_{i \\neq j} \\mathbf{v_i} \\cdot \\mathbf{v_j} = 0\\), donde \\(\\mathbf{v_i} \\in \\mathbb R^d\\), \\(\\mathbf{v_j} \\in \\mathbb R^d\\), y \\((\\cdot)\\) es el producto punto. Cabe mencionar que cualquier token fuera del vocabulario es descartado.\nUsando esta notación, un texto \\(x\\) está representado por una secuencia de tokens, i.e., \\((t_1, t_2, \\ldots)\\); la secuencia puede tener repeticiones es decir, \\(t_j = t_k\\). Utilizando la característica de que cada token está asociado a un vector \\(\\mathbf v\\), se transforma la secuencia de tokens a una secuencia de vectores (manteniendo las repeticiones), i.e., \\((\\mathbf{v_{t_1}}, \\mathbf{v_{t_2}}, \\ldots)\\). Finalmente, el texto \\(x\\) se representa como:\n\\[\n\\mathbf x = \\frac{\\sum_t \\mathbf{v_t}}{\\lVert \\sum_t \\mathbf{v_t} \\rVert},\n\\tag{5.1}\\]\ndonde la suma se hace para todos los elementos de la secuencia, \\(\\mathbf x \\in \\mathbb R^d\\), y \\(\\lVert \\mathbf w \\rVert\\) es la norma Euclideana del vector \\(\\mathbf w.\\)",
     "crumbs": [
       "<span class='chapter-number'>5</span>  <span class='chapter-title'>Representación de Texto</span>"
     ]

@@ -279,7 +279,7 @@ div.csl-indent {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Manejando Texto</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Código</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-manejando-texto" class="quarto-section-identifier"><span class="chapter-number">2</span>&nbsp; <span class="chapter-title">Manejando Texto</span></span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Código</button></div></div>
 </div>
 
 
@@ -298,7 +298,7 @@ div.csl-indent {
 <p>El <strong>objetivo</strong> de la unidad es</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="65a5308c" class="cell" data-execution_count="1">
+<div id="046be6b9" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> microtc.params <span class="im">import</span> OPTION_GROUP, OPTION_DELETE,<span class="op">\</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                           OPTION_NONE</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> microtc.textmodel <span class="im">import</span> SKIP_SYMBOLS</span>
@@ -349,7 +349,7 @@ div.csl-indent {
 <h4 data-number="2.2.1.1" class="anchored" data-anchor-id="usuarios"><span class="header-section-number">2.2.1.1</span> Usuarios</h4>
 <p>En esta sección se trabajará con los nombres de usuarios que siguen el formato usado por Twitter. En un tuit, los nombres de usuarios son aquellas palabras que inician con el caracter @ y terminan con un espacio o caracter terminal. Las acciones que se realizarán con los nombres de usuario encontrados serán su borrado o reemplazo por una etiqueta en particular.</p>
 <p>El procedimiento para encontrar los nombres de usuarios es mediante expresiones regulares, en particular se usa la expresión <code>@\S+</code>, tal y como se muestra en el siguiente ejemplo.</p>
-<div id="66cfe2b3" class="cell" data-execution_count="3">
+<div id="3ddd170a" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'Hola @xx, @mm te está buscando'</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>re.sub(<span class="vs">r"@\S+"</span>, <span class="st">""</span>, text)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
@@ -357,7 +357,7 @@ div.csl-indent {
 </div>
 </div>
 <p>La segunda acción es reemplazar cada nombre de usuario por una etiqueta particular, en el siguiente ejemplo se reemplaza por la etiqueta <code>_usr</code>.</p>
-<div id="c9683396" class="cell" data-execution_count="4">
+<div id="c7af00d4" class="cell" data-execution_count="4">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'Hola @xx, @mm te está buscando'</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>re.sub(<span class="vs">r"@\S+"</span>, <span class="st">"_usr"</span>, text)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
@@ -368,7 +368,7 @@ div.csl-indent {
 <section id="url" class="level4" data-number="2.2.1.2">
 <h4 data-number="2.2.1.2" class="anchored" data-anchor-id="url"><span class="header-section-number">2.2.1.2</span> URL</h4>
 <p>Los ejemplos anteriores se pueden adaptar para manejar URL; solamente es necesario adecuar la expresión regular que identifica una URL. En el siguiente ejemplo se muestra como se pueden borrar las URLs que aparecen en un texto.</p>
-<div id="59cad002" class="cell" data-execution_count="5">
+<div id="f238a5cc" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"puedes verificar que http://google.com esté funcionando"</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>re.sub(<span class="vs">r"https?://\S+"</span>, <span class="st">""</span>, text)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
@@ -379,7 +379,7 @@ div.csl-indent {
 <section id="números" class="level4" data-number="2.2.1.3">
 <h4 data-number="2.2.1.3" class="anchored" data-anchor-id="números"><span class="header-section-number">2.2.1.3</span> Números</h4>
 <p>The previous code can be modified to deal with numbers and replace the number found with a shared label such as <code>_num</code>.</p>
-<div id="6659bbb0" class="cell" data-execution_count="6">
+<div id="8afd9534" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"acabamos de ganar 10 M"</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>re.sub(<span class="vs">r"\d\d*\.?\d*|\d*\.\d\d*"</span>, <span class="st">"_num"</span>, text)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
@@ -394,7 +394,7 @@ div.csl-indent {
 <section id="mayúsculas-y-minúsculas" class="level4" data-number="2.2.2.1">
 <h4 data-number="2.2.2.1" class="anchored" data-anchor-id="mayúsculas-y-minúsculas"><span class="header-section-number">2.2.2.1</span> Mayúsculas y Minúsculas</h4>
 <p>La primera de estas transformaciones es convertir todas los caracteres a minúsculas. Como se puede observar esta transformación hace que el vocabulario se reduzca, por ejemplo, las palabras <em>México</em> o <em>MÉXICO</em> son representados por la palabra <em>méxico</em>. Esta operación se puede realizar con la función <code>lower</code> tal y cómo se muestra a continuación.</p>
-<div id="f39800f4" class="cell" data-execution_count="7">
+<div id="7284fd67" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"México"</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>text.lower()</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
@@ -405,7 +405,7 @@ div.csl-indent {
 <section id="signos-de-puntuación" class="level4" data-number="2.2.2.2">
 <h4 data-number="2.2.2.2" class="anchored" data-anchor-id="signos-de-puntuación"><span class="header-section-number">2.2.2.2</span> Signos de Puntuación</h4>
 <p>Los signos de puntuación son necesarios para tareas como la generación de textos, pero existen otras aplicaciones donde los signos de puntuación tienen un efecto positivo en el rendimiento del algorithm, este es el caso de tareas de categorización de texto. El efecto que tiene el quitar los signos de puntuación es que el vocabulario se reduce. Los símbolos de puntuación se pueden remover teniendo una lista de los mismos, esta lista de signos de puntuación se encuentra en la variable <code>SKIP_SYMBOLS</code> y el siguiente código muestra un procedimiento para quitarlos.</p>
-<div id="bc2e6c8f" class="cell" data-execution_count="8">
+<div id="a190b131" class="cell" data-execution_count="8">
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"¡Hola! buenos días:"</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> <span class="st">""</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x <span class="kw">in</span> text:</span>
@@ -422,7 +422,7 @@ div.csl-indent {
 <h4 data-number="2.2.2.3" class="anchored" data-anchor-id="símbolos-diacríticos"><span class="header-section-number">2.2.2.3</span> Símbolos Diacríticos</h4>
 <p>Continuando con la misma idea de reducir el vocabulario, es común eliminar los símbolos diacríticos en las palabras. Esta transformación también tiene el objetivo de normalizar aquellos textos informales donde los símbolos diacríticos son usado con una menor frecuencia, en particular los acentos en el caso del español. Por ejemplo, es común encontrar la palabra <em>México</em> escrita como <em>Mexico</em>.</p>
 <p>El siguiente código muestra un procedimiento para eliminar los símbolos diacríticos.</p>
-<div id="6a6e4613" class="cell" data-execution_count="9">
+<div id="bc57e63a" class="cell" data-execution_count="9">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'México'</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> <span class="st">""</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x <span class="kw">in</span> unicodedata.normalize(<span class="st">'NFD'</span>, text):</span>
@@ -446,7 +446,7 @@ div.csl-indent {
 <p>Las palabras comunes (<em>stop words</em>) son palabras utilizadas frecuentemente en el lenguaje, las cuales son necesarias para comunicación, pero no aportan información para discriminar un texto de acuerdo a su significado.</p>
 <p>The stop words are the most frequent words used in the language. These words are essential to communicate but are not so much on tasks where the aim is to discriminate texts according to their meaning.</p>
 <p>Las palabras vacías se pueden guardar en un diccionario y el proceso de identificación consiste en buscar la existencia de la palabra en el diccionario. Una vez que la palabra analizada se encuentra en el diccionario, se procede a quitarla o cambiarla por un token particular. El proceso de borrado se muestra en el siguiente código.</p>
-<div id="b647aa96" class="cell" data-execution_count="10">
+<div id="677d8d3e" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>lang <span class="op">=</span> LangDependency(<span class="st">'spanish'</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'¡Buenos días! El día de hoy tendremos un día cálido.'</span></span>
@@ -466,7 +466,7 @@ div.csl-indent {
 <h3 data-number="2.3.2" class="anchored" data-anchor-id="lematización-y-reducción-a-la-raíz"><span class="header-section-number">2.3.2</span> Lematización y Reducción a la Raíz</h3>
 <p>La idea de lematización y reducción a la raíz (<em>stemming</em>) es transformar una palabra a su raíz mediante un proceso heurístico o morfológico. Por ejemplo, las palabras <em>jugando</em> o <em>jugaron</em> se transforman a la palabra <em>jugar</em>.</p>
 <p>El siguiente código muestra el proceso de reducción a la raíz utilizando la clase <code>SnowballStemmer</code>.</p>
-<div id="4ed44774" class="cell" data-execution_count="11">
+<div id="80e1f1ae" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>stemmer <span class="op">=</span> SnowballStemmer(<span class="st">'spanish'</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'Estoy jugando futbol con mis amigos'</span></span>
@@ -488,7 +488,7 @@ div.csl-indent {
 <section id="gramas-de-palabras-n-grams" class="level3" data-number="2.4.1">
 <h3 data-number="2.4.1" class="anchored" data-anchor-id="gramas-de-palabras-n-grams"><span class="header-section-number">2.4.1</span> Gramas de Palabras (n-grams)</h3>
 <p>El primer método de segmentación revisado es la creación de los gramas de palabras. El primer paso es encontrar las palabras las cuales se pueden encontrar mediante la función <code>split</code>; una vez que las palabras están definidas estás se pueden unir para generar los gramas de palabras del tamaño deseado, tal y como se muestra en el siguiente código.</p>
-<div id="d2830a5c" class="cell" data-execution_count="12">
+<div id="1dad74dd" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'Estoy jugando futbol con mis amigos'</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>words <span class="op">=</span> text.split()</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">3</span></span>
@@ -508,7 +508,7 @@ div.csl-indent {
 <h3 data-number="2.4.2" class="anchored" data-anchor-id="gramas-de-caracteres-q-grams"><span class="header-section-number">2.4.2</span> Gramas de Caracteres (q-grams)</h3>
 <p>La segmentación de gramas de caracteres complementa los gramas de palabras. Los gramas de caracteres están definidos como la subcadena de longitud <span class="math inline">\(q\)</span>. Este tipo de segmentación tiene la característica de que es agnóstica al lenguaje, es decir, se puede aplicar en cualquier idioma; contrastando, los gramas de palabras se pueden aplicar solo a los lenguajes que tienen definido el concepto de palabra, por ejemplo en el idioma chino las palabras no se pueden identificar como se pueden identificar en el español o inglés. La segunda característica importante es que ayuda en el problema de errores ortográficos, siguiendo una perspectiva de similitud aproximada.</p>
 <p>El código para realizar los gramas de caracteres es similar a la presentada anteriormente, siendo la diferencia que el ciclo está por los caracteres en lugar de la palabras como se había realizado. El siguiente código muestra una implementación para realizar gramas de caracteres.</p>
-<div id="9dbf5e4d" class="cell" data-execution_count="13">
+<div id="118fa77b" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'Estoy jugando'</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>q <span class="op">=</span> <span class="dv">4</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>q_grams <span class="op">=</span> []</span>
@@ -548,7 +548,7 @@ div.csl-indent {
 <li>ent_option</li>
 </ul>
 <p>Por ejemplo, el siguiente código muestra como se borra el usuario y se reemplaza un hashtag; se puede observar que en la respuesta se cambian todos los espacios por el caracter <code>~</code> y se incluye ese mismo al inicio y final del texto.</p>
-<div id="64816da7" class="cell" data-execution_count="14">
+<div id="854c3661" class="cell" data-execution_count="14">
 <div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(hashtag_option<span class="op">=</span>OPTION_GROUP,</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>               usr_option<span class="op">=</span>OPTION_DELETE)</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>texto <span class="op">=</span> <span class="st">'mira @xyz estoy triste. #UnDiaLluvioso'</span></span>
@@ -564,7 +564,7 @@ div.csl-indent {
 <li>del_diac</li>
 </ul>
 <p>En el siguiente ejemplo se transforman el texto a minúscula y se remueven los signos de puntuación.</p>
-<div id="7e12c8e0" class="cell" data-execution_count="15">
+<div id="85c2036a" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(lc<span class="op">=</span><span class="va">True</span>,</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>               del_punc<span class="op">=</span><span class="va">True</span>,</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>               del_diac<span class="op">=</span><span class="va">False</span>)</span>
@@ -580,7 +580,7 @@ div.csl-indent {
 <li>stemming</li>
 </ul>
 <p>Por ejemplo, las siguientes instrucciones quitan las palabras comunes y realizan una reducción a la raíz.</p>
-<div id="85ecd896" class="cell" data-execution_count="16">
+<div id="eab6d38a" class="cell" data-execution_count="16">
 <div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(lang<span class="op">=</span><span class="st">'es'</span>,</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>               stopwords<span class="op">=</span>OPTION_DELETE,</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>               stemming<span class="op">=</span><span class="va">True</span>)</span>
@@ -595,7 +595,7 @@ div.csl-indent {
 <h3 data-number="2.5.2" class="anchored" data-anchor-id="segmentación"><span class="header-section-number">2.5.2</span> Segmentación</h3>
 <p>El paso final es describir el uso de la segmentación. La librería utiliza el parámetro <code>token_list</code> para indicar el tipo de segmentación que se desea realizar. El formato es una lista de número, donde el valor indica el tipo de segmentación. El número <span class="math inline">\(1\)</span> indica que se realizará una segmentación por palabras, los número positivo corresponden a los gramas de caracteres y los números negativos a los gramas de palabras.</p>
 <p>Por ejemplo, utilizando las normalizaciones que se tienen por defecto, el siguiente código segmenta utilizando gramas de caracteres de tamañan <span class="math inline">\(4.\)</span></p>
-<div id="6f905adb" class="cell" data-execution_count="17">
+<div id="a378fd29" class="cell" data-execution_count="17">
 <div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(token_list<span class="op">=</span>[<span class="dv">4</span>])</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>tm.tokenize(<span class="st">'buenos días'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="17">
@@ -613,7 +613,7 @@ div.csl-indent {
 </div>
 <p>para poder identificar cuando se trata de un segmento que corresponde a una palabra o un grama de caracteres, a los últimos se les agrega el prefijo <code>q:</code>. Cabe mencionar que por defecto se remueven los símbolos diacríticos.</p>
 <p>El ejemplo anterior, se utiliza para generar un grama de palabras de tamaño <span class="math inline">\(2.\)</span> Como se ha mencionado los gramas de palabras se especifican con números negativos siendo el valor absoluto el tamaño del grama.</p>
-<div id="8484fbd6" class="cell" data-execution_count="18">
+<div id="bf89b58a" class="cell" data-execution_count="18">
 <div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(token_list<span class="op">=</span>[<span class="op">-</span><span class="dv">2</span>])</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>tm.tokenize(<span class="st">'buenos días'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
@@ -621,7 +621,7 @@ div.csl-indent {
 </div>
 </div>
 <p>Para completar la explicación, se combinan la segmentación de gramas de caracteres y palabras además de incluir las palabras en la segmentación.</p>
-<div id="ae3ea005" class="cell" data-execution_count="19">
+<div id="88bf382f" class="cell" data-execution_count="19">
 <div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(token_list<span class="op">=</span>[<span class="dv">4</span>, <span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>])</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>tm.tokenize(<span class="st">'buenos días'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="19">
@@ -1066,7 +1066,7 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="sourceCode" id="cb36" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Manejando Texto</span></span>
+<div class="sourceCode" id="cb36" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Manejando Texto {#sec-manejando-texto}</span></span>
 <span id="cb36-2"><a href="#cb36-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb36-3"><a href="#cb36-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es </span>
 <span id="cb36-4"><a href="#cb36-4" aria-hidden="true" tabindex="-1"></a></span>
