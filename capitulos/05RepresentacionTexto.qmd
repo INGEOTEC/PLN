@@ -197,7 +197,7 @@ flowchart LR
 #| echo: true
 dense = DenseBoW(lang='es',
                  voc_size_exponent=15,
-                 emoji=True, keyword=True,
+                 emoji=False, keyword=True,
                  dataset=False)
 txt1 = 'Es un placer estar platicando con ustedes.'
 txt2 = 'La lluvia genera un caos en la ciudad.'
@@ -207,9 +207,40 @@ np.dot(X[0], X[1]), np.dot(X[0], X[2])
 ```
 
 
+La @fig-repr-texto-nube-densa muestra la nube de palabras generada con las características y sus respectivos valores del texto *Es un placer estar platicando con ustedes.* y *La lluvia genera un caos en la ciudad.*
+
+```{python}
+#| code-fold: true
+#| fig-cap: Nube de características positivas y negativas
+#| label: fig-repr-texto-nube-densa
+dense.unit_vector = False
+norm = np.linalg.norm(dense.weights, axis=1)
+values = dense.transform([txt1, txt2]) / norm
+names = dense.names
+tokens_pos = {names[id]: v for id, v in enumerate(values[0]) if v > 0}
+tokens_neg = {names[id]: v for id, v in enumerate(values[1]) if v > 0}
+
+word_pos = WordCloud().generate_from_frequencies(tokens_pos)
+word_neg = WordCloud().generate_from_frequencies(tokens_neg)
+
+fig, (ax1, ax2) = plt.subplots(1, 2)
+
+for cloud, ax, title in zip([word_pos, word_neg],
+                     [ax1, ax2],
+                     ['Es un ... ustedes.', 
+                      'La lluvia ... ciudad.']):
+    ax.imshow(cloud, interpolation='bilinear')
+    ax.grid(False)
+    ax.tick_params(left=False, right=False, labelleft=False,
+                   labelbottom=False, bottom=False)
+    ax.set_title(title)
+```
+
 ```{python}
 #| echo: true
-X = dense.transform(D)
+X = dense.transform(D) / norm
+unit = np.linalg.norm(X, axis=1)
+X = X / np.atleast_2d(unit).T
 dis = np.dot(X, X.T)
 ```
 
