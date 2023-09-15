@@ -191,6 +191,20 @@ flowchart LR
     A --> Repr([Representación])
 ```
 
+
+
+$$
+\mathbf u = \sum_t \mathbf{u_t} + \mathbf{w_0},
+$$ {#eq-bolsa-densas}
+
+donde $\mathbf{w_0} \in \mathbb R^{M}$,  
+
+$$
+\mathbf{u_t} = \frac{\mathbf W \mathbf {v_t}}{\lVert \sum_t \mathbf{v_t} \rVert}
+$$
+
+y $\mathbf W \in \mathbb R^{M \times d}$
+
 ## Ejemplos 
 
 ```{python} 
@@ -198,6 +212,7 @@ flowchart LR
 dense = DenseBoW(lang='es',
                  voc_size_exponent=15,
                  emoji=False, keyword=True,
+                 distance_hyperplane=True,
                  dataset=False)
 txt1 = 'Es un placer estar platicando con ustedes.'
 txt2 = 'La lluvia genera un caos en la ciudad.'
@@ -213,9 +228,7 @@ La @fig-repr-texto-nube-densa muestra la nube de palabras generada con las carac
 #| code-fold: true
 #| fig-cap: Nube de características positivas y negativas
 #| label: fig-repr-texto-nube-densa
-dense.unit_vector = False
-norm = np.linalg.norm(dense.weights, axis=1)
-values = dense.transform([txt1, txt2]) / norm
+values = dense.transform([txt1, txt2])
 names = dense.names
 tokens_pos = {names[id]: v for id, v in enumerate(values[0]) if v > 0}
 tokens_neg = {names[id]: v for id, v in enumerate(values[1]) if v > 0}
@@ -238,7 +251,7 @@ for cloud, ax, title in zip([word_pos, word_neg],
 
 ```{python}
 #| echo: true
-X = dense.transform(D) / norm
+X = dense.transform(D)
 unit = np.linalg.norm(X, axis=1)
 X = X / np.atleast_2d(unit).T
 dis = np.dot(X, X.T)
