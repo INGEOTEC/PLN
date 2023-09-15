@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.358">
+<meta name="generator" content="quarto-1.4.367">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -58,6 +58,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
+  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -256,8 +257,10 @@ div.csl-indent {
   <li><a href="#pesado-de-términos" id="toc-pesado-de-términos" class="nav-link" data-scroll-target="#pesado-de-términos"><span class="header-section-number">5.2.1</span> Pesado de Términos</a></li>
   <li><a href="#ejemplos" id="toc-ejemplos" class="nav-link" data-scroll-target="#ejemplos"><span class="header-section-number">5.2.2</span> Ejemplos</a></li>
   </ul></li>
-  <li><a href="#bolsa-de-palabras-densa" id="toc-bolsa-de-palabras-densa" class="nav-link" data-scroll-target="#bolsa-de-palabras-densa"><span class="header-section-number">5.3</span> Bolsa de Palabras Densa</a></li>
-  <li><a href="#ejemplos-1" id="toc-ejemplos-1" class="nav-link" data-scroll-target="#ejemplos-1"><span class="header-section-number">5.4</span> Ejemplos</a></li>
+  <li><a href="#bolsa-de-palabras-densa" id="toc-bolsa-de-palabras-densa" class="nav-link" data-scroll-target="#bolsa-de-palabras-densa"><span class="header-section-number">5.3</span> Bolsa de Palabras Densa</a>
+  <ul class="collapse">
+  <li><a href="#ejemplos-1" id="toc-ejemplos-1" class="nav-link" data-scroll-target="#ejemplos-1"><span class="header-section-number">5.3.1</span> Ejemplos</a></li>
+  </ul></li>
   </ul>
 </nav>
     </div>
@@ -285,7 +288,7 @@ div.csl-indent {
 <p>El <strong>objetivo</strong> de la unidad es</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="cd978522" class="cell" data-execution_count="1">
+<div id="74a546fb" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> EvoMSA <span class="im">import</span> BoW,<span class="op">\</span></span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a>                   DenseBoW</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> microtc.utils <span class="im">import</span> tweet_iterator</span>
@@ -314,7 +317,8 @@ div.csl-indent {
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-repr-texto-bolsa-dispersa" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-repr-texto-bolsa-dispersa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-repr-texto-bolsa-dispersa">flowchart LR
     Terminos([Texto\n Segmentado]) -- Pre-entrenados --&gt;  A[Asociación]
@@ -324,7 +328,10 @@ div.csl-indent {
     A --&gt; Repr([Representación])
 </pre>
 </div>
-<figcaption class="figure-caption">Figura&nbsp;5.1: Diagrama Bolsa de Palabras Dispersa</figcaption>
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-repr-texto-bolsa-dispersa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.1: Diagrama Bolsa de Palabras Dispersa
+</figcaption>
 </figure>
 </div>
 </div>
@@ -337,7 +344,7 @@ div.csl-indent {
 </section>
 <section id="ejemplos" class="level3" data-number="5.2.2">
 <h3 data-number="5.2.2" class="anchored" data-anchor-id="ejemplos"><span class="header-section-number">5.2.2</span> Ejemplos</h3>
-<div id="29ab4df6" class="cell" data-execution_count="5">
+<div id="d3d9bc95" class="cell" data-execution_count="5">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> BoW(lang<span class="op">=</span><span class="st">'es'</span>).bow</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>vec <span class="op">=</span> tm[<span class="st">'Buen día'</span>]</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>vec[:<span class="dv">3</span>]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -347,7 +354,7 @@ div.csl-indent {
  (24409, 0.2377856890280623)]</code></pre>
 </div>
 </div>
-<div id="84fc8c17" class="cell" data-execution_count="6">
+<div id="c99581cf" class="cell" data-execution_count="6">
 <div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>[(tm.id2token[k], v)</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a> <span class="cf">for</span> k, v <span class="kw">in</span> vec[:<span class="dv">3</span>]]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
@@ -356,7 +363,7 @@ div.csl-indent {
  ('dia', 0.2377856890280623)]</code></pre>
 </div>
 </div>
-<div id="213a9023" class="cell" data-execution_count="7">
+<div id="d41509ea" class="cell" data-execution_count="7">
 <div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'Buen día colegas'</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>[(tm.id2token[k], v)</span>
 <span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a> <span class="cf">for</span> k, v <span class="kw">in</span> tm[txt][:<span class="dv">4</span>]]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -381,15 +388,19 @@ div.csl-indent {
 <span id="cb8-7"><a href="#cb8-7" aria-hidden="true" tabindex="-1"></a>                labelbottom<span class="op">=</span><span class="va">False</span>, bottom<span class="op">=</span><span class="va">False</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-repr-texto-nube" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="05RepresentacionTexto_files/figure-html/fig-repr-texto-nube-output-1.png" width="540" height="280" class="figure-img"></p>
-<figcaption class="figure-caption">Figura&nbsp;5.2: Nube de términos</figcaption>
+<div id="fig-repr-texto-nube" class="quarto-figure quarto-figure-center anchored" height="280" width="540">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-repr-texto-nube-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="05RepresentacionTexto_files/figure-html/fig-repr-texto-nube-output-1.png" width="540" height="280" class="figure-img">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-repr-texto-nube-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.2: Nube de términos
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<div id="75dccf4c" class="cell" data-execution_count="10">
+<div id="e802965e" class="cell" data-execution_count="10">
 <div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>txt1 <span class="op">=</span> <span class="st">'Es un placer estar platicando con ustedes.'</span></span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>txt2 <span class="op">=</span> <span class="st">'La lluvia genera un caos en la ciudad'</span></span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>vec1 <span class="op">=</span> tm[txt1]</span>
@@ -400,7 +411,7 @@ div.csl-indent {
 <pre><code>0.01645519294478695</code></pre>
 </div>
 </div>
-<div id="f287c793" class="cell" data-execution_count="11">
+<div id="f749f5a2" class="cell" data-execution_count="11">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>txt1 <span class="op">=</span> <span class="st">'Es un placer estar platicando con ustedes.'</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>txt2 <span class="op">=</span> <span class="st">'Estoy dando una platica en Morelia.'</span></span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>vec1 <span class="op">=</span> tm[txt1]</span>
@@ -411,11 +422,11 @@ div.csl-indent {
 <pre><code>0.2035427118119315</code></pre>
 </div>
 </div>
-<div id="3992ddca" class="cell" data-execution_count="12">
+<div id="6fd688c7" class="cell" data-execution_count="12">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>fname <span class="op">=</span> <span class="st">'delitos/delitos_ingeotec_Es_train.json'</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> <span class="bu">list</span>(tweet_iterator(fname))</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div id="ce9dd8ed" class="cell" data-execution_count="13">
+<div id="7cd39981" class="cell" data-execution_count="13">
 <div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> tm.transform(D)</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>dis <span class="op">=</span> np.dot(X, X.T)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
@@ -425,10 +436,14 @@ div.csl-indent {
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>sns.displot(dis.data)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-text-repr-similitud-bow" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="05RepresentacionTexto_files/figure-html/fig-text-repr-similitud-bow-output-1.png" width="471" height="470" class="figure-img"></p>
-<figcaption class="figure-caption">Figura&nbsp;5.3: Histograma de la similitud</figcaption>
+<div id="fig-text-repr-similitud-bow" class="quarto-figure quarto-figure-center anchored" height="470" width="471">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-text-repr-similitud-bow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="05RepresentacionTexto_files/figure-html/fig-text-repr-similitud-bow-output-1.png" width="471" height="470" class="figure-img">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-text-repr-similitud-bow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.3: Histograma de la similitud
+</figcaption>
 </figure>
 </div>
 </div>
@@ -437,75 +452,103 @@ div.csl-indent {
 </section>
 <section id="bolsa-de-palabras-densa" class="level2" data-number="5.3">
 <h2 data-number="5.3" class="anchored" data-anchor-id="bolsa-de-palabras-densa"><span class="header-section-number">5.3</span> Bolsa de Palabras Densa</h2>
+<p>La <a href="#fig-repr-texto-bolsa-densa" class="quarto-xref">Figura&nbsp;<span>5.4</span></a> muestra el procedimiento que se sigue para representar un texto en una bolsa de palabras dispersa. En primer lugar la bolsa de palabras densa considera que los vectores asociados a los términos se encuentra pre-entrenados y en general no es factible entrenarlos en el momento, esto por el tiempo que lleva estimar estos vectores.</p>
 <div class="cell">
 <div class="cell-output-display">
 <div id="fig-repr-texto-bolsa-densa" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-repr-texto-bolsa-densa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div>
 <pre class="mermaid mermaid-js" data-label="fig-repr-texto-bolsa-densa">flowchart LR
     Terminos([Texto\n Segmentado]) -- Pre-entrenados --&gt;  A[Asociación]
     A --&gt; Repr([Representación])
 </pre>
 </div>
-<figcaption class="figure-caption">Figura&nbsp;5.4: Diagrama Bolsa de Palabras Densa</figcaption>
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-repr-texto-bolsa-densa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.4: Diagrama Bolsa de Palabras Densa
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-</section>
-<section id="ejemplos-1" class="level2" data-number="5.4">
-<h2 data-number="5.4" class="anchored" data-anchor-id="ejemplos-1"><span class="header-section-number">5.4</span> Ejemplos</h2>
-<div id="c68e3c2e" class="cell" data-execution_count="15">
+<p>El texto se representa como el vector <span class="math inline">\(\mathbf u\)</span> que se calcula usando la <a href="#eq-bolsa-densas" class="quarto-xref">Ecuación&nbsp;<span>5.2</span></a> donde se observa que es la suma de los vectores asociados a cada término más un coeficiente <span class="math inline">\(\mathbf{w_0}\)</span>. En particular el coeficiente <span class="math inline">\(\mathbf{w_0} \in \mathbb R^{M}\)</span> no se encuentra en todas las representaciones densas, pero en la representación que se usará contiene este vector, <span class="math inline">\(M\)</span> es la dimensión de la representación densa.</p>
+<p><span id="eq-bolsa-densas"><span class="math display">\[
+\mathbf u = \sum_t \mathbf{u_t} + \mathbf{w_0}.
+\tag{5.2}\]</span></span></p>
+<p>En vector <span class="math inline">\(\mathbf {u_t}\)</span> está asociado al término <span class="math inline">\(t\)</span>, en particular este vector en la representación densa que se describirá está definido en términos de una bolsa de palabras dispersa (<a href="#eq-bolsa-palabras" class="quarto-xref">Ecuación&nbsp;<span>5.1</span></a>) como se puede observar en la <a href="#eq-bolsa-densa-ut" class="quarto-xref">Ecuación&nbsp;<span>5.3</span></a></p>
+<p><span id="eq-bolsa-densa-ut"><span class="math display">\[
+\mathbf{u_t} = \frac{\mathbf W \mathbf {v_t}}{\lVert \sum_t \mathbf{v_t} \rVert},
+\tag{5.3}\]</span></span></p>
+<p>donde <span class="math inline">\(\mathbf W \in \mathbb R^{M \times d}\)</span> es la matriz que hace la proyección de la representación dispersa a la representación densa, se puede observar esa operación está normalizada con la norma Euclideana de la representación dispersa.</p>
+<p>Combinando las <a href="#eq-bolsa-densas" class="quarto-xref">Ecuación&nbsp;<span>5.2</span></a> y <a href="#eq-bolsa-densa-ut" class="quarto-xref">Ecuación&nbsp;<span>5.3</span></a> queda la</p>
+<p><span class="math display">\[
+\begin{split}
+\mathbf{u_t} &amp;= \sum_t \frac{\mathbf W \mathbf {v_t}}{\lVert \sum_t \mathbf{v_t} \rVert} + \mathbf{w_0} \\
+&amp;= \mathbf W \frac{\sum_t \mathbf {v_t}}{\lVert \sum_t \mathbf{v_t} \rVert} + \mathbf{w_0},
+\end{split}
+\]</span></p>
+<p>donde se puede observar la representación dispersa (<a href="#eq-bolsa-palabras" class="quarto-xref">Ecuación&nbsp;<span>5.1</span></a>), i.e., <span class="math inline">\(\frac{\sum_t \mathbf {v_t}}{\lVert \sum_t \mathbf{v_t} \rVert}\)</span> lo cual resulta en la <a href="#eq-bolsa-densa-texto" class="quarto-xref">Ecuación&nbsp;<span>5.4</span></a></p>
+<p><span id="eq-bolsa-densa-texto"><span class="math display">\[
+\mathbf u = \mathbf W \mathbf x + \mathbf{w_0},
+\tag{5.4}\]</span></span></p>
+<p>que representa un texto en el vector <span class="math inline">\(\mathbf u \in \mathbb R^M.\)</span></p>
+<section id="ejemplos-1" class="level3" data-number="5.3.1">
+<h3 data-number="5.3.1" class="anchored" data-anchor-id="ejemplos-1"><span class="header-section-number">5.3.1</span> Ejemplos</h3>
+<div id="7f00d829" class="cell" data-execution_count="15">
 <div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>dense <span class="op">=</span> DenseBoW(lang<span class="op">=</span><span class="st">'es'</span>,</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>                 voc_size_exponent<span class="op">=</span><span class="dv">15</span>,</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>                 emoji<span class="op">=</span><span class="va">False</span>, keyword<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                 dataset<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>txt1 <span class="op">=</span> <span class="st">'Es un placer estar platicando con ustedes.'</span></span>
-<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>txt2 <span class="op">=</span> <span class="st">'La lluvia genera un caos en la ciudad.'</span></span>
-<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>txt3 <span class="op">=</span> <span class="st">'Estoy dando una platica en Morelia.'</span></span>
-<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> dense.transform([txt1, txt2, txt3])</span>
-<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>np.dot(X[<span class="dv">0</span>], X[<span class="dv">1</span>]), np.dot(X[<span class="dv">0</span>], X[<span class="dv">2</span>])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb16-4"><a href="#cb16-4" aria-hidden="true" tabindex="-1"></a>                 distance_hyperplane<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb16-5"><a href="#cb16-5" aria-hidden="true" tabindex="-1"></a>                 dataset<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb16-6"><a href="#cb16-6" aria-hidden="true" tabindex="-1"></a>txt1 <span class="op">=</span> <span class="st">'Es un placer estar platicando con ustedes.'</span></span>
+<span id="cb16-7"><a href="#cb16-7" aria-hidden="true" tabindex="-1"></a>txt2 <span class="op">=</span> <span class="st">'La lluvia genera un caos en la ciudad.'</span></span>
+<span id="cb16-8"><a href="#cb16-8" aria-hidden="true" tabindex="-1"></a>txt3 <span class="op">=</span> <span class="st">'Estoy dando una platica en Morelia.'</span></span>
+<span id="cb16-9"><a href="#cb16-9" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> dense.transform([txt1, txt2, txt3])</span>
+<span id="cb16-10"><a href="#cb16-10" aria-hidden="true" tabindex="-1"></a>np.dot(X[<span class="dv">0</span>], X[<span class="dv">1</span>]), np.dot(X[<span class="dv">0</span>], X[<span class="dv">2</span>])</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-display" data-execution_count="15">
-<pre><code>(0.6323274911246681, 0.7788382816672064)</code></pre>
+<pre><code>(0.7728943423183761, 0.8721107462230386)</code></pre>
 </div>
 </div>
 <p>La <a href="#fig-repr-texto-nube-densa" class="quarto-xref">Figura&nbsp;<span>5.5</span></a> muestra la nube de palabras generada con las características y sus respectivos valores del texto <em>Es un placer estar platicando con ustedes.</em> y <em>La lluvia genera un caos en la ciudad.</em></p>
 <div id="cell-fig-repr-texto-nube-densa" class="cell" data-execution_count="16">
 <details>
 <summary>Código</summary>
-<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>dense.unit_vector <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>norm <span class="op">=</span> np.linalg.norm(dense.weights, axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>values <span class="op">=</span> dense.transform([txt1, txt2]) <span class="op">/</span> norm</span>
-<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>names <span class="op">=</span> dense.names</span>
-<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a>tokens_pos <span class="op">=</span> {names[<span class="bu">id</span>]: v <span class="cf">for</span> <span class="bu">id</span>, v <span class="kw">in</span> <span class="bu">enumerate</span>(values[<span class="dv">0</span>]) <span class="cf">if</span> v <span class="op">&gt;</span> <span class="dv">0</span>}</span>
-<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>tokens_neg <span class="op">=</span> {names[<span class="bu">id</span>]: v <span class="cf">for</span> <span class="bu">id</span>, v <span class="kw">in</span> <span class="bu">enumerate</span>(values[<span class="dv">1</span>]) <span class="cf">if</span> v <span class="op">&gt;</span> <span class="dv">0</span>}</span>
-<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a>word_pos <span class="op">=</span> WordCloud().generate_from_frequencies(tokens_pos)</span>
-<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>word_neg <span class="op">=</span> WordCloud().generate_from_frequencies(tokens_neg)</span>
+<div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>values <span class="op">=</span> dense.transform([txt1, txt2])</span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>names <span class="op">=</span> dense.names</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>tokens_pos <span class="op">=</span> {names[<span class="bu">id</span>]: v <span class="cf">for</span> <span class="bu">id</span>, v <span class="kw">in</span> <span class="bu">enumerate</span>(values[<span class="dv">0</span>]) <span class="cf">if</span> v <span class="op">&gt;</span> <span class="dv">0</span>}</span>
+<span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>tokens_neg <span class="op">=</span> {names[<span class="bu">id</span>]: v <span class="cf">for</span> <span class="bu">id</span>, v <span class="kw">in</span> <span class="bu">enumerate</span>(values[<span class="dv">1</span>]) <span class="cf">if</span> v <span class="op">&gt;</span> <span class="dv">0</span>}</span>
+<span id="cb18-5"><a href="#cb18-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-6"><a href="#cb18-6" aria-hidden="true" tabindex="-1"></a>word_pos <span class="op">=</span> WordCloud().generate_from_frequencies(tokens_pos)</span>
+<span id="cb18-7"><a href="#cb18-7" aria-hidden="true" tabindex="-1"></a>word_neg <span class="op">=</span> WordCloud().generate_from_frequencies(tokens_neg)</span>
+<span id="cb18-8"><a href="#cb18-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb18-9"><a href="#cb18-9" aria-hidden="true" tabindex="-1"></a>fig, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>)</span>
 <span id="cb18-10"><a href="#cb18-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a>fig, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>)</span>
-<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cloud, ax, title <span class="kw">in</span> <span class="bu">zip</span>([word_pos, word_neg],</span>
-<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>                     [ax1, ax2],</span>
-<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>                     [<span class="st">'Es un ... ustedes.'</span>, </span>
-<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>                      <span class="st">'La lluvia ... ciudad.'</span>]):</span>
-<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    ax.imshow(cloud, interpolation<span class="op">=</span><span class="st">'bilinear'</span>)</span>
-<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>    ax.grid(<span class="va">False</span>)</span>
-<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    ax.tick_params(left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb18-20"><a href="#cb18-20" aria-hidden="true" tabindex="-1"></a>                   labelbottom<span class="op">=</span><span class="va">False</span>, bottom<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb18-21"><a href="#cb18-21" aria-hidden="true" tabindex="-1"></a>    ax.set_title(title)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb18-11"><a href="#cb18-11" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cloud, ax, title <span class="kw">in</span> <span class="bu">zip</span>([word_pos, word_neg],</span>
+<span id="cb18-12"><a href="#cb18-12" aria-hidden="true" tabindex="-1"></a>                     [ax1, ax2],</span>
+<span id="cb18-13"><a href="#cb18-13" aria-hidden="true" tabindex="-1"></a>                     [<span class="st">'Es un ... ustedes.'</span>, </span>
+<span id="cb18-14"><a href="#cb18-14" aria-hidden="true" tabindex="-1"></a>                      <span class="st">'La lluvia ... ciudad.'</span>]):</span>
+<span id="cb18-15"><a href="#cb18-15" aria-hidden="true" tabindex="-1"></a>    ax.imshow(cloud, interpolation<span class="op">=</span><span class="st">'bilinear'</span>)</span>
+<span id="cb18-16"><a href="#cb18-16" aria-hidden="true" tabindex="-1"></a>    ax.grid(<span class="va">False</span>)</span>
+<span id="cb18-17"><a href="#cb18-17" aria-hidden="true" tabindex="-1"></a>    ax.tick_params(left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb18-18"><a href="#cb18-18" aria-hidden="true" tabindex="-1"></a>                   labelbottom<span class="op">=</span><span class="va">False</span>, bottom<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb18-19"><a href="#cb18-19" aria-hidden="true" tabindex="-1"></a>    ax.set_title(title)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-repr-texto-nube-densa" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="05RepresentacionTexto_files/figure-html/fig-repr-texto-nube-densa-output-1.png" width="540" height="157" class="figure-img"></p>
-<figcaption class="figure-caption">Figura&nbsp;5.5: Nube de características positivas y negativas</figcaption>
+<div id="fig-repr-texto-nube-densa" class="quarto-figure quarto-figure-center anchored" height="157" width="540">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-repr-texto-nube-densa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="05RepresentacionTexto_files/figure-html/fig-repr-texto-nube-densa-output-1.png" width="540" height="157" class="figure-img">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-repr-texto-nube-densa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.5: Nube de características positivas y negativas
+</figcaption>
 </figure>
 </div>
 </div>
 </div>
-<div id="a8e13a55" class="cell" data-execution_count="17">
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> dense.transform(D) <span class="op">/</span> norm</span>
+<div id="784829db" class="cell" data-execution_count="17">
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> dense.transform(D)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>unit <span class="op">=</span> np.linalg.norm(X, axis<span class="op">=</span><span class="dv">1</span>)</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> X <span class="op">/</span> np.atleast_2d(unit).T</span>
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>dis <span class="op">=</span> np.dot(X, X.T)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
@@ -516,10 +559,14 @@ div.csl-indent {
 <div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>sns.displot(dis.flatten())</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-text-repr-similitud-dense" class="quarto-figure quarto-figure-center anchored">
-<figure class="figure">
-<p><img src="05RepresentacionTexto_files/figure-html/fig-text-repr-similitud-dense-output-1.png" width="471" height="470" class="figure-img"></p>
-<figcaption class="figure-caption">Figura&nbsp;5.6: Histograma de la similitud usando bolsa de palabras densas</figcaption>
+<div id="fig-text-repr-similitud-dense" class="quarto-figure quarto-figure-center anchored" height="470" width="471">
+<figure class="quarto-float quarto-float-fig figure">
+<div aria-describedby="fig-text-repr-similitud-dense-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<img src="05RepresentacionTexto_files/figure-html/fig-text-repr-similitud-dense-output-1.png" width="471" height="470" class="figure-img">
+</div>
+<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-text-repr-similitud-dense-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+Figura&nbsp;5.6: Histograma de la similitud usando bolsa de palabras densas
+</figcaption>
 </figure>
 </div>
 </div>
@@ -528,7 +575,7 @@ div.csl-indent {
 
 <!-- -->
 
-<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
 <div id="ref-Salton1973" class="csl-entry" role="listitem">
 Salton, Gerard, y Chungshu S. Yang. 1973. <span>«On the specification of term values in automatic indexing»</span>. <em>Journal of Documentation</em> 29 (abril): 351-72. <a href="https://doi.org/10.1108/EB026562">https://doi.org/10.1108/EB026562</a>.
 </div>
@@ -536,6 +583,7 @@ Salton, Gerard, y Chungshu S. Yang. 1973. <span>«On the specification of term v
 Sparck Jones, Karen. 1972. <span>«A statistical interpretation of term specificity and its application in retrieval»</span>. <em>Journal of Documentation</em> 28: 11-21. <a href="https://doi.org/10.1108/EB026526">https://doi.org/10.1108/EB026526</a>.
 </div>
 </div>
+</section>
 </section>
 
 </main> <!-- /main -->
@@ -1129,75 +1177,107 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb21-211"><a href="#cb21-211" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-212"><a href="#cb21-212" aria-hidden="true" tabindex="-1"></a><span class="fu">## Bolsa de Palabras Densa </span></span>
 <span id="cb21-213"><a href="#cb21-213" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-216"><a href="#cb21-216" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
-<span id="cb21-217"><a href="#cb21-217" aria-hidden="true" tabindex="-1"></a><span class="in">%%| echo: false</span></span>
-<span id="cb21-218"><a href="#cb21-218" aria-hidden="true" tabindex="-1"></a><span class="in">%%| fig-cap: Diagrama Bolsa de Palabras Densa</span></span>
-<span id="cb21-219"><a href="#cb21-219" aria-hidden="true" tabindex="-1"></a><span class="in">%%| label: fig-repr-texto-bolsa-densa</span></span>
-<span id="cb21-220"><a href="#cb21-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-221"><a href="#cb21-221" aria-hidden="true" tabindex="-1"></a><span class="in">flowchart LR</span></span>
-<span id="cb21-222"><a href="#cb21-222" aria-hidden="true" tabindex="-1"></a><span class="in">    Terminos([Texto\n Segmentado]) -- Pre-entrenados --&gt;  A[Asociación]</span></span>
-<span id="cb21-223"><a href="#cb21-223" aria-hidden="true" tabindex="-1"></a><span class="in">    A --&gt; Repr([Representación])</span></span>
-<span id="cb21-224"><a href="#cb21-224" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-225"><a href="#cb21-225" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-226"><a href="#cb21-226" aria-hidden="true" tabindex="-1"></a><span class="fu">## Ejemplos </span></span>
+<span id="cb21-214"><a href="#cb21-214" aria-hidden="true" tabindex="-1"></a>La @fig-repr-texto-bolsa-densa muestra el procedimiento que se sigue para representar un texto en una bolsa de palabras dispersa. En primer lugar la bolsa de palabras densa considera que los vectores asociados a los términos se encuentra pre-entrenados y en general no es factible entrenarlos en el momento, esto por el tiempo que lleva estimar estos vectores. </span>
+<span id="cb21-215"><a href="#cb21-215" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-218"><a href="#cb21-218" aria-hidden="true" tabindex="-1"></a><span class="in">```{mermaid}</span></span>
+<span id="cb21-219"><a href="#cb21-219" aria-hidden="true" tabindex="-1"></a><span class="in">%%| echo: false</span></span>
+<span id="cb21-220"><a href="#cb21-220" aria-hidden="true" tabindex="-1"></a><span class="in">%%| fig-cap: Diagrama Bolsa de Palabras Densa</span></span>
+<span id="cb21-221"><a href="#cb21-221" aria-hidden="true" tabindex="-1"></a><span class="in">%%| label: fig-repr-texto-bolsa-densa</span></span>
+<span id="cb21-222"><a href="#cb21-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-223"><a href="#cb21-223" aria-hidden="true" tabindex="-1"></a><span class="in">flowchart LR</span></span>
+<span id="cb21-224"><a href="#cb21-224" aria-hidden="true" tabindex="-1"></a><span class="in">    Terminos([Texto\n Segmentado]) -- Pre-entrenados --&gt;  A[Asociación]</span></span>
+<span id="cb21-225"><a href="#cb21-225" aria-hidden="true" tabindex="-1"></a><span class="in">    A --&gt; Repr([Representación])</span></span>
+<span id="cb21-226"><a href="#cb21-226" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb21-227"><a href="#cb21-227" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-230"><a href="#cb21-230" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb21-231"><a href="#cb21-231" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb21-232"><a href="#cb21-232" aria-hidden="true" tabindex="-1"></a>dense <span class="op">=</span> DenseBoW(lang<span class="op">=</span><span class="st">'es'</span>,</span>
-<span id="cb21-233"><a href="#cb21-233" aria-hidden="true" tabindex="-1"></a>                 voc_size_exponent<span class="op">=</span><span class="dv">15</span>,</span>
-<span id="cb21-234"><a href="#cb21-234" aria-hidden="true" tabindex="-1"></a>                 emoji<span class="op">=</span><span class="va">False</span>, keyword<span class="op">=</span><span class="va">True</span>,</span>
-<span id="cb21-235"><a href="#cb21-235" aria-hidden="true" tabindex="-1"></a>                 dataset<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb21-236"><a href="#cb21-236" aria-hidden="true" tabindex="-1"></a>txt1 <span class="op">=</span> <span class="st">'Es un placer estar platicando con ustedes.'</span></span>
-<span id="cb21-237"><a href="#cb21-237" aria-hidden="true" tabindex="-1"></a>txt2 <span class="op">=</span> <span class="st">'La lluvia genera un caos en la ciudad.'</span></span>
-<span id="cb21-238"><a href="#cb21-238" aria-hidden="true" tabindex="-1"></a>txt3 <span class="op">=</span> <span class="st">'Estoy dando una platica en Morelia.'</span></span>
-<span id="cb21-239"><a href="#cb21-239" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> dense.transform([txt1, txt2, txt3])</span>
-<span id="cb21-240"><a href="#cb21-240" aria-hidden="true" tabindex="-1"></a>np.dot(X[<span class="dv">0</span>], X[<span class="dv">1</span>]), np.dot(X[<span class="dv">0</span>], X[<span class="dv">2</span>])</span>
-<span id="cb21-241"><a href="#cb21-241" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-242"><a href="#cb21-242" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-228"><a href="#cb21-228" aria-hidden="true" tabindex="-1"></a>El texto se representa como el vector $\mathbf u$ que se calcula usando la @eq-bolsa-densas donde se observa que es la suma de los vectores asociados a cada término más un coeficiente $\mathbf{w_0}$. En particular el coeficiente $\mathbf{w_0} \in \mathbb R^{M}$ no se encuentra en todas las representaciones densas, pero en la representación que se usará contiene este vector, $M$ es la dimensión de la representación densa. </span>
+<span id="cb21-229"><a href="#cb21-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-230"><a href="#cb21-230" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-231"><a href="#cb21-231" aria-hidden="true" tabindex="-1"></a>\mathbf u = \sum_t \mathbf{u_t} + \mathbf{w_0}.</span>
+<span id="cb21-232"><a href="#cb21-232" aria-hidden="true" tabindex="-1"></a>$$ {#eq-bolsa-densas}</span>
+<span id="cb21-233"><a href="#cb21-233" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-234"><a href="#cb21-234" aria-hidden="true" tabindex="-1"></a>En vector $\mathbf {u_t}$ está asociado al término $t$, en particular este vector en la representación densa que se describirá está definido en términos de una bolsa de palabras dispersa (@eq-bolsa-palabras) como se puede observar en la @eq-bolsa-densa-ut</span>
+<span id="cb21-235"><a href="#cb21-235" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-236"><a href="#cb21-236" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-237"><a href="#cb21-237" aria-hidden="true" tabindex="-1"></a>\mathbf{u_t} = \frac{\mathbf W \mathbf {v_t}}{\lVert \sum_t \mathbf{v_t} \rVert},</span>
+<span id="cb21-238"><a href="#cb21-238" aria-hidden="true" tabindex="-1"></a>$$ {#eq-bolsa-densa-ut}</span>
+<span id="cb21-239"><a href="#cb21-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-240"><a href="#cb21-240" aria-hidden="true" tabindex="-1"></a>donde $\mathbf W \in \mathbb R^{M \times d}$ es la matriz que hace la proyección de la representación dispersa a la representación densa, se puede observar esa operación está normalizada con la norma Euclideana de la representación dispersa. </span>
+<span id="cb21-241"><a href="#cb21-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-242"><a href="#cb21-242" aria-hidden="true" tabindex="-1"></a>Combinando las @eq-bolsa-densas y @eq-bolsa-densa-ut queda la </span>
 <span id="cb21-243"><a href="#cb21-243" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-244"><a href="#cb21-244" aria-hidden="true" tabindex="-1"></a>La @fig-repr-texto-nube-densa muestra la nube de palabras generada con las características y sus respectivos valores del texto *Es un placer estar platicando con ustedes.* y *La lluvia genera un caos en la ciudad.*</span>
-<span id="cb21-245"><a href="#cb21-245" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-248"><a href="#cb21-248" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb21-249"><a href="#cb21-249" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb21-250"><a href="#cb21-250" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Nube de características positivas y negativas</span></span>
-<span id="cb21-251"><a href="#cb21-251" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-repr-texto-nube-densa</span></span>
-<span id="cb21-252"><a href="#cb21-252" aria-hidden="true" tabindex="-1"></a>dense.unit_vector <span class="op">=</span> <span class="va">False</span></span>
-<span id="cb21-253"><a href="#cb21-253" aria-hidden="true" tabindex="-1"></a>norm <span class="op">=</span> np.linalg.norm(dense.weights, axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb21-254"><a href="#cb21-254" aria-hidden="true" tabindex="-1"></a>values <span class="op">=</span> dense.transform([txt1, txt2]) <span class="op">/</span> norm</span>
-<span id="cb21-255"><a href="#cb21-255" aria-hidden="true" tabindex="-1"></a>names <span class="op">=</span> dense.names</span>
-<span id="cb21-256"><a href="#cb21-256" aria-hidden="true" tabindex="-1"></a>tokens_pos <span class="op">=</span> {names[<span class="bu">id</span>]: v <span class="cf">for</span> <span class="bu">id</span>, v <span class="kw">in</span> <span class="bu">enumerate</span>(values[<span class="dv">0</span>]) <span class="cf">if</span> v <span class="op">&gt;</span> <span class="dv">0</span>}</span>
-<span id="cb21-257"><a href="#cb21-257" aria-hidden="true" tabindex="-1"></a>tokens_neg <span class="op">=</span> {names[<span class="bu">id</span>]: v <span class="cf">for</span> <span class="bu">id</span>, v <span class="kw">in</span> <span class="bu">enumerate</span>(values[<span class="dv">1</span>]) <span class="cf">if</span> v <span class="op">&gt;</span> <span class="dv">0</span>}</span>
+<span id="cb21-244"><a href="#cb21-244" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-245"><a href="#cb21-245" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb21-246"><a href="#cb21-246" aria-hidden="true" tabindex="-1"></a>\mathbf{u_t} &amp;= \sum_t \frac{\mathbf W \mathbf {v_t}}{\lVert \sum_t \mathbf{v_t} \rVert} + \mathbf{w_0} <span class="sc">\\</span></span>
+<span id="cb21-247"><a href="#cb21-247" aria-hidden="true" tabindex="-1"></a>&amp;= \mathbf W \frac{\sum_t \mathbf {v_t}}{\lVert \sum_t \mathbf{v_t} \rVert} + \mathbf{w_0},</span>
+<span id="cb21-248"><a href="#cb21-248" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
+<span id="cb21-249"><a href="#cb21-249" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-250"><a href="#cb21-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-251"><a href="#cb21-251" aria-hidden="true" tabindex="-1"></a>donde se puede observar la representación dispersa (@eq-bolsa-palabras), i.e., $\frac{\sum_t \mathbf {v_t}}{\lVert \sum_t \mathbf{v_t} \rVert}$ lo cual resulta en la @eq-bolsa-densa-texto</span>
+<span id="cb21-252"><a href="#cb21-252" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-253"><a href="#cb21-253" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb21-254"><a href="#cb21-254" aria-hidden="true" tabindex="-1"></a>\mathbf u = \mathbf W \mathbf x + \mathbf{w_0},</span>
+<span id="cb21-255"><a href="#cb21-255" aria-hidden="true" tabindex="-1"></a>$$ {#eq-bolsa-densa-texto}</span>
+<span id="cb21-256"><a href="#cb21-256" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-257"><a href="#cb21-257" aria-hidden="true" tabindex="-1"></a>que representa un texto en el vector $\mathbf u \in \mathbb R^M.$</span>
 <span id="cb21-258"><a href="#cb21-258" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-259"><a href="#cb21-259" aria-hidden="true" tabindex="-1"></a>word_pos <span class="op">=</span> WordCloud().generate_from_frequencies(tokens_pos)</span>
-<span id="cb21-260"><a href="#cb21-260" aria-hidden="true" tabindex="-1"></a>word_neg <span class="op">=</span> WordCloud().generate_from_frequencies(tokens_neg)</span>
-<span id="cb21-261"><a href="#cb21-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-262"><a href="#cb21-262" aria-hidden="true" tabindex="-1"></a>fig, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>)</span>
-<span id="cb21-263"><a href="#cb21-263" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-264"><a href="#cb21-264" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cloud, ax, title <span class="kw">in</span> <span class="bu">zip</span>([word_pos, word_neg],</span>
-<span id="cb21-265"><a href="#cb21-265" aria-hidden="true" tabindex="-1"></a>                     [ax1, ax2],</span>
-<span id="cb21-266"><a href="#cb21-266" aria-hidden="true" tabindex="-1"></a>                     [<span class="st">'Es un ... ustedes.'</span>, </span>
-<span id="cb21-267"><a href="#cb21-267" aria-hidden="true" tabindex="-1"></a>                      <span class="st">'La lluvia ... ciudad.'</span>]):</span>
-<span id="cb21-268"><a href="#cb21-268" aria-hidden="true" tabindex="-1"></a>    ax.imshow(cloud, interpolation<span class="op">=</span><span class="st">'bilinear'</span>)</span>
-<span id="cb21-269"><a href="#cb21-269" aria-hidden="true" tabindex="-1"></a>    ax.grid(<span class="va">False</span>)</span>
-<span id="cb21-270"><a href="#cb21-270" aria-hidden="true" tabindex="-1"></a>    ax.tick_params(left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>,</span>
-<span id="cb21-271"><a href="#cb21-271" aria-hidden="true" tabindex="-1"></a>                   labelbottom<span class="op">=</span><span class="va">False</span>, bottom<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb21-272"><a href="#cb21-272" aria-hidden="true" tabindex="-1"></a>    ax.set_title(title)</span>
-<span id="cb21-273"><a href="#cb21-273" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-274"><a href="#cb21-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-277"><a href="#cb21-277" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb21-278"><a href="#cb21-278" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb21-279"><a href="#cb21-279" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> dense.transform(D) <span class="op">/</span> norm</span>
-<span id="cb21-280"><a href="#cb21-280" aria-hidden="true" tabindex="-1"></a>unit <span class="op">=</span> np.linalg.norm(X, axis<span class="op">=</span><span class="dv">1</span>)</span>
-<span id="cb21-281"><a href="#cb21-281" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> X <span class="op">/</span> np.atleast_2d(unit).T</span>
-<span id="cb21-282"><a href="#cb21-282" aria-hidden="true" tabindex="-1"></a>dis <span class="op">=</span> np.dot(X, X.T)</span>
-<span id="cb21-283"><a href="#cb21-283" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb21-284"><a href="#cb21-284" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb21-287"><a href="#cb21-287" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb21-288"><a href="#cb21-288" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
-<span id="cb21-289"><a href="#cb21-289" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Histograma de la similitud usando bolsa de palabras densas</span></span>
-<span id="cb21-290"><a href="#cb21-290" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-text-repr-similitud-dense</span></span>
-<span id="cb21-291"><a href="#cb21-291" aria-hidden="true" tabindex="-1"></a>sns.displot(dis.flatten())</span>
-<span id="cb21-292"><a href="#cb21-292" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-259"><a href="#cb21-259" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplos </span></span>
+<span id="cb21-260"><a href="#cb21-260" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-263"><a href="#cb21-263" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-264"><a href="#cb21-264" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb21-265"><a href="#cb21-265" aria-hidden="true" tabindex="-1"></a>dense <span class="op">=</span> DenseBoW(lang<span class="op">=</span><span class="st">'es'</span>,</span>
+<span id="cb21-266"><a href="#cb21-266" aria-hidden="true" tabindex="-1"></a>                 voc_size_exponent<span class="op">=</span><span class="dv">15</span>,</span>
+<span id="cb21-267"><a href="#cb21-267" aria-hidden="true" tabindex="-1"></a>                 emoji<span class="op">=</span><span class="va">False</span>, keyword<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb21-268"><a href="#cb21-268" aria-hidden="true" tabindex="-1"></a>                 distance_hyperplane<span class="op">=</span><span class="va">True</span>,</span>
+<span id="cb21-269"><a href="#cb21-269" aria-hidden="true" tabindex="-1"></a>                 dataset<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb21-270"><a href="#cb21-270" aria-hidden="true" tabindex="-1"></a>txt1 <span class="op">=</span> <span class="st">'Es un placer estar platicando con ustedes.'</span></span>
+<span id="cb21-271"><a href="#cb21-271" aria-hidden="true" tabindex="-1"></a>txt2 <span class="op">=</span> <span class="st">'La lluvia genera un caos en la ciudad.'</span></span>
+<span id="cb21-272"><a href="#cb21-272" aria-hidden="true" tabindex="-1"></a>txt3 <span class="op">=</span> <span class="st">'Estoy dando una platica en Morelia.'</span></span>
+<span id="cb21-273"><a href="#cb21-273" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> dense.transform([txt1, txt2, txt3])</span>
+<span id="cb21-274"><a href="#cb21-274" aria-hidden="true" tabindex="-1"></a>np.dot(X[<span class="dv">0</span>], X[<span class="dv">1</span>]), np.dot(X[<span class="dv">0</span>], X[<span class="dv">2</span>])</span>
+<span id="cb21-275"><a href="#cb21-275" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-276"><a href="#cb21-276" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-277"><a href="#cb21-277" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-278"><a href="#cb21-278" aria-hidden="true" tabindex="-1"></a>La @fig-repr-texto-nube-densa muestra la nube de palabras generada con las características y sus respectivos valores del texto *Es un placer estar platicando con ustedes.* y *La lluvia genera un caos en la ciudad.*</span>
+<span id="cb21-279"><a href="#cb21-279" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-282"><a href="#cb21-282" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-283"><a href="#cb21-283" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb21-284"><a href="#cb21-284" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Nube de características positivas y negativas</span></span>
+<span id="cb21-285"><a href="#cb21-285" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-repr-texto-nube-densa</span></span>
+<span id="cb21-286"><a href="#cb21-286" aria-hidden="true" tabindex="-1"></a>values <span class="op">=</span> dense.transform([txt1, txt2])</span>
+<span id="cb21-287"><a href="#cb21-287" aria-hidden="true" tabindex="-1"></a>names <span class="op">=</span> dense.names</span>
+<span id="cb21-288"><a href="#cb21-288" aria-hidden="true" tabindex="-1"></a>tokens_pos <span class="op">=</span> {names[<span class="bu">id</span>]: v <span class="cf">for</span> <span class="bu">id</span>, v <span class="kw">in</span> <span class="bu">enumerate</span>(values[<span class="dv">0</span>]) <span class="cf">if</span> v <span class="op">&gt;</span> <span class="dv">0</span>}</span>
+<span id="cb21-289"><a href="#cb21-289" aria-hidden="true" tabindex="-1"></a>tokens_neg <span class="op">=</span> {names[<span class="bu">id</span>]: v <span class="cf">for</span> <span class="bu">id</span>, v <span class="kw">in</span> <span class="bu">enumerate</span>(values[<span class="dv">1</span>]) <span class="cf">if</span> v <span class="op">&gt;</span> <span class="dv">0</span>}</span>
+<span id="cb21-290"><a href="#cb21-290" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-291"><a href="#cb21-291" aria-hidden="true" tabindex="-1"></a>word_pos <span class="op">=</span> WordCloud().generate_from_frequencies(tokens_pos)</span>
+<span id="cb21-292"><a href="#cb21-292" aria-hidden="true" tabindex="-1"></a>word_neg <span class="op">=</span> WordCloud().generate_from_frequencies(tokens_neg)</span>
+<span id="cb21-293"><a href="#cb21-293" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-294"><a href="#cb21-294" aria-hidden="true" tabindex="-1"></a>fig, (ax1, ax2) <span class="op">=</span> plt.subplots(<span class="dv">1</span>, <span class="dv">2</span>)</span>
+<span id="cb21-295"><a href="#cb21-295" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-296"><a href="#cb21-296" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> cloud, ax, title <span class="kw">in</span> <span class="bu">zip</span>([word_pos, word_neg],</span>
+<span id="cb21-297"><a href="#cb21-297" aria-hidden="true" tabindex="-1"></a>                     [ax1, ax2],</span>
+<span id="cb21-298"><a href="#cb21-298" aria-hidden="true" tabindex="-1"></a>                     [<span class="st">'Es un ... ustedes.'</span>, </span>
+<span id="cb21-299"><a href="#cb21-299" aria-hidden="true" tabindex="-1"></a>                      <span class="st">'La lluvia ... ciudad.'</span>]):</span>
+<span id="cb21-300"><a href="#cb21-300" aria-hidden="true" tabindex="-1"></a>    ax.imshow(cloud, interpolation<span class="op">=</span><span class="st">'bilinear'</span>)</span>
+<span id="cb21-301"><a href="#cb21-301" aria-hidden="true" tabindex="-1"></a>    ax.grid(<span class="va">False</span>)</span>
+<span id="cb21-302"><a href="#cb21-302" aria-hidden="true" tabindex="-1"></a>    ax.tick_params(left<span class="op">=</span><span class="va">False</span>, right<span class="op">=</span><span class="va">False</span>, labelleft<span class="op">=</span><span class="va">False</span>,</span>
+<span id="cb21-303"><a href="#cb21-303" aria-hidden="true" tabindex="-1"></a>                   labelbottom<span class="op">=</span><span class="va">False</span>, bottom<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb21-304"><a href="#cb21-304" aria-hidden="true" tabindex="-1"></a>    ax.set_title(title)</span>
+<span id="cb21-305"><a href="#cb21-305" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-306"><a href="#cb21-306" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-309"><a href="#cb21-309" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-310"><a href="#cb21-310" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb21-311"><a href="#cb21-311" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> dense.transform(D)</span>
+<span id="cb21-312"><a href="#cb21-312" aria-hidden="true" tabindex="-1"></a>unit <span class="op">=</span> np.linalg.norm(X, axis<span class="op">=</span><span class="dv">1</span>)</span>
+<span id="cb21-313"><a href="#cb21-313" aria-hidden="true" tabindex="-1"></a>X <span class="op">=</span> X <span class="op">/</span> np.atleast_2d(unit).T</span>
+<span id="cb21-314"><a href="#cb21-314" aria-hidden="true" tabindex="-1"></a>dis <span class="op">=</span> np.dot(X, X.T)</span>
+<span id="cb21-315"><a href="#cb21-315" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb21-316"><a href="#cb21-316" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-319"><a href="#cb21-319" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb21-320"><a href="#cb21-320" aria-hidden="true" tabindex="-1"></a><span class="co">#| code-fold: true</span></span>
+<span id="cb21-321"><a href="#cb21-321" aria-hidden="true" tabindex="-1"></a><span class="co">#| fig-cap: Histograma de la similitud usando bolsa de palabras densas</span></span>
+<span id="cb21-322"><a href="#cb21-322" aria-hidden="true" tabindex="-1"></a><span class="co">#| label: fig-text-repr-similitud-dense</span></span>
+<span id="cb21-323"><a href="#cb21-323" aria-hidden="true" tabindex="-1"></a>sns.displot(dis.flatten())</span>
+<span id="cb21-324"><a href="#cb21-324" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 </code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
