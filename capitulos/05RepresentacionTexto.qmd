@@ -181,6 +181,8 @@ sns.displot(dis.data)
 
 ## Bolsa de Palabras Densa 
 
+La @fig-repr-texto-bolsa-densa muestra el procedimiento que se sigue para representar un texto en una bolsa de palabras dispersa. En primer lugar la bolsa de palabras densa considera que los vectores asociados a los términos se encuentra pre-entrenados y en general no es factible entrenarlos en el momento, esto por el tiempo que lleva estimar estos vectores. 
+
 ```{mermaid}
 %%| echo: false
 %%| fig-cap: Diagrama Bolsa de Palabras Densa
@@ -191,13 +193,45 @@ flowchart LR
     A --> Repr([Representación])
 ```
 
-## Ejemplos 
+El texto se representa como el vector $\mathbf u$ que se calcula usando la @eq-bolsa-densas donde se observa que es la suma de los vectores asociados a cada término más un coeficiente $\mathbf{w_0}$. En particular el coeficiente $\mathbf{w_0} \in \mathbb R^{M}$ no se encuentra en todas las representaciones densas, pero en la representación que se usará contiene este vector, $M$ es la dimensión de la representación densa. 
+
+$$
+\mathbf u = \sum_t \mathbf{u_t} + \mathbf{w_0}.
+$$ {#eq-bolsa-densas}
+
+En vector $\mathbf {u_t}$ está asociado al término $t$, en particular este vector en la representación densa que se describirá está definido en términos de una bolsa de palabras dispersa (@eq-bolsa-palabras) como se puede observar en la @eq-bolsa-densa-ut
+
+$$
+\mathbf{u_t} = \frac{\mathbf W \mathbf {v_t}}{\lVert \sum_t \mathbf{v_t} \rVert},
+$$ {#eq-bolsa-densa-ut}
+
+donde $\mathbf W \in \mathbb R^{M \times d}$ es la matriz que hace la proyección de la representación dispersa a la representación densa, se puede observar esa operación está normalizada con la norma Euclideana de la representación dispersa. 
+
+Combinando las @eq-bolsa-densas y @eq-bolsa-densa-ut queda la 
+
+$$
+\begin{split}
+\mathbf{u_t} &= \sum_t \frac{\mathbf W \mathbf {v_t}}{\lVert \sum_t \mathbf{v_t} \rVert} + \mathbf{w_0} \\
+&= \mathbf W \frac{\sum_t \mathbf {v_t}}{\lVert \sum_t \mathbf{v_t} \rVert} + \mathbf{w_0},
+\end{split}
+$$
+
+donde se puede observar la representación dispersa (@eq-bolsa-palabras), i.e., $\frac{\sum_t \mathbf {v_t}}{\lVert \sum_t \mathbf{v_t} \rVert}$ lo cual resulta en la @eq-bolsa-densa-texto
+
+$$
+\mathbf u = \mathbf W \mathbf x + \mathbf{w_0},
+$$ {#eq-bolsa-densa-texto}
+
+que representa un texto en el vector $\mathbf u \in \mathbb R^M.$
+
+### Ejemplos 
 
 ```{python} 
 #| echo: true
 dense = DenseBoW(lang='es',
                  voc_size_exponent=15,
                  emoji=False, keyword=True,
+                 distance_hyperplane=True,
                  dataset=False)
 txt1 = 'Es un placer estar platicando con ustedes.'
 txt2 = 'La lluvia genera un caos en la ciudad.'
@@ -213,9 +247,7 @@ La @fig-repr-texto-nube-densa muestra la nube de palabras generada con las carac
 #| code-fold: true
 #| fig-cap: Nube de características positivas y negativas
 #| label: fig-repr-texto-nube-densa
-dense.unit_vector = False
-norm = np.linalg.norm(dense.weights, axis=1)
-values = dense.transform([txt1, txt2]) / norm
+values = dense.transform([txt1, txt2])
 names = dense.names
 tokens_pos = {names[id]: v for id, v in enumerate(values[0]) if v > 0}
 tokens_neg = {names[id]: v for id, v in enumerate(values[1]) if v > 0}
@@ -238,7 +270,7 @@ for cloud, ax, title in zip([word_pos, word_neg],
 
 ```{python}
 #| echo: true
-X = dense.transform(D) / norm
+X = dense.transform(D)
 unit = np.linalg.norm(X, axis=1)
 X = X / np.atleast_2d(unit).T
 dis = np.dot(X, X.T)
