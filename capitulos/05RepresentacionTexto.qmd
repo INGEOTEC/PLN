@@ -89,6 +89,7 @@ bow = BoW(lang='es')
 tm = bow.bow
 vec = tm['Buen día']
 key_f = Markdown(f'${vec[0][0]}$')
+key_txt = Markdown(f'*{tm.id2token[vec[0][0]]}*')
 idf_f = Markdown(f'${vec[0][1]:0.4f}$')
 len_f = Markdown(f'${len(vec)}$')
 voc_f = Markdown(f'${len(bow.names)}$')
@@ -98,16 +99,17 @@ En los siguientes ejemplos se usa una bolsa de palabras con un pesado TFIDF pre-
 
 ```{python} 
 #| echo: true
-tm = BoW(lang='es').bow
+bow = BoW(lang='es')
+tm = bow.bow
 vec = tm['Buen día']
 vec[:3]
 ```
 
-El uso del identificador del término se puede reemplazar por el término para poder visualizar mejor la representación del texto en el espacio vectorial. El diccionario que se encuentra en `tm.id2token` hace la relación identificador a término. Se puede ver que el primer elemento del vector es el bigrama *buen~dia*, seguido por *buen* y el tercer término es *dia*. Los siguientes términos que no se muestran corresponden a gramas de caracteres. El valor TFIDF no indica la importancia del término, mientras mayor sea el valor, se considera más importante de acuerdo al TFIDF. En este ejemplo el bigrama tiene más importancia que las palabras y la palabra *buen* es más significativa que *dia*.
+El uso del identificador del término se puede reemplazar por el término para poder visualizar mejor la representación del texto en el espacio vectorial. El diccionario que se encuentra en `BoW.names` hace la relación identificador a término. Se puede ver que el primer elemento del vector es el bigrama *buen~dia*, seguido por *buen* y el tercer término es *dia*. Los siguientes términos que no se muestran corresponden a gramas de caracteres. El valor TFIDF no indica la importancia del término, mientras mayor sea el valor, se considera más importante de acuerdo al TFIDF. En este ejemplo el bigrama tiene más importancia que las palabras y la palabra *buen* es más significativa que *dia*.
 
 ```{python} 
 #| echo: true
-[(tm.id2token[k], v)
+[(bow.names[k], v)
  for k, v in vec[:3]]
 ```
 
@@ -119,7 +121,7 @@ vec2 = tm[txt]
 idf2_f = Markdown(f'${vec2[0][1]:0.4f}$')
 ```
 
-Con el objetivo de ilustrar una heurística que ha dado buenos resultados en el siguiente ejemplo se presentan las primeras cuatro componentes del texto *Buen día colegas*. Se puede observar como los valores de IDF de los términos comunes cambiaron, por ejemplo para el caso de `{python} key_f` cambio de `{python} idf_f` a `{python} idf2_f`. Este es el resultado de que los valores están normalizados tal como se muestra en la @eq-bolsa-palabras. Por otro lado, se observa que ahora el término más significativo es la palabra *colegas*. 
+Con el objetivo de ilustrar una heurística que ha dado buenos resultados en el siguiente ejemplo se presentan las primeras cuatro componentes del texto *Buen día colegas*. Se puede observar como los valores de IDF de los términos comunes cambiaron, por ejemplo para el caso de `{python} key_txt` cambio de `{python} idf_f` a `{python} idf2_f`. Este es el resultado de que los valores están normalizados tal como se muestra en la @eq-bolsa-palabras. Por otro lado, se observa que ahora el término más significativo es la palabra *colegas*. 
 
 ```{python} 
 #| echo: true
@@ -238,43 +240,56 @@ $$ {#eq-bolsa-densa-texto}
 
 que representa un texto en el vector $\mathbf u \in \mathbb R^M.$
 
+Para algunas representaciones densas, las componentes de la matriz de transformación $\mathcal W$ están asociadas a conceptos, en el caso que se analiza estas están asociadas a palabras claves o emojis. 
+
 ### Ejemplos 
 
-```{python} 
+Continuando con los ejemplos presentados para la bolsa dispersa (@sec-bolsa-dispersa-ejemplos) en esta sección se hace el análisis con la representación de palabras densa. El primer paso es inicializar la clase que contiene las representaciones densas, esto se hace con la siguiente instrucción. 
+
+```{python}
 #| echo: true
 dense = DenseBoW(lang='es',
                  voc_size_exponent=15,
                  emoji=False, keyword=True,
                  distance_hyperplane=True,
                  dataset=False)
-txt1 = 'Es un placer estar platicando con ustedes.'
-txt2 = 'La lluvia genera un caos en la ciudad.'
-txt3 = 'Estoy dando una platica en Morelia.'
-X = dense.transform([txt1, txt2, txt3])
-np.dot(X[0], X[1]), np.dot(X[0], X[2])
 ```
 
+Para representar un texto en el espacio vectorial denso se utiliza el método `transform`, por ejemplo la siguiente instrucción representa el texto *Es un placer estar platicando con ustedes.* Solo se visualizan los valores de las primeras tres componentes.
 
-La @fig-repr-texto-nube-densa muestra la nube de palabras generada con las características y sus respectivos valores del texto *Es un placer estar platicando con ustedes.* y *La lluvia genera un caos en la ciudad.*
+```{python}
+#| echo: true
+txt1 = 'Es un placer estar platicando con ustedes.'
+dense.transform([txt1])[0, :3]
+```
+
+Lo primero que se observa es que los valores son negativos, a diferencia del caso disperso donde todos los valores son positivos. En este tipo de representación cada componente está asociada a una palabra las cuales se pueden conocer en el atributo `names`. El siguiente código muestra las tres primeras palabras asociadas al ejemplo anterior. 
+
+```{python}
+#| echo: true
+dense.names[:3]
+```
+
+Siguiente la idea de utilizar una nube de palabras para visualizar el vector que representa el texto modelado, La @fig-repr-texto-nube-densa muestra las nubes de palabras generada con las características y sus respectivos valores del texto *Es un placer estar platicando con ustedes.* Durante la generación de la nube de palabras se decidió representar genera una nube de palabras con las palabras con coeficiente negativo más significativo y aquellas con los coeficientes positivos más significativos. Se puede observar que las palabras positivas contienen componentes que están relacionados al enunciado, pero al mismo tiempo leyendo los términos positivos es complicado construir el texto representado. Adicionalmente las términos negativos que se observan en la nube de palabras en su mayoría son hashtags que tiene muy poca relación al texto representado. 
 
 ```{python}
 #| code-fold: true
-#| fig-cap: Nube de características positivas y negativas
+#| fig-cap: Nube de características para el texto *Es un placer estar platicando con ustedes.*
 #| label: fig-repr-texto-nube-densa
-values = dense.transform([txt1, txt2])
+values = dense.transform([txt1])
 names = dense.names
 tokens_pos = {names[id]: v for id, v in enumerate(values[0]) if v > 0}
-tokens_neg = {names[id]: v for id, v in enumerate(values[1]) if v > 0}
+tokens_neg = {names[id]: v * -1 for id, v in enumerate(values[0]) if v < 0}
 
 word_pos = WordCloud().generate_from_frequencies(tokens_pos)
 word_neg = WordCloud().generate_from_frequencies(tokens_neg)
 
 fig, (ax1, ax2) = plt.subplots(1, 2)
 
-for cloud, ax, title in zip([word_pos, word_neg],
+for cloud, ax, title in zip([word_neg, word_pos],
                      [ax1, ax2],
-                     ['Es un ... ustedes.', 
-                      'La lluvia ... ciudad.']):
+                     ['Negativas', 
+                      'Positivas']):
     ax.imshow(cloud, interpolation='bilinear')
     ax.grid(False)
     ax.tick_params(left=False, right=False, labelleft=False,
@@ -282,15 +297,73 @@ for cloud, ax, title in zip([word_pos, word_neg],
     ax.set_title(title)
 ```
 
+Esta representación también permite comparación de similitud entre textos, en el siguiente ejemplo se calcula la similitud entre el texto *Es un placer estar platicando con ustedes.* y los textos *La lluvia genera un caos en la ciudad.* y *Estoy dando una platica en Morelia.* tal y como se hizo para la representación dispersa. Se puede observar que existe una mayor similitud entre los textos que contienen el concepto **plática**, lo cual es equivalente a lo que se observó en el ejemplo con bolsa de palabras discretas, pero los valores son significativamente mayores que en ese caso.
+
+
+```{python} 
+#| echo: true
+txt1 = 'Es un placer estar platicando con ustedes.'
+txt2 = 'La lluvia genera un caos en la ciudad.'
+txt3 = 'Estoy dando una platica en Morelia.'
+X = dense.transform([txt1, txt2, txt3])
+np.dot(X[0], X[1]), np.dot(X[0], X[2])
+```
+
+Los valores de similitud entre los enunciados anteriores, se puede visualizar en una nube de palabras, utilizando solo las características positivas. La @fig-repr-texto-nube-densa-comp muestra las nubes de palabras generadas, en ellas es complicado comprender la razón por la cual la frases que tiene el concepto *plática* están más cercanas, es probable que la cola de la distribución, es decir, las palabras menos significativas son las que acercan las dos oraciones. 
+
+```{python}
+#| code-fold: true
+#| fig-cap: Nube de características positivas.
+#| label: fig-repr-texto-nube-densa-comp
+values = dense.transform([txt1, txt2, txt3])
+names = dense.names
+tokens_pos = {names[id]: v for id, v in enumerate(values[0]) if v > 0}
+tokens_neg = {names[id]: v for id, v in enumerate(values[1]) if v > 0}
+tokens_otro = {names[id]: v for id, v in enumerate(values[2]) if v > 0}
+
+word_pos = WordCloud().generate_from_frequencies(tokens_pos)
+word_neg = WordCloud().generate_from_frequencies(tokens_neg)
+word_otro = WordCloud().generate_from_frequencies(tokens_otro)
+
+
+fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
+
+for cloud, ax, title in zip([word_pos, word_neg, word_otro],
+                     [ax1, ax2, ax3],
+                     ['Es un ... ustedes.', 
+                      'La lluvia ... ciudad.',
+                      'Estoy ... Morelia.']):
+    ax.imshow(cloud, interpolation='bilinear')
+    ax.grid(False)
+    ax.tick_params(left=False, right=False, labelleft=False,
+                   labelbottom=False, bottom=False)
+    ax.set_title(title)
+```
+
+Al igual que en el caso disperso se puede calcular la distribución de similitud. Las siguientes instrucciones calcula la similitud coseno entre todos los ejemplos del conjunto de entrenamiento ($\mathcal T$). 
+
 ```{python}
 #| echo: true
 X = dense.transform(D)
-dis = np.dot(X, X.T)
+sim = np.dot(X, X.T)
 ```
+
+La @fig-text-repr-similitud-dense muestra el histograma de las similitudes calculada mediante la bolsa densa. Aquí se puede observar que la gran mayoría de los ejemplos tiene una similitud mayor y tiene una desviación estándar mayor que la vista en la @fig-text-repr-similitud-bow. 
 
 ```{python}
 #| code-fold: true
 #| fig-cap: Histograma de la similitud usando bolsa de palabras densas
 #| label: fig-text-repr-similitud-dense
-sns.displot(dis.flatten())
+sns.displot(sim.flatten())
 ```
+
+
+
+
+
+
+
+
+
+
+
