@@ -45,8 +45,6 @@ if not isdir('delitos'):
 ---
 :::
 
-## Introducción 
-
 ## Bolsa de Palabras Dispersa 
 
 La idea de una bolsa de palabras discretas es que después de haber normalizado y segmentado el texto (@sec-manejando-texto), cada token $t$ sea asociado a un vector único $\mathbf{v_t} \in \mathbb R^d$ donde la $i$-ésima componente, i.e., $\mathbf{v_t}_i$, es diferente de cero y $\forall_{j \neq i} \mathbf{v_t}_j=0$. Es decir la $i$-ésima componente está asociada al token $t$, se podría pensar que si el vocabulario está ordenado de alguna manera, entonces el token $t$ está en la posición $i$. Por otro lado el valor que contiene la componente se usa para representar alguna característica del token. 
@@ -83,15 +81,20 @@ Como se había mencionado el valor que tiene la componente $i$-ésima del vector
 Una medida que complementa la información que tiene la frecuencia de términos es el inverso de la frecuencia del término (*Inverse Document Frequency (IDF)*) en la colección, esta medida propuesta por @Jones1972 se usa en un método de pesado descrito por @Salton1973 el cual es conocido como **TFIDF**. Este método de pesado propone el considerar el producto de la frecuencia del término y el inverso de la frecuencia del término (*Inverse Document Frequency (IDF)* ) en la colección como el peso del término.
 
 
-### Ejemplos 
+### Ejemplos {#sec-bolsa-dispersa-ejemplos}
 
 ```{python} 
 #| echo: false
-tm = BoW(lang='es').bow
+bow = BoW(lang='es')
+tm = bow.bow
 vec = tm['Buen día']
-key_f = Markdown(f'*{tm.id2token[vec[0][0]]}*')
+key_f = Markdown(f'${vec[0][0]}$')
 idf_f = Markdown(f'${vec[0][1]:0.4f}$')
+len_f = Markdown(f'${len(vec)}$')
+voc_f = Markdown(f'${len(bow.names)}$')
 ```
+
+En los siguientes ejemplos se usa una bolsa de palabras con un pesado TFIDF pre-entrenada, los datos de esta bolsa de palabras se encuentra en el atributo `BoW.bow`. El tamaño del vocabulario es `{python} voc_f`, que está compuesto por palabras, gramas de palabras y caracteres. En el siguiente ejemplo se muestran los primeros tres gramas con sus respectivos valores TFIDF de la frase *Buen día*. Se puede observar que el `tm` regresa una lista de pares, donde la primera parte es el identificador del término, e.g., `{python} key_f` y el segundo es el valor TFIDF, e.g., `{python} idf_f`. La lista tiene un tamaño de `{python} len_f` elementos, el resto de los  `{python} voc_f` componentes son cero dado que no se encuentran en el texto representado. 
 
 ```{python} 
 #| echo: true
@@ -99,6 +102,8 @@ tm = BoW(lang='es').bow
 vec = tm['Buen día']
 vec[:3]
 ```
+
+El uso del identificador del término se puede reemplazar por el término para poder visualizar mejor la representación del texto en el espacio vectorial. El diccionario que se encuentra en `tm.id2token` hace la relación identificador a término. Se puede ver que el primer elemento del vector es el bigrama *buen~dia*, seguido por *buen* y el tercer término es *dia*. Los siguientes términos que no se muestran corresponden a gramas de caracteres. El valor TFIDF no indica la importancia del término, mientras mayor sea el valor, se considera más importante de acuerdo al TFIDF. En este ejemplo el bigrama tiene más importancia que las palabras y la palabra *buen* es más significativa que *dia*.
 
 ```{python} 
 #| echo: true
@@ -108,22 +113,22 @@ vec[:3]
 
 
 ```{python} 
-#| echo: true
-txt = 'Buen día colegas'
-[(tm.id2token[k], v)
- for k, v in tm[txt][:4]]
-```
-
-```{python} 
 #| echo: false
 txt = 'Buen día colegas'
 vec2 = tm[txt]
 idf2_f = Markdown(f'${vec2[0][1]:0.4f}$')
 ```
 
-Se puede observar como los valores de IDF de los términos comunes cambiaron, por ejemplo para el caso de `{python} key_f` cambio de `{python} idf_f` a `{python} idf2_f`. Este es el resultado de que los valores están normalizados tal como se muestra en la @eq-bolsa-palabras.
+Con el objetivo de ilustrar una heurística que ha dado buenos resultados en el siguiente ejemplo se presentan las primeras cuatro componentes del texto *Buen día colegas*. Se puede observar como los valores de IDF de los términos comunes cambiaron, por ejemplo para el caso de `{python} key_f` cambio de `{python} idf_f` a `{python} idf2_f`. Este es el resultado de que los valores están normalizados tal como se muestra en la @eq-bolsa-palabras. Por otro lado, se observa que ahora el término más significativo es la palabra *colegas*. 
 
-La @fig-repr-texto-nube muestra la nube de palabras generada con los términos y sus respectivos valores IDF del texto *Es un placer estar platicando con ustedes.*
+```{python} 
+#| echo: true
+txt = 'Buen día colegas'
+[(tm.id2token[k], v)
+ for k, v in tm[txt][:4]]
+```
+
+Una manera de visualizar la representación es creando una nube de palabras de los términos, donde el tamaño del termino corresponde al valor TFIDF. En la @fig-repr-texto-nube muestra la nube de palabras generada con los términos y sus respectivos valores IDF del texto *Es un placer estar platicando con ustedes.*
 
 ```{python}
 #| code-fold: true
@@ -138,16 +143,19 @@ plt.tick_params(left=False, right=False, labelleft=False,
                 labelbottom=False, bottom=False)
 ```
 
+El texto se representa en un espacio vectorial, entonces es posible comparar la similitud entre dos textos en esta representación, por ejemplo, en el siguiente ejemplo se compara la similitud coseno entre los textos *Es un placer estar platicando con ustedes.* y *La lluvia genera un caos en la ciudad.* El valor obtenido es cercano a cero indicando que estos textos no son similares. 
+
 ```{python} 
 #| echo: true
 txt1 = 'Es un placer estar platicando con ustedes.'
-txt2 = 'La lluvia genera un caos en la ciudad'
+txt2 = 'La lluvia genera un caos en la ciudad.'
 vec1 = tm[txt1]
 vec2 = tm[txt2]
 f = {k: v for k, v in vec1}
 np.sum([f[k] * v for k, v in vec2 if k in f])
 ```
 
+Complementando el ejemplo anterior, en esta ocasión se comparan dos textos que comparten el concepto *plática*, estos son *Es un placer estar platicando con ustedes.* y *Estoy dando una platica en Morelia.* se puede observar que estos textos son más similares que los ejemplos anteriores. 
 
 ```{python} 
 #| echo: true
@@ -158,7 +166,8 @@ vec2 = tm[txt2]
 f = {k: v for k, v in vec1}
 np.sum([f[k] * v for k, v in vec2 if k in f])
 ```
-
+ 
+ Habiendo realizado la similitud entre algunos textos lleva a preguntarse cómo será la distribución de similitud entre varios textos, para poder contestar esta pregunta, se utilizarán los datos de [Delitos](https://ingeotec.github.io/Delitos), los cuales se guardan en la variable `D` tal y como se en las siguientes instrucciones. 
 
 ```{python}
 #| echo: true
@@ -166,17 +175,22 @@ fname = 'delitos/delitos_ingeotec_Es_train.json'
 D = list(tweet_iterator(fname))
 ```
 
+El primer paso es representar todos los textos en el espacio vectorial de la bolsa de palabras, lo cual se logra con el método `BoW.transform` (primera linea), el segundo paso es calcular la similitud entre todos los textos, como se muestra en la segunda linea. 
+
 ```{python}
 #| echo: true
 X = tm.transform(D)
-dis = np.dot(X, X.T)
+sim = np.dot(X, X.T)
 ```
+
+La distribución de similitud se muestra en la @fig-text-repr-similitud-bow se puede observar que las similitudes se encuentran concentradas cerca del cero, esto indica que la mayoría de los textos están distantes, esto es el resultado de la bolsa de palabras discreta que se enfoca en modelar las palabras y no el significado de las mismas. 
+
 
 ```{python}
 #| code-fold: true
 #| fig-cap: Histograma de la similitud
 #| label: fig-text-repr-similitud-bow
-sns.displot(dis.data)
+sns.displot(sim.data)
 ```
 
 ## Bolsa de Palabras Densa 
@@ -271,8 +285,6 @@ for cloud, ax, title in zip([word_pos, word_neg],
 ```{python}
 #| echo: true
 X = dense.transform(D)
-unit = np.linalg.norm(X, axis=1)
-X = X / np.atleast_2d(unit).T
 dis = np.dot(X, X.T)
 ```
 
