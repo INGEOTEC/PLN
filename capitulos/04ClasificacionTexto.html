@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.373">
+<meta name="generator" content="quarto-1.4.382">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -231,8 +231,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   <li><a href="#introducción" id="toc-introducción" class="nav-link" data-scroll-target="#introducción"><span class="header-section-number">4.1</span> Introducción</a></li>
   <li><a href="#sec-categorical-distribution" id="toc-sec-categorical-distribution" class="nav-link" data-scroll-target="#sec-categorical-distribution"><span class="header-section-number">4.2</span> Modelado Probabilistico (Distribución Categórica)</a>
   <ul class="collapse">
-  <li><a href="#problema-sintético" id="toc-problema-sintético" class="nav-link" data-scroll-target="#problema-sintético"><span class="header-section-number">4.2.1</span> Problema Sintético</a></li>
-  <li><a href="#sec-tc-categorical" id="toc-sec-tc-categorical" class="nav-link" data-scroll-target="#sec-tc-categorical"><span class="header-section-number">4.2.2</span> Clasificador de Texto</a></li>
+  <li><a href="#sec-tc-categorical" id="toc-sec-tc-categorical" class="nav-link" data-scroll-target="#sec-tc-categorical"><span class="header-section-number">4.2.1</span> Clasificador de Texto</a></li>
   </ul></li>
   <li><a href="#sec-tc-vectorial" id="toc-sec-tc-vectorial" class="nav-link" data-scroll-target="#sec-tc-vectorial"><span class="header-section-number">4.3</span> Modelado Vectorial</a></li>
   </ul>
@@ -259,10 +258,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 </header>
 
+
 <p>El <strong>objetivo</strong> de la unidad es</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="64b3d566" class="cell" data-execution_count="1">
+<div id="a19b2750" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> microtc.utils <span class="im">import</span> tweet_iterator, load_model, save_model</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> b4msa.textmodel <span class="im">import</span> TextModel</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> EvoMSA.tests.test_base <span class="im">import</span> TWEETS</span>
@@ -283,14 +283,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="introducción" class="level2" data-number="4.1">
 <h2 data-number="4.1" class="anchored" data-anchor-id="introducción"><span class="header-section-number">4.1</span> Introducción</h2>
-<p>Text Categorization is an NLP task that deals with creating algorithms capable of identifying the category of a text from a set of predefined categories. For example, sentiment analysis belongs to this task, and the aim is to detect the polarity (e.g., positive, neutral, or negative) of a text. Furthermore, different NLP tasks that initially seem unrelated to this problem can be formulated as a classification one such as question answering and sentence entailment, to mention a few.</p>
-<p>Text Categorization can be tackled from different perspectives; the one followed here is to treat it as a supervised learning problem. As in any supervised learning problem, the starting point is a set of pairs, where the first element of the pair is the input and the second one corresponds to the output. Let <span class="math inline">\(\mathcal D = \{(\text{text}_i, y_i) \mid i=1,\ldots, N\}\)</span> where <span class="math inline">\(y \in \{c_1, \ldots c_K\}\)</span> and <span class="math inline">\(\text{text}_i\)</span> is a text.</p>
+<p>El problema de categorización (clasificación) de texto es una tarea de PLN que desarrolla algoritmos capaces de identificar la categoría de un texto de un conjunto de categorías previamente definidas. Por ejemplo, en análisis de sentimientos pertenece a esta tarea y su objetivo es el detectar la polaridad (e.g., positiva, neutral, o negativa) del texto. Cabe mencionar, que diferentes tareas de PLN pueden ser formuladas como problemas de clasificación, e.g., la tarea de preguntas y respuestas, vinculación de enunciados, entre otras.</p>
+<p>El problema de clasificación de texto se puede resolver desde diferentes perspectivas; el camino que se seguirá corresponde a aprendizaje supervisado. Los problemas de aprendizaje supervisado comienzan con un conjunto de pares, donde el primer elementos del par corresponde a las entradas (variables independientes) y el segundo es la respuesta (variable dependiente). Sea <span class="math inline">\(\mathcal D = \{(\text{texto}_i, y_i) \mid i=1,\ldots, N\}\)</span> donde <span class="math inline">\(y \in \{c_1, \ldots c_K\}\)</span> y <span class="math inline">\(\text{texto}_i\)</span> contiene el texto.</p>
 </section>
 <section id="sec-categorical-distribution" class="level2" data-number="4.2">
 <h2 data-number="4.2" class="anchored" data-anchor-id="sec-categorical-distribution"><span class="header-section-number">4.2</span> Modelado Probabilistico (Distribución Categórica)</h2>
-<section id="problema-sintético" class="level3" data-number="4.2.1">
-<h3 data-number="4.2.1" class="anchored" data-anchor-id="problema-sintético"><span class="header-section-number">4.2.1</span> Problema Sintético</h3>
-<p>The description of Bayes’ theorem continues with an example of a Categorical distribution. A Categorical distribution can simulate the drawn of <span class="math inline">\(K\)</span> events that can be encoded as characters, and <span class="math inline">\(\ell\)</span> repetitions can be represented as a sequence of characters. Consequently, the distribution can illustrate the generation sequences associated with different classes, e.g., positive or negative.</p>
+<p>Se inicia la descripción de clasificación de texto presentando un ejemplo sintético que ejemplifica los supuestos que se realizan en el modelo. La distribución categórica modela el evento de seleccionar <span class="math inline">\(K\)</span> eventos, los cuales pueden estar codificados como caracteres. Si esta selección se realiza <span class="math inline">\(\ell\)</span> veces se cuenta con una secuencia de eventos representados por caracteres. Por ejemplo, los <span class="math inline">\(K\)</span> eventos pueden ser representados por los caracteres</p>
+<p>repetitions can be represented as a sequence of characters. Consequently, the distribution can illustrate the generation sequences associated with different classes, e.g., positive or negative.</p>
 <p>The first step is to create the dataset. As done previously, two distributions are defined, one for each class; it can be observed that each distribution has different parameters. The second step is to sample these distributions; the distributions are sampled 1000 times with the following procedure. Each time, a random variable representing the number of outcomes taken from each distribution is drawn from a Normal <span class="math inline">\(\mathcal N(15, 3)\)</span> and stored in the variable <code>length.</code> The random variable indicates the number of outcomes for each Categorical distribution; the results are transformed into a sequence, associated to the label corresponding to the positive and negative class, and stored in the list <code>D.</code></p>
 <div class="sourceCode" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pos <span class="op">=</span> multinomial(<span class="dv">1</span>, [<span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.35</span>, <span class="fl">0.25</span>])</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>neg <span class="op">=</span> multinomial(<span class="dv">1</span>, [<span class="fl">0.35</span>, <span class="fl">0.20</span>, <span class="fl">0.25</span>, <span class="fl">0.20</span>])</span>
@@ -359,9 +358,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>post_pos <span class="op">/=</span> evidence</span>
 <span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>post_neg <span class="op">/=</span> evidence</span>
 <span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.where(post_pos <span class="op">&gt;</span> post_neg, <span class="dv">1</span>, <span class="dv">0</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-</section>
-<section id="sec-tc-categorical" class="level3" data-number="4.2.2">
-<h3 data-number="4.2.2" class="anchored" data-anchor-id="sec-tc-categorical"><span class="header-section-number">4.2.2</span> Clasificador de Texto</h3>
+<section id="sec-tc-categorical" class="level3" data-number="4.2.1">
+<h3 data-number="4.2.1" class="anchored" data-anchor-id="sec-tc-categorical"><span class="header-section-number">4.2.1</span> Clasificador de Texto</h3>
 <p>The approach followed on text categorization is to treat it as supervised learning problem where the starting point is a dataset <span class="math inline">\(\mathcal D = \{(\text{text}_i, y_i) \mid i=1,\ldots, N\}\)</span> where <span class="math inline">\(y \in \{c_1, \ldots c_K\}\)</span> and <span class="math inline">\(\text{text}_i\)</span> is a text. For example, the next code uses a toy sentiment analysis dataset with four classes: negative (N), neutral (NEU), absence of polarity (NONE), and positive (P).</p>
 <div class="sourceCode" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> [(x[<span class="st">'text'</span>], x[<span class="st">'klass'</span>]) <span class="cf">for</span> x <span class="kw">in</span> tweet_iterator(TWEETS)]</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <p>As can be observed, <span class="math inline">\(\mathcal D\)</span> is equivalent to the one used in the <a href="#sec:categorical-distribution">Categorical Distribution</a> example. The difference is that sequence of letters is changed with a sentence. Nonetheless, a feasible approach is to obtain the tokens using the <code>split</code> method. Another approach is to retrieve the tokens using a Tokenizer, as covered in the <a href="../NLP-Course/topics/05TextNormalization">Text Normalization</a> Section.</p>
@@ -388,8 +386,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <div class="sourceCode" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>l_tokens <span class="op">+=</span> <span class="fl">0.1</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>l_tokens <span class="op">=</span> l_tokens <span class="op">/</span> np.atleast_2d(l_tokens.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)).T</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>l_tokens <span class="op">=</span> np.log(l_tokens)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<section id="prediction" class="level4" data-number="4.2.2.1">
-<h4 data-number="4.2.2.1" class="anchored" data-anchor-id="prediction"><span class="header-section-number">4.2.2.1</span> Prediction</h4>
+<section id="prediction" class="level4" data-number="4.2.1.1">
+<h4 data-number="4.2.1.1" class="anchored" data-anchor-id="prediction"><span class="header-section-number">4.2.1.1</span> Prediction</h4>
 <p>Once all the parameters have been estimated, it is time to use the model to classify any text. The following function computes the posterior distribution. The first step is to tokenize the text (second line) and compute the frequency of each token in the text. The frequency stored in the dictionary <code>cnt</code> is converted into the vector <code>x</code> using the mapping function <code>w2id</code>. The final step is to compute the product of the likelihood and the prior. The product is computed in log-space; thus, this is done using the likelihood and the prior sum. The last step is to compute the evidence and normalize the result; the evidence is computed with the function <code>logsumexp.</code></p>
 <div class="sourceCode" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> posterior(txt):</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> np.zeros(<span class="bu">len</span>(w2id))</span>
@@ -408,8 +406,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>(y <span class="op">==</span> hy).mean()</span>
 <span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a><span class="fl">0.974</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </section>
-<section id="training" class="level4" data-number="4.2.2.2">
-<h4 data-number="4.2.2.2" class="anchored" data-anchor-id="training"><span class="header-section-number">4.2.2.2</span> Training</h4>
+<section id="training" class="level4" data-number="4.2.1.2">
+<h4 data-number="4.2.1.2" class="anchored" data-anchor-id="training"><span class="header-section-number">4.2.1.2</span> Training</h4>
 <p>Solving supervised learning problems requires two phases; one is the training phase, and the other is the prediction. The posterior function handles the later phase, and it is missing to organize the code described in a training function. The following code describes the training function; it requires the dataset’s parameters and an instance of <code>TextModel.</code></p>
 <div class="sourceCode" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> training(D, tm):</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    tok <span class="op">=</span> tm.tokenize</span>
@@ -756,7 +754,6 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
     window.addEventListener(
       "resize",
       throttle(() => {
-        console.log("RESIZE");
         elRect = undefined;
         if (selectedAnnoteEl) {
           selectCodeLines(selectedAnnoteEl);
@@ -889,199 +886,200 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 <span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción </span></span>
 <span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a>Text Categorization is an NLP task that deals with creating algorithms capable of identifying the category of a text from a set of predefined categories. For example, sentiment analysis belongs to this task, and the aim is to detect the polarity (e.g., positive, neutral, or negative) of a text. Furthermore, different NLP tasks that initially seem unrelated to this problem can be formulated as a classification one such as question answering and sentence entailment, to mention a few. </span>
+<span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a>El problema de categorización (clasificación) de texto es una tarea de PLN que desarrolla algoritmos capaces de identificar la categoría de un texto de un conjunto de categorías previamente definidas. Por ejemplo, en análisis de sentimientos pertenece a esta tarea y su objetivo es el detectar la polaridad (e.g., positiva, neutral, o negativa) del texto. Cabe mencionar, que diferentes tareas de PLN pueden ser formuladas como problemas de clasificación, e.g., la tarea de preguntas y respuestas, vinculación de enunciados, entre otras.  </span>
 <span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a>Text Categorization can be tackled from different perspectives; the one followed here is to treat it as a supervised learning problem. As in any supervised learning problem, the starting point is a set of pairs, where the first element of the pair is the input and the second one corresponds to the output. Let $\mathcal D = <span class="sc">\{</span>(\text{text}_i, y_i) \mid i=1,\ldots, N\}$ where $y \in \{c_1, \ldots c_K\}$ and $\text{text}_i$ is a text. </span>
+<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a>El problema de clasificación de texto se puede resolver desde diferentes perspectivas; el camino que se seguirá corresponde a aprendizaje supervisado. Los problemas de aprendizaje supervisado comienzan con un conjunto de pares, donde el primer elementos del par corresponde a las entradas (variables independientes) y el segundo es la respuesta (variable dependiente). Sea $\mathcal D = <span class="sc">\{</span>(\text{texto}_i, y_i) \mid i=1,\ldots, N\}$ donde $y \in \{c_1, \ldots c_K\}$ y $\text{texto}_i$ contiene el texto. </span>
 <span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modelado Probabilistico (Distribución Categórica) {#sec-categorical-distribution}</span></span>
 <span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a><span class="fu">### Problema Sintético</span></span>
+<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a>Se inicia la descripción de clasificación de texto presentando un ejemplo sintético que ejemplifica los supuestos que se realizan en el modelo. La distribución categórica modela el evento de seleccionar $K$ eventos, los cuales pueden estar codificados como caracteres. Si esta selección se realiza $\ell$ veces se cuenta con una secuencia de eventos representados por caracteres. Por ejemplo, los $K$ eventos pueden ser representados por los caracteres </span>
 <span id="cb17-51"><a href="#cb17-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a>The description of Bayes’ theorem continues with an example of a Categorical distribution. A Categorical distribution can simulate the drawn of $K$ events that can be encoded as characters, and $\ell$ repetitions can be represented as a sequence of characters. Consequently, the distribution can illustrate the generation sequences associated with different classes, e.g., positive or negative.</span>
-<span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-54"><a href="#cb17-54" aria-hidden="true" tabindex="-1"></a>The first step is to create the dataset. As done previously, two distributions are defined, one for each class; it can be observed that each distribution has different parameters. The second step is to sample these distributions; the distributions are sampled 1000 times with the following procedure. Each time, a random variable representing the number of outcomes taken from each distribution is drawn from a Normal $\mathcal N(15, 3)$ and stored in the variable <span class="in">`length.`</span> The random variable indicates the number of outcomes for each Categorical distribution; the results are transformed into a sequence, associated to the label corresponding to the positive and negative class, and stored in the list <span class="in">`D.`</span></span>
-<span id="cb17-55"><a href="#cb17-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-56"><a href="#cb17-56" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb17-57"><a href="#cb17-57" aria-hidden="true" tabindex="-1"></a>pos <span class="op">=</span> multinomial(<span class="dv">1</span>, [<span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.35</span>, <span class="fl">0.25</span>])</span>
-<span id="cb17-58"><a href="#cb17-58" aria-hidden="true" tabindex="-1"></a>neg <span class="op">=</span> multinomial(<span class="dv">1</span>, [<span class="fl">0.35</span>, <span class="fl">0.20</span>, <span class="fl">0.25</span>, <span class="fl">0.20</span>])</span>
-<span id="cb17-59"><a href="#cb17-59" aria-hidden="true" tabindex="-1"></a>length <span class="op">=</span> norm(loc<span class="op">=</span><span class="dv">15</span>, scale<span class="op">=</span><span class="dv">3</span>)</span>
-<span id="cb17-60"><a href="#cb17-60" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> []</span>
-<span id="cb17-61"><a href="#cb17-61" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> {k: <span class="bu">chr</span>(<span class="dv">122</span> <span class="op">-</span> k) <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>)}</span>
-<span id="cb17-62"><a href="#cb17-62" aria-hidden="true" tabindex="-1"></a>id2w <span class="op">=</span> <span class="kw">lambda</span> x: <span class="st">" "</span>.join([m[_] <span class="cf">for</span> _ <span class="kw">in</span> x.argmax(axis<span class="op">=</span><span class="dv">1</span>)])</span>
-<span id="cb17-63"><a href="#cb17-63" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> l <span class="kw">in</span> length.rvs(size<span class="op">=</span><span class="dv">1000</span>):</span>
-<span id="cb17-64"><a href="#cb17-64" aria-hidden="true" tabindex="-1"></a>    D.append((id2w(pos.rvs(<span class="bu">round</span>(l))), <span class="dv">1</span>))</span>
-<span id="cb17-65"><a href="#cb17-65" aria-hidden="true" tabindex="-1"></a>    D.append((id2w(neg.rvs(<span class="bu">round</span>(l))), <span class="dv">0</span>))</span>
-<span id="cb17-66"><a href="#cb17-66" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-67"><a href="#cb17-67" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-68"><a href="#cb17-68" aria-hidden="true" tabindex="-1"></a>The following table shows four examples of this process; the first column contains the sequence, and the second the associated label.</span>
-<span id="cb17-69"><a href="#cb17-69" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-70"><a href="#cb17-70" aria-hidden="true" tabindex="-1"></a>|Text          |Label    |</span>
-<span id="cb17-71"><a href="#cb17-71" aria-hidden="true" tabindex="-1"></a>|--------------|---------|</span>
-<span id="cb17-72"><a href="#cb17-72" aria-hidden="true" tabindex="-1"></a>|x w x x z w y | positive       |</span>
-<span id="cb17-73"><a href="#cb17-73" aria-hidden="true" tabindex="-1"></a>|y w z z z x w | negative       |</span>
-<span id="cb17-74"><a href="#cb17-74" aria-hidden="true" tabindex="-1"></a>|z x x x z x z w x w | positive |</span>
-<span id="cb17-75"><a href="#cb17-75" aria-hidden="true" tabindex="-1"></a>|x w z w y z z z z w | negative |</span>
-<span id="cb17-76"><a href="#cb17-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-77"><a href="#cb17-77" aria-hidden="true" tabindex="-1"></a>As done previously, the first step is to compute the likelihood given that dataset; considering that the data comes from a Categorical distribution, the procedure to estimate the parameters is similar to the ones used to estimate the prior. The following code estimates the data parameters corresponding to the positive class. It can be observed that the parameters estimated are similar to the ones used to generate the dataset. </span>
-<span id="cb17-78"><a href="#cb17-78" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-79"><a href="#cb17-79" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb17-80"><a href="#cb17-80" aria-hidden="true" tabindex="-1"></a>D_pos <span class="op">=</span> []</span>
-<span id="cb17-81"><a href="#cb17-81" aria-hidden="true" tabindex="-1"></a>[D_pos.extend(data.split()) <span class="cf">for</span> data, k <span class="kw">in</span> D <span class="cf">if</span> k <span class="op">==</span> <span class="dv">1</span>]</span>
-<span id="cb17-82"><a href="#cb17-82" aria-hidden="true" tabindex="-1"></a>words, l_pos <span class="op">=</span> np.unique(D_pos, return_counts<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb17-83"><a href="#cb17-83" aria-hidden="true" tabindex="-1"></a>w2id <span class="op">=</span> {v: k <span class="cf">for</span> k, v <span class="kw">in</span> <span class="bu">enumerate</span>(words)}</span>
-<span id="cb17-84"><a href="#cb17-84" aria-hidden="true" tabindex="-1"></a>l_pos <span class="op">=</span> l_pos <span class="op">/</span> l_pos.<span class="bu">sum</span>()</span>
-<span id="cb17-85"><a href="#cb17-85" aria-hidden="true" tabindex="-1"></a>l_pos</span>
-<span id="cb17-86"><a href="#cb17-86" aria-hidden="true" tabindex="-1"></a>array([<span class="fl">0.25489421</span>, <span class="fl">0.33854064</span>, <span class="fl">0.20773186</span>, <span class="fl">0.1988333</span> ])</span>
-<span id="cb17-87"><a href="#cb17-87" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-88"><a href="#cb17-88" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-89"><a href="#cb17-89" aria-hidden="true" tabindex="-1"></a>An equivalent procedure is performed to calculate the likelihood of the negative class.</span>
-<span id="cb17-90"><a href="#cb17-90" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-91"><a href="#cb17-91" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb17-92"><a href="#cb17-92" aria-hidden="true" tabindex="-1"></a>D_neg <span class="op">=</span> []</span>
-<span id="cb17-93"><a href="#cb17-93" aria-hidden="true" tabindex="-1"></a>[D_neg.extend(data.split()) <span class="cf">for</span> data, k <span class="kw">in</span> D <span class="cf">if</span> k <span class="op">==</span> <span class="dv">0</span>]</span>
-<span id="cb17-94"><a href="#cb17-94" aria-hidden="true" tabindex="-1"></a>_, l_neg <span class="op">=</span> np.unique(D_neg, return_counts<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb17-95"><a href="#cb17-95" aria-hidden="true" tabindex="-1"></a>l_neg <span class="op">=</span> l_neg <span class="op">/</span> l_neg.<span class="bu">sum</span>()</span>
-<span id="cb17-96"><a href="#cb17-96" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-97"><a href="#cb17-97" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-98"><a href="#cb17-98" aria-hidden="true" tabindex="-1"></a>The prior is estimated with the following code, equivalent to the one used on all the examples seen so far. </span>
-<span id="cb17-99"><a href="#cb17-99" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-100"><a href="#cb17-100" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb17-101"><a href="#cb17-101" aria-hidden="true" tabindex="-1"></a>_, priors <span class="op">=</span> np.unique([k <span class="cf">for</span> _, k <span class="kw">in</span> D], return_counts<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb17-102"><a href="#cb17-102" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> priors.<span class="bu">sum</span>()</span>
-<span id="cb17-103"><a href="#cb17-103" aria-hidden="true" tabindex="-1"></a>prior_pos <span class="op">=</span> priors[<span class="dv">1</span>] <span class="op">/</span> N</span>
-<span id="cb17-104"><a href="#cb17-104" aria-hidden="true" tabindex="-1"></a>prior_neg <span class="op">=</span> priors[<span class="dv">0</span>] <span class="op">/</span> N</span>
-<span id="cb17-105"><a href="#cb17-105" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-106"><a href="#cb17-106" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-107"><a href="#cb17-107" aria-hidden="true" tabindex="-1"></a>Once the parameters have been identified, these can be used to predict the class of a given sequence. The first step is to compute the likelihood, e.g., $\mathbb P($w w x z$\mid \mathcal Y)$. It can be observed that the sequence needs to be transformed into tokens which can be done with the <span class="in">`split`</span> method. Then, the token is converted into an index using the mapping <span class="in">`w2id`</span>; once the index is retrieved, it can be used to obtain the parameter associated with the word. The likelihood is the product of all the probabilities; however, this product is computed in log space. </span>
-<span id="cb17-108"><a href="#cb17-108" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-109"><a href="#cb17-109" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb17-110"><a href="#cb17-110" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> likelihood(params, txt):</span>
-<span id="cb17-111"><a href="#cb17-111" aria-hidden="true" tabindex="-1"></a>    params <span class="op">=</span> np.log(params)</span>
-<span id="cb17-112"><a href="#cb17-112" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> [params[w2id[x]] <span class="cf">for</span> x <span class="kw">in</span> txt.split()]</span>
-<span id="cb17-113"><a href="#cb17-113" aria-hidden="true" tabindex="-1"></a>    tot <span class="op">=</span> <span class="bu">sum</span>(_)</span>
-<span id="cb17-114"><a href="#cb17-114" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.exp(tot)</span>
-<span id="cb17-115"><a href="#cb17-115" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-116"><a href="#cb17-116" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-117"><a href="#cb17-117" aria-hidden="true" tabindex="-1"></a>The likelihood combined with the prior for all the classes produces the evidence, which subsequently is used to calculate the posterior distribution. The posterior is then used to predict the class for all the sequences in $\mathcal D$. The predictions are stored in the variable <span class="in">`hy`</span>.</span>
-<span id="cb17-118"><a href="#cb17-118" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-119"><a href="#cb17-119" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb17-120"><a href="#cb17-120" aria-hidden="true" tabindex="-1"></a>post_pos <span class="op">=</span> [likelihood(l_pos, x) <span class="op">*</span> prior_pos <span class="cf">for</span> x, _ <span class="kw">in</span> D]</span>
-<span id="cb17-121"><a href="#cb17-121" aria-hidden="true" tabindex="-1"></a>post_neg <span class="op">=</span> [likelihood(l_neg, x) <span class="op">*</span> prior_neg <span class="cf">for</span> x, _ <span class="kw">in</span> D]</span>
-<span id="cb17-122"><a href="#cb17-122" aria-hidden="true" tabindex="-1"></a>evidence <span class="op">=</span> np.vstack([post_pos, post_neg]).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)</span>
-<span id="cb17-123"><a href="#cb17-123" aria-hidden="true" tabindex="-1"></a>post_pos <span class="op">/=</span> evidence</span>
-<span id="cb17-124"><a href="#cb17-124" aria-hidden="true" tabindex="-1"></a>post_neg <span class="op">/=</span> evidence</span>
-<span id="cb17-125"><a href="#cb17-125" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.where(post_pos <span class="op">&gt;</span> post_neg, <span class="dv">1</span>, <span class="dv">0</span>)</span>
-<span id="cb17-126"><a href="#cb17-126" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-127"><a href="#cb17-127" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-128"><a href="#cb17-128" aria-hidden="true" tabindex="-1"></a><span class="fu">### Clasificador de Texto {#sec-tc-categorical }</span></span>
-<span id="cb17-129"><a href="#cb17-129" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-130"><a href="#cb17-130" aria-hidden="true" tabindex="-1"></a>The approach followed on text categorization is to treat it as supervised learning problem where the starting point is a dataset $\mathcal D = <span class="sc">\{</span>(\text{text}_i, y_i) \mid i=1,\ldots, N\}$ where $y \in \{c_1, \ldots c_K\}$ and $\text{text}_i$ is a text. For example, the next code uses a toy sentiment analysis dataset with four classes: negative (N), neutral (NEU), absence of polarity (NONE), and positive (P).</span>
-<span id="cb17-131"><a href="#cb17-131" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-132"><a href="#cb17-132" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb17-133"><a href="#cb17-133" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> [(x[<span class="st">'text'</span>], x[<span class="st">'klass'</span>]) <span class="cf">for</span> x <span class="kw">in</span> tweet_iterator(TWEETS)]</span>
-<span id="cb17-134"><a href="#cb17-134" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-135"><a href="#cb17-135" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-136"><a href="#cb17-136" aria-hidden="true" tabindex="-1"></a>As can be observed, $\mathcal D$ is equivalent to the one used in the <span class="co">[</span><span class="ot">Categorical Distribution</span><span class="co">](#sec:categorical-distribution)</span> example. The difference is that sequence of letters is changed with a sentence. Nonetheless, a feasible approach is to obtain the tokens using the <span class="in">`split`</span> method. Another approach is to retrieve the tokens using a Tokenizer, as covered in the <span class="co">[</span><span class="ot">Text Normalization</span><span class="co">](/NLP-Course/topics/05TextNormalization)</span> Section. </span>
-<span id="cb17-137"><a href="#cb17-137" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-138"><a href="#cb17-138" aria-hidden="true" tabindex="-1"></a>The following code uses the <span class="in">`TextModel`</span> class to tokenize the text using words as the tokenizer; the tokenized text is stored in the variable <span class="in">`D.`</span></span>
-<span id="cb17-139"><a href="#cb17-139" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-140"><a href="#cb17-140" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb17-141"><a href="#cb17-141" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(token_list<span class="op">=</span>[<span class="op">-</span><span class="dv">1</span>])</span>
-<span id="cb17-142"><a href="#cb17-142" aria-hidden="true" tabindex="-1"></a>tok <span class="op">=</span> tm.tokenize</span>
-<span id="cb17-143"><a href="#cb17-143" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> [(tok(x), y) <span class="cf">for</span> x, y <span class="kw">in</span> D]</span>
-<span id="cb17-144"><a href="#cb17-144" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-145"><a href="#cb17-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-146"><a href="#cb17-146" aria-hidden="true" tabindex="-1"></a>Before estimating the likelihood parameters, it is needed to encode the tokens using an index; by doing it, it is possible to store the parameters in an array and compute everything <span class="in">`numpy`</span> operations. The following code encodes each token with a unique index; the mapping is in the dictionary <span class="in">`w2id`</span>. </span>
-<span id="cb17-147"><a href="#cb17-147" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-148"><a href="#cb17-148" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb17-149"><a href="#cb17-149" aria-hidden="true" tabindex="-1"></a>words <span class="op">=</span> <span class="bu">set</span>()</span>
-<span id="cb17-150"><a href="#cb17-150" aria-hidden="true" tabindex="-1"></a>[words.update(x) <span class="cf">for</span> x, y <span class="kw">in</span> D]</span>
-<span id="cb17-151"><a href="#cb17-151" aria-hidden="true" tabindex="-1"></a>w2id <span class="op">=</span> {v: k <span class="cf">for</span> k, v <span class="kw">in</span> <span class="bu">enumerate</span>(words)}</span>
-<span id="cb17-152"><a href="#cb17-152" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-153"><a href="#cb17-153" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-154"><a href="#cb17-154" aria-hidden="true" tabindex="-1"></a>Previously, the classes have been represented using natural numbers. The positive class has been associated with the number $1$, whereas the negative class with $0$. However, in this dataset, the classes are strings. It was decided to encode them as numbers to facilitate subsequent operations. The encoding process can be performed simultaneously with the estimation of the prior of each class. Please note that the priors are stored using the logarithm in the variable <span class="in">`priors.`</span> </span>
-<span id="cb17-155"><a href="#cb17-155" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-156"><a href="#cb17-156" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb17-157"><a href="#cb17-157" aria-hidden="true" tabindex="-1"></a>uniq_labels, priors <span class="op">=</span> np.unique([k <span class="cf">for</span> _, k <span class="kw">in</span> D], return_counts<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb17-158"><a href="#cb17-158" aria-hidden="true" tabindex="-1"></a>priors <span class="op">=</span> np.log(priors <span class="op">/</span> priors.<span class="bu">sum</span>())</span>
-<span id="cb17-159"><a href="#cb17-159" aria-hidden="true" tabindex="-1"></a>uniq_labels <span class="op">=</span> {<span class="bu">str</span>(v): k <span class="cf">for</span> k, v <span class="kw">in</span> <span class="bu">enumerate</span>(uniq_labels)}</span>
-<span id="cb17-160"><a href="#cb17-160" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-161"><a href="#cb17-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-162"><a href="#cb17-162" aria-hidden="true" tabindex="-1"></a>It is time to estimate the likelihood parameters for each of the classes. It is assumed that the data comes from a Categorical distribution and that each token is independent. The likelihood parameters can be stored in a matrix (variable <span class="in">`l_tokens`</span>) with $K$ rows, each row contains the parameters of the class, and the number of columns corresponds to the vocabulary's size. The first step is to calculate the frequency of each token per class which can be done with the following code. </span>
-<span id="cb17-163"><a href="#cb17-163" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-164"><a href="#cb17-164" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb17-165"><a href="#cb17-165" aria-hidden="true" tabindex="-1"></a>l_tokens <span class="op">=</span> np.zeros((<span class="bu">len</span>(uniq_labels), <span class="bu">len</span>(w2id)))</span>
-<span id="cb17-166"><a href="#cb17-166" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x, y <span class="kw">in</span> D:</span>
-<span id="cb17-167"><a href="#cb17-167" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> l_tokens[uniq_labels[y]]</span>
-<span id="cb17-168"><a href="#cb17-168" aria-hidden="true" tabindex="-1"></a>    cnt <span class="op">=</span> Counter(x)</span>
-<span id="cb17-169"><a href="#cb17-169" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, v <span class="kw">in</span> cnt.items():</span>
-<span id="cb17-170"><a href="#cb17-170" aria-hidden="true" tabindex="-1"></a>        w[w2id[i]] <span class="op">+=</span> v</span>
-<span id="cb17-171"><a href="#cb17-171" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-172"><a href="#cb17-172" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-173"><a href="#cb17-173" aria-hidden="true" tabindex="-1"></a>The next step is to normalize the frequency. However, before normalizing it, it is being used a Laplace smoothing with a value $0.1$. Therefore, the constant $0.1$ is added to all the matrix elements. The next step is to normalize (second line), and finally, the parameters are stored using the logarithm. </span>
-<span id="cb17-174"><a href="#cb17-174" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-175"><a href="#cb17-175" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb17-176"><a href="#cb17-176" aria-hidden="true" tabindex="-1"></a>l_tokens <span class="op">+=</span> <span class="fl">0.1</span></span>
-<span id="cb17-177"><a href="#cb17-177" aria-hidden="true" tabindex="-1"></a>l_tokens <span class="op">=</span> l_tokens <span class="op">/</span> np.atleast_2d(l_tokens.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)).T</span>
-<span id="cb17-178"><a href="#cb17-178" aria-hidden="true" tabindex="-1"></a>l_tokens <span class="op">=</span> np.log(l_tokens)</span>
-<span id="cb17-179"><a href="#cb17-179" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-180"><a href="#cb17-180" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-181"><a href="#cb17-181" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Prediction</span></span>
-<span id="cb17-182"><a href="#cb17-182" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-183"><a href="#cb17-183" aria-hidden="true" tabindex="-1"></a>Once all the parameters have been estimated, it is time to use the model to classify any text. The following function computes the posterior distribution. The first step is to tokenize the text (second line) and compute the frequency of each token in the text. The frequency stored in the dictionary <span class="in">`cnt`</span> is converted into the vector <span class="in">`x`</span> using the mapping function <span class="in">`w2id`</span>. The final step is to compute the product of the likelihood and the prior. The product is computed in log-space; thus, this is done using the likelihood and the prior sum. The last step is to compute the evidence and normalize the result; the evidence is computed with the function <span class="in">`logsumexp.`</span> </span>
-<span id="cb17-184"><a href="#cb17-184" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-185"><a href="#cb17-185" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb17-186"><a href="#cb17-186" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> posterior(txt):</span>
-<span id="cb17-187"><a href="#cb17-187" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> np.zeros(<span class="bu">len</span>(w2id))</span>
-<span id="cb17-188"><a href="#cb17-188" aria-hidden="true" tabindex="-1"></a>    cnt <span class="op">=</span> Counter(tm.tokenize(txt))</span>
-<span id="cb17-189"><a href="#cb17-189" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, v <span class="kw">in</span> cnt.items():</span>
-<span id="cb17-190"><a href="#cb17-190" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
-<span id="cb17-191"><a href="#cb17-191" aria-hidden="true" tabindex="-1"></a>            x[w2id[i]] <span class="op">+=</span> v</span>
-<span id="cb17-192"><a href="#cb17-192" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span> <span class="pp">KeyError</span>:</span>
-<span id="cb17-193"><a href="#cb17-193" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
-<span id="cb17-194"><a href="#cb17-194" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> (x <span class="op">*</span> l_tokens).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">+</span> priors</span>
-<span id="cb17-195"><a href="#cb17-195" aria-hidden="true" tabindex="-1"></a>    l <span class="op">=</span> np.exp(_ <span class="op">-</span> logsumexp(_))</span>
-<span id="cb17-196"><a href="#cb17-196" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> l</span>
-<span id="cb17-197"><a href="#cb17-197" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-198"><a href="#cb17-198" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-199"><a href="#cb17-199" aria-hidden="true" tabindex="-1"></a>The posterior function can predict all the text in $\mathcal D$; the predictions are used to compute the model's accuracy. In order to compute the accuracy, the classes in $\mathcal D$ need to be transformed using the nomenclature of the likelihood matrix and priors vector; this is done with the <span class="in">`uniq_labels`</span> dictionary (second line). </span>
-<span id="cb17-200"><a href="#cb17-200" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-201"><a href="#cb17-201" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb17-202"><a href="#cb17-202" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.array([posterior(x).argmax() <span class="cf">for</span> x, _ <span class="kw">in</span> D])</span>
-<span id="cb17-203"><a href="#cb17-203" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([uniq_labels[y] <span class="cf">for</span> _, y <span class="kw">in</span> D])</span>
-<span id="cb17-204"><a href="#cb17-204" aria-hidden="true" tabindex="-1"></a>(y <span class="op">==</span> hy).mean()</span>
-<span id="cb17-205"><a href="#cb17-205" aria-hidden="true" tabindex="-1"></a><span class="fl">0.974</span></span>
-<span id="cb17-206"><a href="#cb17-206" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-207"><a href="#cb17-207" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-208"><a href="#cb17-208" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Training</span></span>
-<span id="cb17-209"><a href="#cb17-209" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-210"><a href="#cb17-210" aria-hidden="true" tabindex="-1"></a>Solving supervised learning problems requires two phases; one is the training phase, and the other is the prediction. The posterior function handles the later phase, and it is missing to organize the code described in a training function. The following code describes the training function; it requires the dataset's parameters and an instance of <span class="in">`TextModel.`</span></span>
-<span id="cb17-211"><a href="#cb17-211" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-212"><a href="#cb17-212" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
-<span id="cb17-213"><a href="#cb17-213" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> training(D, tm):</span>
-<span id="cb17-214"><a href="#cb17-214" aria-hidden="true" tabindex="-1"></a>    tok <span class="op">=</span> tm.tokenize</span>
-<span id="cb17-215"><a href="#cb17-215" aria-hidden="true" tabindex="-1"></a>    D <span class="op">=</span>[(tok(x), y) <span class="cf">for</span> x, y <span class="kw">in</span> D]</span>
-<span id="cb17-216"><a href="#cb17-216" aria-hidden="true" tabindex="-1"></a>    words <span class="op">=</span> <span class="bu">set</span>()</span>
-<span id="cb17-217"><a href="#cb17-217" aria-hidden="true" tabindex="-1"></a>    [words.update(x) <span class="cf">for</span> x, y <span class="kw">in</span> D]</span>
-<span id="cb17-218"><a href="#cb17-218" aria-hidden="true" tabindex="-1"></a>    w2id <span class="op">=</span> {v: k <span class="cf">for</span> k, v <span class="kw">in</span> <span class="bu">enumerate</span>(words)}</span>
-<span id="cb17-219"><a href="#cb17-219" aria-hidden="true" tabindex="-1"></a>    uniq_labels, priors <span class="op">=</span> np.unique([k <span class="cf">for</span> _, k <span class="kw">in</span> D], return_counts<span class="op">=</span><span class="va">True</span>)</span>
-<span id="cb17-220"><a href="#cb17-220" aria-hidden="true" tabindex="-1"></a>    priors <span class="op">=</span> np.log(priors <span class="op">/</span> priors.<span class="bu">sum</span>())</span>
-<span id="cb17-221"><a href="#cb17-221" aria-hidden="true" tabindex="-1"></a>    uniq_labels <span class="op">=</span> {<span class="bu">str</span>(v): k <span class="cf">for</span> k, v <span class="kw">in</span> <span class="bu">enumerate</span>(uniq_labels)}</span>
-<span id="cb17-222"><a href="#cb17-222" aria-hidden="true" tabindex="-1"></a>    l_tokens <span class="op">=</span> np.zeros((<span class="bu">len</span>(uniq_labels), <span class="bu">len</span>(w2id)))</span>
-<span id="cb17-223"><a href="#cb17-223" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> x, y <span class="kw">in</span> D:</span>
-<span id="cb17-224"><a href="#cb17-224" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> l_tokens[uniq_labels[y]]</span>
-<span id="cb17-225"><a href="#cb17-225" aria-hidden="true" tabindex="-1"></a>        cnt <span class="op">=</span> Counter(x)</span>
-<span id="cb17-226"><a href="#cb17-226" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i, v <span class="kw">in</span> cnt.items():</span>
-<span id="cb17-227"><a href="#cb17-227" aria-hidden="true" tabindex="-1"></a>            w[w2id[i]] <span class="op">+=</span> v</span>
-<span id="cb17-228"><a href="#cb17-228" aria-hidden="true" tabindex="-1"></a>    l_tokens <span class="op">+=</span> <span class="fl">0.1</span></span>
-<span id="cb17-229"><a href="#cb17-229" aria-hidden="true" tabindex="-1"></a>    l_tokens <span class="op">=</span> l_tokens <span class="op">/</span> np.atleast_2d(l_tokens.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)).T</span>
-<span id="cb17-230"><a href="#cb17-230" aria-hidden="true" tabindex="-1"></a>    l_tokens <span class="op">=</span> np.log(l_tokens)</span>
-<span id="cb17-231"><a href="#cb17-231" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> w2id, uniq_labels, l_tokens, priors</span>
-<span id="cb17-232"><a href="#cb17-232" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb17-233"><a href="#cb17-233" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-234"><a href="#cb17-234" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modelado Vectorial {#sec-tc-vectorial} </span></span>
-<span id="cb17-235"><a href="#cb17-235" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-236"><a href="#cb17-236" aria-hidden="true" tabindex="-1"></a>xxx</span>
+<span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a>repetitions can be represented as a sequence of characters. Consequently, the distribution can illustrate the generation sequences associated with different classes, e.g., positive or negative.</span>
+<span id="cb17-54"><a href="#cb17-54" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-55"><a href="#cb17-55" aria-hidden="true" tabindex="-1"></a>The first step is to create the dataset. As done previously, two distributions are defined, one for each class; it can be observed that each distribution has different parameters. The second step is to sample these distributions; the distributions are sampled 1000 times with the following procedure. Each time, a random variable representing the number of outcomes taken from each distribution is drawn from a Normal $\mathcal N(15, 3)$ and stored in the variable <span class="in">`length.`</span> The random variable indicates the number of outcomes for each Categorical distribution; the results are transformed into a sequence, associated to the label corresponding to the positive and negative class, and stored in the list <span class="in">`D.`</span></span>
+<span id="cb17-56"><a href="#cb17-56" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-57"><a href="#cb17-57" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb17-58"><a href="#cb17-58" aria-hidden="true" tabindex="-1"></a>pos <span class="op">=</span> multinomial(<span class="dv">1</span>, [<span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.35</span>, <span class="fl">0.25</span>])</span>
+<span id="cb17-59"><a href="#cb17-59" aria-hidden="true" tabindex="-1"></a>neg <span class="op">=</span> multinomial(<span class="dv">1</span>, [<span class="fl">0.35</span>, <span class="fl">0.20</span>, <span class="fl">0.25</span>, <span class="fl">0.20</span>])</span>
+<span id="cb17-60"><a href="#cb17-60" aria-hidden="true" tabindex="-1"></a>length <span class="op">=</span> norm(loc<span class="op">=</span><span class="dv">15</span>, scale<span class="op">=</span><span class="dv">3</span>)</span>
+<span id="cb17-61"><a href="#cb17-61" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> []</span>
+<span id="cb17-62"><a href="#cb17-62" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> {k: <span class="bu">chr</span>(<span class="dv">122</span> <span class="op">-</span> k) <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>)}</span>
+<span id="cb17-63"><a href="#cb17-63" aria-hidden="true" tabindex="-1"></a>id2w <span class="op">=</span> <span class="kw">lambda</span> x: <span class="st">" "</span>.join([m[_] <span class="cf">for</span> _ <span class="kw">in</span> x.argmax(axis<span class="op">=</span><span class="dv">1</span>)])</span>
+<span id="cb17-64"><a href="#cb17-64" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> l <span class="kw">in</span> length.rvs(size<span class="op">=</span><span class="dv">1000</span>):</span>
+<span id="cb17-65"><a href="#cb17-65" aria-hidden="true" tabindex="-1"></a>    D.append((id2w(pos.rvs(<span class="bu">round</span>(l))), <span class="dv">1</span>))</span>
+<span id="cb17-66"><a href="#cb17-66" aria-hidden="true" tabindex="-1"></a>    D.append((id2w(neg.rvs(<span class="bu">round</span>(l))), <span class="dv">0</span>))</span>
+<span id="cb17-67"><a href="#cb17-67" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-68"><a href="#cb17-68" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-69"><a href="#cb17-69" aria-hidden="true" tabindex="-1"></a>The following table shows four examples of this process; the first column contains the sequence, and the second the associated label.</span>
+<span id="cb17-70"><a href="#cb17-70" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-71"><a href="#cb17-71" aria-hidden="true" tabindex="-1"></a>|Text          |Label    |</span>
+<span id="cb17-72"><a href="#cb17-72" aria-hidden="true" tabindex="-1"></a>|--------------|---------|</span>
+<span id="cb17-73"><a href="#cb17-73" aria-hidden="true" tabindex="-1"></a>|x w x x z w y | positive       |</span>
+<span id="cb17-74"><a href="#cb17-74" aria-hidden="true" tabindex="-1"></a>|y w z z z x w | negative       |</span>
+<span id="cb17-75"><a href="#cb17-75" aria-hidden="true" tabindex="-1"></a>|z x x x z x z w x w | positive |</span>
+<span id="cb17-76"><a href="#cb17-76" aria-hidden="true" tabindex="-1"></a>|x w z w y z z z z w | negative |</span>
+<span id="cb17-77"><a href="#cb17-77" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-78"><a href="#cb17-78" aria-hidden="true" tabindex="-1"></a>As done previously, the first step is to compute the likelihood given that dataset; considering that the data comes from a Categorical distribution, the procedure to estimate the parameters is similar to the ones used to estimate the prior. The following code estimates the data parameters corresponding to the positive class. It can be observed that the parameters estimated are similar to the ones used to generate the dataset. </span>
+<span id="cb17-79"><a href="#cb17-79" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-80"><a href="#cb17-80" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb17-81"><a href="#cb17-81" aria-hidden="true" tabindex="-1"></a>D_pos <span class="op">=</span> []</span>
+<span id="cb17-82"><a href="#cb17-82" aria-hidden="true" tabindex="-1"></a>[D_pos.extend(data.split()) <span class="cf">for</span> data, k <span class="kw">in</span> D <span class="cf">if</span> k <span class="op">==</span> <span class="dv">1</span>]</span>
+<span id="cb17-83"><a href="#cb17-83" aria-hidden="true" tabindex="-1"></a>words, l_pos <span class="op">=</span> np.unique(D_pos, return_counts<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-84"><a href="#cb17-84" aria-hidden="true" tabindex="-1"></a>w2id <span class="op">=</span> {v: k <span class="cf">for</span> k, v <span class="kw">in</span> <span class="bu">enumerate</span>(words)}</span>
+<span id="cb17-85"><a href="#cb17-85" aria-hidden="true" tabindex="-1"></a>l_pos <span class="op">=</span> l_pos <span class="op">/</span> l_pos.<span class="bu">sum</span>()</span>
+<span id="cb17-86"><a href="#cb17-86" aria-hidden="true" tabindex="-1"></a>l_pos</span>
+<span id="cb17-87"><a href="#cb17-87" aria-hidden="true" tabindex="-1"></a>array([<span class="fl">0.25489421</span>, <span class="fl">0.33854064</span>, <span class="fl">0.20773186</span>, <span class="fl">0.1988333</span> ])</span>
+<span id="cb17-88"><a href="#cb17-88" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-89"><a href="#cb17-89" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-90"><a href="#cb17-90" aria-hidden="true" tabindex="-1"></a>An equivalent procedure is performed to calculate the likelihood of the negative class.</span>
+<span id="cb17-91"><a href="#cb17-91" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-92"><a href="#cb17-92" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb17-93"><a href="#cb17-93" aria-hidden="true" tabindex="-1"></a>D_neg <span class="op">=</span> []</span>
+<span id="cb17-94"><a href="#cb17-94" aria-hidden="true" tabindex="-1"></a>[D_neg.extend(data.split()) <span class="cf">for</span> data, k <span class="kw">in</span> D <span class="cf">if</span> k <span class="op">==</span> <span class="dv">0</span>]</span>
+<span id="cb17-95"><a href="#cb17-95" aria-hidden="true" tabindex="-1"></a>_, l_neg <span class="op">=</span> np.unique(D_neg, return_counts<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-96"><a href="#cb17-96" aria-hidden="true" tabindex="-1"></a>l_neg <span class="op">=</span> l_neg <span class="op">/</span> l_neg.<span class="bu">sum</span>()</span>
+<span id="cb17-97"><a href="#cb17-97" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-98"><a href="#cb17-98" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-99"><a href="#cb17-99" aria-hidden="true" tabindex="-1"></a>The prior is estimated with the following code, equivalent to the one used on all the examples seen so far. </span>
+<span id="cb17-100"><a href="#cb17-100" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-101"><a href="#cb17-101" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb17-102"><a href="#cb17-102" aria-hidden="true" tabindex="-1"></a>_, priors <span class="op">=</span> np.unique([k <span class="cf">for</span> _, k <span class="kw">in</span> D], return_counts<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-103"><a href="#cb17-103" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> priors.<span class="bu">sum</span>()</span>
+<span id="cb17-104"><a href="#cb17-104" aria-hidden="true" tabindex="-1"></a>prior_pos <span class="op">=</span> priors[<span class="dv">1</span>] <span class="op">/</span> N</span>
+<span id="cb17-105"><a href="#cb17-105" aria-hidden="true" tabindex="-1"></a>prior_neg <span class="op">=</span> priors[<span class="dv">0</span>] <span class="op">/</span> N</span>
+<span id="cb17-106"><a href="#cb17-106" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-107"><a href="#cb17-107" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-108"><a href="#cb17-108" aria-hidden="true" tabindex="-1"></a>Once the parameters have been identified, these can be used to predict the class of a given sequence. The first step is to compute the likelihood, e.g., $\mathbb P($w w x z$\mid \mathcal Y)$. It can be observed that the sequence needs to be transformed into tokens which can be done with the <span class="in">`split`</span> method. Then, the token is converted into an index using the mapping <span class="in">`w2id`</span>; once the index is retrieved, it can be used to obtain the parameter associated with the word. The likelihood is the product of all the probabilities; however, this product is computed in log space. </span>
+<span id="cb17-109"><a href="#cb17-109" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-110"><a href="#cb17-110" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb17-111"><a href="#cb17-111" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> likelihood(params, txt):</span>
+<span id="cb17-112"><a href="#cb17-112" aria-hidden="true" tabindex="-1"></a>    params <span class="op">=</span> np.log(params)</span>
+<span id="cb17-113"><a href="#cb17-113" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> [params[w2id[x]] <span class="cf">for</span> x <span class="kw">in</span> txt.split()]</span>
+<span id="cb17-114"><a href="#cb17-114" aria-hidden="true" tabindex="-1"></a>    tot <span class="op">=</span> <span class="bu">sum</span>(_)</span>
+<span id="cb17-115"><a href="#cb17-115" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.exp(tot)</span>
+<span id="cb17-116"><a href="#cb17-116" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-117"><a href="#cb17-117" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-118"><a href="#cb17-118" aria-hidden="true" tabindex="-1"></a>The likelihood combined with the prior for all the classes produces the evidence, which subsequently is used to calculate the posterior distribution. The posterior is then used to predict the class for all the sequences in $\mathcal D$. The predictions are stored in the variable <span class="in">`hy`</span>.</span>
+<span id="cb17-119"><a href="#cb17-119" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-120"><a href="#cb17-120" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb17-121"><a href="#cb17-121" aria-hidden="true" tabindex="-1"></a>post_pos <span class="op">=</span> [likelihood(l_pos, x) <span class="op">*</span> prior_pos <span class="cf">for</span> x, _ <span class="kw">in</span> D]</span>
+<span id="cb17-122"><a href="#cb17-122" aria-hidden="true" tabindex="-1"></a>post_neg <span class="op">=</span> [likelihood(l_neg, x) <span class="op">*</span> prior_neg <span class="cf">for</span> x, _ <span class="kw">in</span> D]</span>
+<span id="cb17-123"><a href="#cb17-123" aria-hidden="true" tabindex="-1"></a>evidence <span class="op">=</span> np.vstack([post_pos, post_neg]).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)</span>
+<span id="cb17-124"><a href="#cb17-124" aria-hidden="true" tabindex="-1"></a>post_pos <span class="op">/=</span> evidence</span>
+<span id="cb17-125"><a href="#cb17-125" aria-hidden="true" tabindex="-1"></a>post_neg <span class="op">/=</span> evidence</span>
+<span id="cb17-126"><a href="#cb17-126" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.where(post_pos <span class="op">&gt;</span> post_neg, <span class="dv">1</span>, <span class="dv">0</span>)</span>
+<span id="cb17-127"><a href="#cb17-127" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-128"><a href="#cb17-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-129"><a href="#cb17-129" aria-hidden="true" tabindex="-1"></a><span class="fu">### Clasificador de Texto {#sec-tc-categorical }</span></span>
+<span id="cb17-130"><a href="#cb17-130" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-131"><a href="#cb17-131" aria-hidden="true" tabindex="-1"></a>The approach followed on text categorization is to treat it as supervised learning problem where the starting point is a dataset $\mathcal D = <span class="sc">\{</span>(\text{text}_i, y_i) \mid i=1,\ldots, N\}$ where $y \in \{c_1, \ldots c_K\}$ and $\text{text}_i$ is a text. For example, the next code uses a toy sentiment analysis dataset with four classes: negative (N), neutral (NEU), absence of polarity (NONE), and positive (P).</span>
+<span id="cb17-132"><a href="#cb17-132" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-133"><a href="#cb17-133" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb17-134"><a href="#cb17-134" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> [(x[<span class="st">'text'</span>], x[<span class="st">'klass'</span>]) <span class="cf">for</span> x <span class="kw">in</span> tweet_iterator(TWEETS)]</span>
+<span id="cb17-135"><a href="#cb17-135" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-136"><a href="#cb17-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-137"><a href="#cb17-137" aria-hidden="true" tabindex="-1"></a>As can be observed, $\mathcal D$ is equivalent to the one used in the <span class="co">[</span><span class="ot">Categorical Distribution</span><span class="co">](#sec:categorical-distribution)</span> example. The difference is that sequence of letters is changed with a sentence. Nonetheless, a feasible approach is to obtain the tokens using the <span class="in">`split`</span> method. Another approach is to retrieve the tokens using a Tokenizer, as covered in the <span class="co">[</span><span class="ot">Text Normalization</span><span class="co">](/NLP-Course/topics/05TextNormalization)</span> Section. </span>
+<span id="cb17-138"><a href="#cb17-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-139"><a href="#cb17-139" aria-hidden="true" tabindex="-1"></a>The following code uses the <span class="in">`TextModel`</span> class to tokenize the text using words as the tokenizer; the tokenized text is stored in the variable <span class="in">`D.`</span></span>
+<span id="cb17-140"><a href="#cb17-140" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-141"><a href="#cb17-141" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb17-142"><a href="#cb17-142" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(token_list<span class="op">=</span>[<span class="op">-</span><span class="dv">1</span>])</span>
+<span id="cb17-143"><a href="#cb17-143" aria-hidden="true" tabindex="-1"></a>tok <span class="op">=</span> tm.tokenize</span>
+<span id="cb17-144"><a href="#cb17-144" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> [(tok(x), y) <span class="cf">for</span> x, y <span class="kw">in</span> D]</span>
+<span id="cb17-145"><a href="#cb17-145" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-146"><a href="#cb17-146" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-147"><a href="#cb17-147" aria-hidden="true" tabindex="-1"></a>Before estimating the likelihood parameters, it is needed to encode the tokens using an index; by doing it, it is possible to store the parameters in an array and compute everything <span class="in">`numpy`</span> operations. The following code encodes each token with a unique index; the mapping is in the dictionary <span class="in">`w2id`</span>. </span>
+<span id="cb17-148"><a href="#cb17-148" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-149"><a href="#cb17-149" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb17-150"><a href="#cb17-150" aria-hidden="true" tabindex="-1"></a>words <span class="op">=</span> <span class="bu">set</span>()</span>
+<span id="cb17-151"><a href="#cb17-151" aria-hidden="true" tabindex="-1"></a>[words.update(x) <span class="cf">for</span> x, y <span class="kw">in</span> D]</span>
+<span id="cb17-152"><a href="#cb17-152" aria-hidden="true" tabindex="-1"></a>w2id <span class="op">=</span> {v: k <span class="cf">for</span> k, v <span class="kw">in</span> <span class="bu">enumerate</span>(words)}</span>
+<span id="cb17-153"><a href="#cb17-153" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-154"><a href="#cb17-154" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-155"><a href="#cb17-155" aria-hidden="true" tabindex="-1"></a>Previously, the classes have been represented using natural numbers. The positive class has been associated with the number $1$, whereas the negative class with $0$. However, in this dataset, the classes are strings. It was decided to encode them as numbers to facilitate subsequent operations. The encoding process can be performed simultaneously with the estimation of the prior of each class. Please note that the priors are stored using the logarithm in the variable <span class="in">`priors.`</span> </span>
+<span id="cb17-156"><a href="#cb17-156" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-157"><a href="#cb17-157" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb17-158"><a href="#cb17-158" aria-hidden="true" tabindex="-1"></a>uniq_labels, priors <span class="op">=</span> np.unique([k <span class="cf">for</span> _, k <span class="kw">in</span> D], return_counts<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-159"><a href="#cb17-159" aria-hidden="true" tabindex="-1"></a>priors <span class="op">=</span> np.log(priors <span class="op">/</span> priors.<span class="bu">sum</span>())</span>
+<span id="cb17-160"><a href="#cb17-160" aria-hidden="true" tabindex="-1"></a>uniq_labels <span class="op">=</span> {<span class="bu">str</span>(v): k <span class="cf">for</span> k, v <span class="kw">in</span> <span class="bu">enumerate</span>(uniq_labels)}</span>
+<span id="cb17-161"><a href="#cb17-161" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-162"><a href="#cb17-162" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-163"><a href="#cb17-163" aria-hidden="true" tabindex="-1"></a>It is time to estimate the likelihood parameters for each of the classes. It is assumed that the data comes from a Categorical distribution and that each token is independent. The likelihood parameters can be stored in a matrix (variable <span class="in">`l_tokens`</span>) with $K$ rows, each row contains the parameters of the class, and the number of columns corresponds to the vocabulary's size. The first step is to calculate the frequency of each token per class which can be done with the following code. </span>
+<span id="cb17-164"><a href="#cb17-164" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-165"><a href="#cb17-165" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb17-166"><a href="#cb17-166" aria-hidden="true" tabindex="-1"></a>l_tokens <span class="op">=</span> np.zeros((<span class="bu">len</span>(uniq_labels), <span class="bu">len</span>(w2id)))</span>
+<span id="cb17-167"><a href="#cb17-167" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x, y <span class="kw">in</span> D:</span>
+<span id="cb17-168"><a href="#cb17-168" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> l_tokens[uniq_labels[y]]</span>
+<span id="cb17-169"><a href="#cb17-169" aria-hidden="true" tabindex="-1"></a>    cnt <span class="op">=</span> Counter(x)</span>
+<span id="cb17-170"><a href="#cb17-170" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, v <span class="kw">in</span> cnt.items():</span>
+<span id="cb17-171"><a href="#cb17-171" aria-hidden="true" tabindex="-1"></a>        w[w2id[i]] <span class="op">+=</span> v</span>
+<span id="cb17-172"><a href="#cb17-172" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-173"><a href="#cb17-173" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-174"><a href="#cb17-174" aria-hidden="true" tabindex="-1"></a>The next step is to normalize the frequency. However, before normalizing it, it is being used a Laplace smoothing with a value $0.1$. Therefore, the constant $0.1$ is added to all the matrix elements. The next step is to normalize (second line), and finally, the parameters are stored using the logarithm. </span>
+<span id="cb17-175"><a href="#cb17-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-176"><a href="#cb17-176" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb17-177"><a href="#cb17-177" aria-hidden="true" tabindex="-1"></a>l_tokens <span class="op">+=</span> <span class="fl">0.1</span></span>
+<span id="cb17-178"><a href="#cb17-178" aria-hidden="true" tabindex="-1"></a>l_tokens <span class="op">=</span> l_tokens <span class="op">/</span> np.atleast_2d(l_tokens.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)).T</span>
+<span id="cb17-179"><a href="#cb17-179" aria-hidden="true" tabindex="-1"></a>l_tokens <span class="op">=</span> np.log(l_tokens)</span>
+<span id="cb17-180"><a href="#cb17-180" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-181"><a href="#cb17-181" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-182"><a href="#cb17-182" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Prediction</span></span>
+<span id="cb17-183"><a href="#cb17-183" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-184"><a href="#cb17-184" aria-hidden="true" tabindex="-1"></a>Once all the parameters have been estimated, it is time to use the model to classify any text. The following function computes the posterior distribution. The first step is to tokenize the text (second line) and compute the frequency of each token in the text. The frequency stored in the dictionary <span class="in">`cnt`</span> is converted into the vector <span class="in">`x`</span> using the mapping function <span class="in">`w2id`</span>. The final step is to compute the product of the likelihood and the prior. The product is computed in log-space; thus, this is done using the likelihood and the prior sum. The last step is to compute the evidence and normalize the result; the evidence is computed with the function <span class="in">`logsumexp.`</span> </span>
+<span id="cb17-185"><a href="#cb17-185" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-186"><a href="#cb17-186" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb17-187"><a href="#cb17-187" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> posterior(txt):</span>
+<span id="cb17-188"><a href="#cb17-188" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> np.zeros(<span class="bu">len</span>(w2id))</span>
+<span id="cb17-189"><a href="#cb17-189" aria-hidden="true" tabindex="-1"></a>    cnt <span class="op">=</span> Counter(tm.tokenize(txt))</span>
+<span id="cb17-190"><a href="#cb17-190" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> i, v <span class="kw">in</span> cnt.items():</span>
+<span id="cb17-191"><a href="#cb17-191" aria-hidden="true" tabindex="-1"></a>        <span class="cf">try</span>:</span>
+<span id="cb17-192"><a href="#cb17-192" aria-hidden="true" tabindex="-1"></a>            x[w2id[i]] <span class="op">+=</span> v</span>
+<span id="cb17-193"><a href="#cb17-193" aria-hidden="true" tabindex="-1"></a>        <span class="cf">except</span> <span class="pp">KeyError</span>:</span>
+<span id="cb17-194"><a href="#cb17-194" aria-hidden="true" tabindex="-1"></a>            <span class="cf">continue</span></span>
+<span id="cb17-195"><a href="#cb17-195" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> (x <span class="op">*</span> l_tokens).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>) <span class="op">+</span> priors</span>
+<span id="cb17-196"><a href="#cb17-196" aria-hidden="true" tabindex="-1"></a>    l <span class="op">=</span> np.exp(_ <span class="op">-</span> logsumexp(_))</span>
+<span id="cb17-197"><a href="#cb17-197" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> l</span>
+<span id="cb17-198"><a href="#cb17-198" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-199"><a href="#cb17-199" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-200"><a href="#cb17-200" aria-hidden="true" tabindex="-1"></a>The posterior function can predict all the text in $\mathcal D$; the predictions are used to compute the model's accuracy. In order to compute the accuracy, the classes in $\mathcal D$ need to be transformed using the nomenclature of the likelihood matrix and priors vector; this is done with the <span class="in">`uniq_labels`</span> dictionary (second line). </span>
+<span id="cb17-201"><a href="#cb17-201" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-202"><a href="#cb17-202" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb17-203"><a href="#cb17-203" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.array([posterior(x).argmax() <span class="cf">for</span> x, _ <span class="kw">in</span> D])</span>
+<span id="cb17-204"><a href="#cb17-204" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([uniq_labels[y] <span class="cf">for</span> _, y <span class="kw">in</span> D])</span>
+<span id="cb17-205"><a href="#cb17-205" aria-hidden="true" tabindex="-1"></a>(y <span class="op">==</span> hy).mean()</span>
+<span id="cb17-206"><a href="#cb17-206" aria-hidden="true" tabindex="-1"></a><span class="fl">0.974</span></span>
+<span id="cb17-207"><a href="#cb17-207" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-208"><a href="#cb17-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-209"><a href="#cb17-209" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Training</span></span>
+<span id="cb17-210"><a href="#cb17-210" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-211"><a href="#cb17-211" aria-hidden="true" tabindex="-1"></a>Solving supervised learning problems requires two phases; one is the training phase, and the other is the prediction. The posterior function handles the later phase, and it is missing to organize the code described in a training function. The following code describes the training function; it requires the dataset's parameters and an instance of <span class="in">`TextModel.`</span></span>
+<span id="cb17-212"><a href="#cb17-212" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-213"><a href="#cb17-213" aria-hidden="true" tabindex="-1"></a><span class="in">```python</span></span>
+<span id="cb17-214"><a href="#cb17-214" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> training(D, tm):</span>
+<span id="cb17-215"><a href="#cb17-215" aria-hidden="true" tabindex="-1"></a>    tok <span class="op">=</span> tm.tokenize</span>
+<span id="cb17-216"><a href="#cb17-216" aria-hidden="true" tabindex="-1"></a>    D <span class="op">=</span>[(tok(x), y) <span class="cf">for</span> x, y <span class="kw">in</span> D]</span>
+<span id="cb17-217"><a href="#cb17-217" aria-hidden="true" tabindex="-1"></a>    words <span class="op">=</span> <span class="bu">set</span>()</span>
+<span id="cb17-218"><a href="#cb17-218" aria-hidden="true" tabindex="-1"></a>    [words.update(x) <span class="cf">for</span> x, y <span class="kw">in</span> D]</span>
+<span id="cb17-219"><a href="#cb17-219" aria-hidden="true" tabindex="-1"></a>    w2id <span class="op">=</span> {v: k <span class="cf">for</span> k, v <span class="kw">in</span> <span class="bu">enumerate</span>(words)}</span>
+<span id="cb17-220"><a href="#cb17-220" aria-hidden="true" tabindex="-1"></a>    uniq_labels, priors <span class="op">=</span> np.unique([k <span class="cf">for</span> _, k <span class="kw">in</span> D], return_counts<span class="op">=</span><span class="va">True</span>)</span>
+<span id="cb17-221"><a href="#cb17-221" aria-hidden="true" tabindex="-1"></a>    priors <span class="op">=</span> np.log(priors <span class="op">/</span> priors.<span class="bu">sum</span>())</span>
+<span id="cb17-222"><a href="#cb17-222" aria-hidden="true" tabindex="-1"></a>    uniq_labels <span class="op">=</span> {<span class="bu">str</span>(v): k <span class="cf">for</span> k, v <span class="kw">in</span> <span class="bu">enumerate</span>(uniq_labels)}</span>
+<span id="cb17-223"><a href="#cb17-223" aria-hidden="true" tabindex="-1"></a>    l_tokens <span class="op">=</span> np.zeros((<span class="bu">len</span>(uniq_labels), <span class="bu">len</span>(w2id)))</span>
+<span id="cb17-224"><a href="#cb17-224" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> x, y <span class="kw">in</span> D:</span>
+<span id="cb17-225"><a href="#cb17-225" aria-hidden="true" tabindex="-1"></a>        w <span class="op">=</span> l_tokens[uniq_labels[y]]</span>
+<span id="cb17-226"><a href="#cb17-226" aria-hidden="true" tabindex="-1"></a>        cnt <span class="op">=</span> Counter(x)</span>
+<span id="cb17-227"><a href="#cb17-227" aria-hidden="true" tabindex="-1"></a>        <span class="cf">for</span> i, v <span class="kw">in</span> cnt.items():</span>
+<span id="cb17-228"><a href="#cb17-228" aria-hidden="true" tabindex="-1"></a>            w[w2id[i]] <span class="op">+=</span> v</span>
+<span id="cb17-229"><a href="#cb17-229" aria-hidden="true" tabindex="-1"></a>    l_tokens <span class="op">+=</span> <span class="fl">0.1</span></span>
+<span id="cb17-230"><a href="#cb17-230" aria-hidden="true" tabindex="-1"></a>    l_tokens <span class="op">=</span> l_tokens <span class="op">/</span> np.atleast_2d(l_tokens.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)).T</span>
+<span id="cb17-231"><a href="#cb17-231" aria-hidden="true" tabindex="-1"></a>    l_tokens <span class="op">=</span> np.log(l_tokens)</span>
+<span id="cb17-232"><a href="#cb17-232" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> w2id, uniq_labels, l_tokens, priors</span>
+<span id="cb17-233"><a href="#cb17-233" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb17-234"><a href="#cb17-234" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-235"><a href="#cb17-235" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modelado Vectorial {#sec-tc-vectorial} </span></span>
+<span id="cb17-236"><a href="#cb17-236" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb17-237"><a href="#cb17-237" aria-hidden="true" tabindex="-1"></a>xxx</span>
 </code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div></div></div></div></div>
 </div> <!-- /content -->
