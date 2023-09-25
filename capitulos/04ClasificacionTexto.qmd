@@ -39,13 +39,14 @@ from IPython.display import Markdown
 
 El problema de categorización (clasificación) de texto es una tarea de PLN que desarrolla algoritmos capaces de identificar la categoría de un texto de un conjunto de categorías previamente definidas. Por ejemplo, en análisis de sentimientos pertenece a esta tarea y su objetivo es el detectar la polaridad (e.g., positiva, neutral, o negativa) del texto. Cabe mencionar, que diferentes tareas de PLN pueden ser formuladas como problemas de clasificación, e.g., la tarea de preguntas y respuestas, vinculación de enunciados, entre otras.  
 
-Text Categorization can be tackled from different perspectives; the one followed here is to treat it as a supervised learning problem. As in any supervised learning problem, the starting point is a set of pairs, where the first element of the pair is the input and the second one corresponds to the output. Let $\mathcal D = \{(\text{text}_i, y_i) \mid i=1,\ldots, N\}$ where $y \in \{c_1, \ldots c_K\}$ and $\text{text}_i$ is a text. 
+El problema de clasificación de texto se puede resolver desde diferentes perspectivas; el camino que se seguirá corresponde a aprendizaje supervisado. Los problemas de aprendizaje supervisado comienzan con un conjunto de pares, donde el primer elementos del par corresponde a las entradas (variables independientes) y el segundo es la respuesta (variable dependiente). Sea $\mathcal D = \{(\text{texto}_i, y_i) \mid i=1,\ldots, N\}$ donde $y \in \{c_1, \ldots c_K\}$ y $\text{texto}_i$ contiene el texto. 
 
 ## Modelado Probabilistico (Distribución Categórica) {#sec-categorical-distribution}
 
-### Problema Sintético
+Se inicia la descripción de clasificación de texto presentando un ejemplo sintético que ejemplifica los supuestos que se realizan en el modelo. La distribución categórica modela el evento de seleccionar $K$ eventos, los cuales pueden estar codificados como caracteres. Si esta selección se realiza $\ell$ veces se cuenta con una secuencia de eventos representados por caracteres. Por ejemplo, los $K$ eventos pueden ser representados por los caracteres 
 
-The description of Bayes’ theorem continues with an example of a Categorical distribution. A Categorical distribution can simulate the drawn of $K$ events that can be encoded as characters, and $\ell$ repetitions can be represented as a sequence of characters. Consequently, the distribution can illustrate the generation sequences associated with different classes, e.g., positive or negative.
+
+repetitions can be represented as a sequence of characters. Consequently, the distribution can illustrate the generation sequences associated with different classes, e.g., positive or negative.
 
 The first step is to create the dataset. As done previously, two distributions are defined, one for each class; it can be observed that each distribution has different parameters. The second step is to sample these distributions; the distributions are sampled 1000 times with the following procedure. Each time, a random variable representing the number of outcomes taken from each distribution is drawn from a Normal $\mathcal N(15, 3)$ and stored in the variable `length.` The random variable indicates the number of outcomes for each Categorical distribution; the results are transformed into a sequence, associated to the label corresponding to the positive and negative class, and stored in the list `D.`
 
