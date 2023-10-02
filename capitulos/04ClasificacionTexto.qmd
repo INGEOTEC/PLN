@@ -41,6 +41,25 @@ El problema de categorización (clasificación) de texto es una tarea de PLN que
 
 El problema de clasificación de texto se puede resolver desde diferentes perspectivas; el camino que se seguirá corresponde a aprendizaje supervisado. Los problemas de aprendizaje supervisado comienzan con un conjunto de pares, donde el primer elementos del par corresponde a las entradas (variables independientes) y el segundo es la respuesta (variable dependiente). Sea $\mathcal D = \{(\text{texto}_i, y_i) \mid i=1,\ldots, N\}$ donde $y \in \{c_1, \ldots c_K\}$ y $\text{texto}_i$ contiene el texto. 
 
+## Teorema de Bayes
+
+Una manera de modelar este problema es modelando la probabilidad de observar la clase $\mathcal Y$ dada la entrada, es decir, $\mathbb P(\mathcal Y \mid \mathcal X)$. El Teorema de Bayes ayuda a expresa esta expresión en términos de elementos que se pueden medir de un conjunto de entrenamiento. 
+
+La probabilidad conjunta se puede expresar como $\mathbb P(\mathcal X, \mathcal Y)$, esta probabilidad es conmutativa por lo que $\mathbb P(\mathcal X, \mathcal Y)=\mathbb P(\mathcal Y, \mathcal X).$ En este momento se puede utilizar la definición de **probabilidad condicional** que es $\mathbb P(\mathcal Y, \mathcal X)=\mathbb P(\mathcal Y \mid \mathcal X) \mathbb P(\mathcal X).$ Utilizando estas ecuaciones el **Teorema de Bayes** queda como
+
+$$
+\mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)}{\mathbb P(\mathcal X)},
+$$ {#eq-teorema-bayes}
+
+donde al término $\mathbb P(\mathcal X \mid \mathcal Y)$ se le conoce como **verosimilitud**, $\mathbb P(\mathcal Y)$ es la probabilidad **a priori** y $\mathbb P(\mathcal X)$ es la **evidencia**. 
+
+Es importante mencionar que la evidencia se puede calcular mediante la probabilidad
+total, es decir:
+
+$$
+\mathbb P(\mathcal X) = \sum_{y \in \mathcal Y} \mathbb P(\mathcal X \mid \mathcal Y=y) \mathbb P(\mathcal Y=y).
+$$ {#eq-evidencia}
+
 ## Modelado Probabilistico (Distribución Categórica) {#sec-categorical-distribution}
 
 Se inicia la descripción de clasificación de texto presentando un ejemplo sintético que ejemplifica los supuestos que se realizan en el modelo. La distribución categórica modela el evento de seleccionar $K$ eventos, los cuales pueden estar codificados como caracteres. Si esta selección se realiza $\ell$ veces se cuenta con una secuencia de eventos representados por caracteres. Por ejemplo, los $K$ eventos pueden ser representados por los caracteres *w*, *x*, *y* y *z*. Utilizando este proceso se puede utilizar para ejemplificar el proceso de asociar una secuencia a una clase, e.g., positiva o negativa.
@@ -109,9 +128,7 @@ prior_pos = priors[1] / N
 prior_neg = priors[0] / N
 ```
 
-Una ves que se han identificador los parámetroos, estos pueden ser utilizados para predecir la clase dada una secuencia. El primer paso es calcular la verosimilitud, e.g., $\mathbb P($w w x z$\mid \mathcal Y)$. Se observa que la secuencia tiene se tiene que transformar en términos, esto se puede realizar con el método `split`. Después, los términos se convierten al identificador que corresponde al parámetro del token con el mapa `w2id`. Una vez que se identifica el índice se puede 
-
-It can be observed that the sequence needs to be transformed into tokens which can be done with the `split` method. Then, the token is converted into an index using the mapping `w2id`; once the index is retrieved, it can be used to obtain the parameter associated with the word. The likelihood is the product of all the probabilities; however, this product is computed in log space. 
+Una ves que se han identificador los parámetros, estos pueden ser utilizados para predecir la clase dada una secuencia. El primer paso es calcular la verosimilitud, e.g., $\mathbb P($w w x z$\mid \mathcal Y)$. Se observa que la secuencia tiene se tiene que transformar en términos, esto se puede realizar con el método `split`. Después, los términos se convierten al identificador que corresponde al parámetro del token con el mapa `w2id`. Una vez que se identifica el índice se conoce el valor del parámetro, se calcula el producto (como o la suma si se hace todo en términos del logaritmo) y se regresa el valor de la verosimilitud. 
 
 ```python
 def likelihood(params, txt):
@@ -121,7 +138,7 @@ def likelihood(params, txt):
     return np.exp(tot)
 ```
 
-The likelihood combined with the prior for all the classes produces the evidence, which subsequently is used to calculate the posterior distribution. The posterior is then used to predict the class for all the sequences in $\mathcal D$. The predictions are stored in the variable `hy`.
+La verosimilitud se combina con la probabilidad a priori, con esta información se calcula la evidencia y para obtener la probabilidad a posteriori tanto para la clase positiva (`post_pos`) como para la negativa (`post_neg`). La clase corresponde a la etiqueta que presenta la máxima probabilidad, última línea (`hy`).
 
 ```python
 post_pos = [likelihood(l_pos, x) * prior_pos for x, _ in D]
@@ -129,7 +146,7 @@ post_neg = [likelihood(l_neg, x) * prior_neg for x, _ in D]
 evidence = np.vstack([post_pos, post_neg]).sum(axis=0)
 post_pos /= evidence
 post_neg /= evidence
-hy = np.where(post_pos > post_neg, 1, 0)
+hy = np.where(post_pos >= post_neg, 1, 0)
 ```
 
 ### Clasificador de Texto {#sec-tc-categorical }
