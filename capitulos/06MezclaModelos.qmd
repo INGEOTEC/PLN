@@ -24,6 +24,7 @@ import seaborn as sns
 ```{python}
 #| echo: false
 from IPython.display import Markdown
+sns.set_style('whitegrid')
 ```
 
 ```{python}

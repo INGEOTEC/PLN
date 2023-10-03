@@ -12,3 +12,4 @@ dependencies:
   - wordcloud
   - pandas
   - jupyterlab
+  - plotly
