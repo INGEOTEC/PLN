@@ -151,6 +151,10 @@ hy = np.where(post_pos >= post_neg, 1, 0)
 
 ### Clasificador de Texto {#sec-tc-categorical }
 
+
+En la sección anterior se trabajo desde la creación de un conjunto de datos sintético que fue generado mediante dos distribuciones Categóricas, donde a cada distribución se le asignó una clase, e.g., positiva o negativa. Esto permitió observar todas las partes de modelado, en la realidad se desconoce el procedimiento que genera los textos y el proceso de aprendizaje empieza con un conjunto de datos, en este ejemplo se utilizará un conjunto de datos 
+
+
 The approach followed on text categorization is to treat it as supervised learning problem where the starting point is a dataset $\mathcal D = \{(\text{text}_i, y_i) \mid i=1,\ldots, N\}$ where $y \in \{c_1, \ldots c_K\}$ and $\text{text}_i$ is a text. For example, the next code uses a toy sentiment analysis dataset with four classes: negative (N), neutral (NEU), absence of polarity (NONE), and positive (P).
 
 ```python
