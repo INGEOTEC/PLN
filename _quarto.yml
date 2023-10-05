@@ -17,9 +17,9 @@ book:
     - capitulos/01Introduccion.qmd
     - capitulos/02ManejandoTexto.qmd
     - capitulos/03ModeladoLenguaje.qmd
-    - capitulos/04ClasificacionTexto.qmd
+    - capitulos/04FundamentosCT.qmd
     - capitulos/05RepresentacionTexto.qmd
-    - capitulos/06MezclaModelos.qmd
+    - capitulos/06ClasificacionTexto.qmd
     - capitulos/07TareasClasificacion.qmd
     - capitulos/08BasesConocimiento.qmd
     - capitulos/09Visualizacion.qmd

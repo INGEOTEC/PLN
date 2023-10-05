@@ -118,7 +118,7 @@ df_dis = dense.decision_function(Dtest).flatten()
 ::: {.content-visible when-format="html"}
 ```{python}
 #| code-fold: true
-#| df = pd.DataFrame(reducer.transform(X_dense), columns=['x', 'y'])
+df = pd.DataFrame(reducer.transform(X_dense), columns=['x', 'y'])
 df['Distancia'] = df_dis
 acc = np.r_[[x['klass'] for x in Dtest]] == np.where(df_dis >= 0, 1, 0)
 df['Acierto'] = acc
@@ -141,7 +141,7 @@ fig.show()
 ::: {.content-visible when-format="pdf"}
 ```{python}
 #| code-fold: true
-#| df = pd.DataFrame(reducer.transform(X_dense), columns=['x', 'y'])
+df = pd.DataFrame(reducer.transform(X_dense), columns=['x', 'y'])
 df['Distancia'] = df_dis
 acc = np.r_[[x['klass'] for x in Dtest]] == np.where(df_dis >= 0, 1, 0)
 df['Acierto'] = acc
