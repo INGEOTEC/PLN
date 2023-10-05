@@ -151,10 +151,22 @@ hy = np.where(post_pos >= post_neg, 1, 0)
 
 ### Clasificador de Texto {#sec-tc-categorical }
 
-The approach followed on text categorization is to treat it as supervised learning problem where the starting point is a dataset $\mathcal D = \{(\text{text}_i, y_i) \mid i=1,\ldots, N\}$ where $y \in \{c_1, \ldots c_K\}$ and $\text{text}_i$ is a text. For example, the next code uses a toy sentiment analysis dataset with four classes: negative (N), neutral (NEU), absence of polarity (NONE), and positive (P).
 
-```python
-D = [(x['text'], x['klass']) for x in tweet_iterator(TWEETS)]
+En la sección anterior se trabajo desde la creación de un conjunto de datos sintético que fue generado mediante dos distribuciones Categóricas, donde a cada distribución se le asignó una clase, e.g., positiva o negativa. Esto permitió observar todas las partes de modelado, en la realidad se desconoce el procedimiento que genera los textos y el proceso de aprendizaje empieza con un conjunto de datos, en este ejemplo se utilizará un conjunto de datos de polaridad que tiene cuatro clases, negativo (N), neutral (N), ausencia de polaridad (NEU), y positivo (P). 
+
+::: {.callout-caution collapse="true"}
+### Conjunto de Datos 
+
+Es pertinente mencionar que el conjunto de datos fue etiquetado usando un clasificador de texto y ninguna valoración humana fue realizada para verificar que las etiquetas sean correctas. 
+
+Este conjunto se usa dentro de [EvoMSA](https://evomsa.readthedocs.io) (@EvoMSA) como conjunto de prueba para realizar pruebas unitarias. 
+:::
+
+El conjunto de datos se obtiene con la siguiente instrucción.
+
+```{python}
+D = [(x['text'], x['klass'])
+     for x in tweet_iterator(TWEETS)]
 ```
 
 As can be observed, $\mathcal D$ is equivalent to the one used in the [Categorical Distribution](#sec:categorical-distribution) example. The difference is that sequence of letters is changed with a sentence. Nonetheless, a feasible approach is to obtain the tokens using the `split` method. Another approach is to retrieve the tokens using a Tokenizer, as covered in the [Text Normalization](/NLP-Course/topics/05TextNormalization) Section. 
