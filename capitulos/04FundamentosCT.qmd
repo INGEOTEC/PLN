@@ -149,7 +149,7 @@ post_neg /= evidence
 hy = np.where(post_pos >= post_neg, 1, 0)
 ```
 
-### Clasificador de Texto {#sec-tc-categorical }
+### Clasificador de Texto {#sec-tc-categorical}
 
 
 En la sección anterior se trabajo desde la creación de un conjunto de datos sintético que fue generado mediante dos distribuciones Categóricas, donde a cada distribución se le asignó una clase, e.g., positiva o negativa. Esto permitió observar todas las partes de modelado, en la realidad se desconoce el procedimiento que genera los textos y el proceso de aprendizaje empieza con un conjunto de datos, en este ejemplo se utilizará un conjunto de datos de polaridad que tiene cuatro clases, negativo (N), neutral (N), ausencia de polaridad (NEU), y positivo (P). 
@@ -169,7 +169,7 @@ D = [(x['text'], x['klass'])
      for x in tweet_iterator(TWEETS)]
 ```
 
-As can be observed, $\mathcal D$ is equivalent to the one used in the [Categorical Distribution](#sec:categorical-distribution) example. The difference is that sequence of letters is changed with a sentence. Nonetheless, a feasible approach is to obtain the tokens using the `split` method. Another approach is to retrieve the tokens using a Tokenizer, as covered in the [Text Normalization](/NLP-Course/topics/05TextNormalization) Section. 
+Como se puede observar, $\mathcal D$ es equivalente al usado en el ejemplo de la @sec-categorical-distribution. La diferencia es que la secuencia de letras está cambiada con un enunciado. Aún así, es una metodología factible es obtener los tokens using el método `split`. Otro método es obtener los tokens usando el segmentador descrito en la @sec-TextModel. 
 
 The following code uses the `TextModel` class to tokenize the text using words as the tokenizer; the tokenized text is stored in the variable `D.`
 
