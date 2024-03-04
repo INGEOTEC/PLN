@@ -232,7 +232,7 @@ for a in zip(*[text[i:] for i in range(q)]):
 q_grams
 ```
 
-## TextModel
+## TextModel {#sec-TextModel}
 
 Habiendo descrito diferentes tipos de normalización (sintáctica y semántica) y el proceso de segmentación es momento para describir la librería [B4MSA](https://b4msa.readthedocs.io/) (@B4MSA) que implementa estos procedimientos; específicamente, el punto de acceso de estos procedimientos corresponde a la clase `TextModel`. El método `TextModel.text_transformations` es el que realiza todos los métodos de normalización (@sec-normalizacion y @sec-normalizacion-semantica) y el método `TextModel.tokenize` es el encargado de realizar la segmentación (@sec-segmentacion) siguiendo el flujo mostrado en la @fig-pre-procesamiento.
 
@@ -293,7 +293,7 @@ texto = 'el clima es perfecto'
 tm.text_transformations(texto)
 ```
 
-### Segmentación 
+### Segmentación
 
 El paso final es describir el uso de la segmentación. La librería utiliza el parámetro `token_list` para indicar el tipo de segmentación que se desea realizar. El formato es una lista de número, donde el valor indica el tipo de segmentación. El número $1$ indica que se realizará una segmentación por palabras, los número positivo corresponden a los gramas de caracteres y los números negativos a los gramas de palabras. 
 
