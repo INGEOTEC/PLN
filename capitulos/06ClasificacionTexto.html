@@ -2,7 +2,7 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.4.398">
+<meta name="generator" content="quarto-1.4.550">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
@@ -116,6 +116,7 @@ div.csl-indent {
     "search-more-match-text": "resultado adicional en este documento",
     "search-more-matches-text": "resultados adicionales en este documento",
     "search-clear-button-title": "Borrar",
+    "search-text-placeholder": "",
     "search-detached-cancel-button-title": "Cancelar",
     "search-submit-button-title": "Enviar",
     "search-label": "Buscar"
@@ -131,6 +132,33 @@ div.csl-indent {
   <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
   <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
+<script type="text/javascript">
+const typesetMath = (el) => {
+  if (window.MathJax) {
+    // MathJax Typeset
+    window.MathJax.typeset([el]);
+  } else if (window.katex) {
+    // KaTeX Render
+    var mathElements = el.getElementsByClassName("math");
+    var macros = [];
+    for (var i = 0; i < mathElements.length; i++) {
+      var texText = mathElements[i].firstChild;
+      if (mathElements[i].tagName == "SPAN") {
+        window.katex.render(texText.data, mathElements[i], {
+          displayMode: mathElements[i].classList.contains('display'),
+          throwOnError: false,
+          macros: macros,
+          fleqn: false
+        });
+      }
+    }
+  }
+}
+window.Quarto = {
+  typesetMath
+};
+</script>
+
 </head>
 
 <body class="nav-sidebar floating">
@@ -139,11 +167,11 @@ div.csl-indent {
   <header id="quarto-header" class="headroom fixed-top">
   <nav class="quarto-secondary-nav">
     <div class="container-fluid d-flex">
-      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
+      <button type="button" class="quarto-btn-toggle btn" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">
         <i class="bi bi-layout-text-sidebar-reverse"></i>
       </button>
         <nav class="quarto-page-breadcrumbs" aria-label="breadcrumb"><ol class="breadcrumb"><li class="breadcrumb-item"><a href="../capitulos/06ClasificacionTexto.html"><span class="chapter-number">6</span>&nbsp; <span class="chapter-title">Clasificación de Texto</span></a></li></ol></nav>
-        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
+        <a class="flex-grow-1" role="button" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item" aria-controls="quarto-sidebar" aria-expanded="false" aria-label="Alternar barra lateral" onclick="if (window.quartoToggleHeadroom) { window.quartoToggleHeadroom(); }">      
         </a>
       <button type="button" class="btn quarto-search-button" aria-label="" onclick="window.quartoOpenSearch();">
         <i class="bi bi-search"></i>
@@ -154,13 +182,13 @@ div.csl-indent {
 <!-- content -->
 <div id="quarto-content" class="quarto-container page-columns page-rows-contents page-layout-article">
 <!-- sidebar -->
-  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal sidebar-navigation floating overflow-auto">
+  <nav id="quarto-sidebar" class="sidebar collapse collapse-horizontal quarto-sidebar-collapse-item sidebar-navigation floating overflow-auto">
     <div class="pt-lg-2 mt-2 text-left sidebar-header">
     <div class="sidebar-title mb-0 py-0">
       <a href="../">Procesamiento de Lenguaje Natural</a> 
         <div class="sidebar-tools-main">
-    <a href="https://github.com/INGEOTEC/PLN" title="Source Code" class="quarto-navigation-tool px-1" aria-label="Source Code"><i class="bi bi-github"></i></a>
-    <a href="../Procesamiento-de-Lenguaje-Natural.pdf" title="Download PDF" class="quarto-navigation-tool px-1" aria-label="Download PDF"><i class="bi bi-file-pdf"></i></a>
+    <a href="https://github.com/INGEOTEC/PLN" title="Ejecutar el código" class="quarto-navigation-tool px-1" aria-label="Ejecutar el código"><i class="bi bi-github"></i></a>
+    <a href="../Procesamiento-de-Lenguaje-Natural.pdf" title="Descargar PDF" class="quarto-navigation-tool px-1" aria-label="Descargar PDF"><i class="bi bi-file-pdf"></i></a>
 </div>
     </div>
       </div>
@@ -246,7 +274,7 @@ div.csl-indent {
     </ul>
     </div>
 </nav>
-<div id="quarto-sidebar-glass" data-bs-toggle="collapse" data-bs-target="#quarto-sidebar,#quarto-sidebar-glass"></div>
+<div id="quarto-sidebar-glass" class="quarto-sidebar-collapse-item" data-bs-toggle="collapse" data-bs-target=".quarto-sidebar-collapse-item"></div>
 <!-- margin-sidebar -->
     <div id="quarto-margin-sidebar" class="sidebar margin-sidebar">
         <nav id="TOC" role="doc-toc" class="toc-active">
@@ -308,9 +336,9 @@ div.csl-indent {
 </section>
 <section id="introducción" class="level2" data-number="6.1">
 <h2 data-number="6.1" class="anchored" data-anchor-id="introducción"><span class="header-section-number">6.1</span> Introducción</h2>
-<div class="cell">
+<div class="cell" data-layout-align="default">
 <div class="cell-output-display">
-<div id="fig-prediccion-1-estimador" class="quarto-figure quarto-figure-center anchored">
+<div id="fig-prediccion-1-estimador" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-prediccion-1-estimador-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div>
@@ -322,7 +350,7 @@ div.csl-indent {
 </pre>
 </div>
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-prediccion-1-estimador-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-prediccion-1-estimador-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;6.1: Diagrama de predicción
 </figcaption>
 </figure>
@@ -382,7 +410,7 @@ Figura&nbsp;6.1: Diagrama de predicción
 </div>
 <p>El intervalo izquierdo es <span class="math inline">\([0.9298, 0.6542]\)</span> y el derecho tiene los valores <span class="math inline">\([0.9624, 0.8211]\)</span>. Para complementar la información del intervalo de confianza, la <a href="#fig-hist-f1-bow" class="quarto-xref">Figura&nbsp;<span>6.2</span></a> muestra el histograma y la densidad estimada para calcular el intervalo de confianza. Se ve que la varianza en la clase negativa es menor además de que tiene un rendimiento mejor que en la clase positiva.</p>
 <div id="cell-fig-hist-f1-bow" class="cell" data-execution_count="13">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>df_bow <span class="op">=</span> pd.DataFrame(ci.statistic_samples, columns<span class="op">=</span>[<span class="st">'f1-neg'</span>, <span class="st">'f1-pos'</span>])</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>df_bow[<span class="st">'Tipo'</span>] <span class="op">=</span> <span class="st">'BoW'</span></span>
@@ -390,12 +418,12 @@ Figura&nbsp;6.1: Diagrama de predicción
 <span id="cb12-4"><a href="#cb12-4" aria-hidden="true" tabindex="-1"></a>sns.displot(df_bow, kde<span class="op">=</span><span class="va">True</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-hist-f1-bow" class="quarto-figure quarto-figure-center anchored" width="564" height="470">
+<div id="fig-hist-f1-bow" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-hist-f1-bow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="06ClasificacionTexto_files/figure-html/fig-hist-f1-bow-output-1.png" width="564" height="470" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-hist-f1-bow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-hist-f1-bow-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;6.2: Histograma de f1 por clase
 </figcaption>
 </figure>
@@ -418,9 +446,9 @@ Figura&nbsp;6.2: Histograma de f1 por clase
 <span id="cb14-7"><a href="#cb14-7" aria-hidden="true" tabindex="-1"></a>                                      idfs, ws)</span>
 <span id="cb14-8"><a href="#cb14-8" aria-hidden="true" tabindex="-1"></a>              <span class="cf">if</span> w <span class="op">&lt;</span> <span class="dv">0</span>}</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<p>En la figura se puede observar que las características más importantes corresponden a la presencia de <em>asesinan</em>, <em>asesinan a</em>, <em>tiroteo</em> entre otras y por el lado de palabras relacionadas a la clase negativa se observan <em>secuestrado</em>, <em>asesina</em>, <em>un asesino</em>, entre otras. En <a href="#sec-analisis-ejemplo" class="quarto-xref"><span>Sección&nbsp;6.4</span></a> se muestran ejemplos que ayudan a comprender el hecho de que la palabra <em>asesinan</em> sea considerada como positiva y por otro lado <em>asesina</em> se en la clase negativa.</p>
+<p>En la figura se puede observar que las características más importantes corresponden a la presencia de <em>asesinan</em>, <em>asesinan a</em>, <em>tiroteo</em> entre otras y por el lado de palabras relacionadas a la clase negativa se observan <em>secuestrado</em>, <em>asesina</em>, <em>un asesino</em>, entre otras. En <a href="#sec-analisis-ejemplo" class="quarto-xref"><span>Sección 6.4</span></a> se muestran ejemplos que ayudan a comprender el hecho de que la palabra <em>asesinan</em> sea considerada como positiva y por otro lado <em>asesina</em> se en la clase negativa.</p>
 <div id="cell-fig-nube-tokens" class="cell" data-execution_count="16">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>word_pos <span class="op">=</span> WordCloud().generate_from_frequencies(tokens_pos)</span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>word_neg <span class="op">=</span> WordCloud().generate_from_frequencies(tokens_neg)</span>
@@ -437,12 +465,12 @@ Figura&nbsp;6.2: Histograma de f1 por clase
 <span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>    ax.set_title(title)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-nube-tokens" class="quarto-figure quarto-figure-center anchored" width="540" height="157">
+<div id="fig-nube-tokens" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-nube-tokens-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="06ClasificacionTexto_files/figure-html/fig-nube-tokens-output-1.png" width="540" height="157" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-nube-tokens-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nube-tokens-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;6.3: Nubes de términos positivos y negativos
 </figcaption>
 </figure>
@@ -477,7 +505,7 @@ Figura&nbsp;6.3: Nubes de términos positivos y negativos
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>perf <span class="op">=</span> select.cv_results_</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div id="cell-fig-dense-k" class="cell" data-execution_count="20">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> [{<span class="st">'d'</span>: k, <span class="st">'macro-f1'</span>: v} <span class="cf">for</span> k, v <span class="kw">in</span> perf.items()]</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(_)</span>
@@ -485,12 +513,12 @@ Figura&nbsp;6.3: Nubes de términos positivos y negativos
 <span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>sns.set_style(<span class="st">'whitegrid'</span>)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-dense-k" class="quarto-figure quarto-figure-center anchored" width="585" height="427">
+<div id="fig-dense-k" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-dense-k-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="06ClasificacionTexto_files/figure-html/fig-dense-k-output-1.png" width="585" height="427" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-dense-k-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-dense-k-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;6.4: Rendimiento Variando el Número de Características
 </figcaption>
 </figure>
@@ -509,7 +537,7 @@ Figura&nbsp;6.4: Rendimiento Variando el Número de Características
 </div>
 </div>
 <div id="cell-fig-hist-f1-bow-dense" class="cell" data-execution_count="23">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>ci(y, hy_dense)</span>
 <span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>df_dense <span class="op">=</span> pd.DataFrame(ci.statistic_samples, columns<span class="op">=</span>[<span class="st">'f1-neg'</span>, <span class="st">'f1-pos'</span>])</span>
@@ -523,12 +551,12 @@ Figura&nbsp;6.4: Rendimiento Variando el Número de Características
 <span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a><span class="co">#&nbsp;plt.grid()</span></span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-hist-f1-bow-dense" class="quarto-figure quarto-figure-center anchored" width="1044" height="471">
+<div id="fig-hist-f1-bow-dense" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-hist-f1-bow-dense-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="06ClasificacionTexto_files/figure-html/fig-hist-f1-bow-dense-output-1.png" width="1044" height="471" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-hist-f1-bow-dense-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-hist-f1-bow-dense-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;6.5: Histogramas de f1 por clase
 </figcaption>
 </figure>
@@ -544,7 +572,7 @@ Figura&nbsp;6.5: Histogramas de f1 por clase
 </div>
 <p>La <a href="#fig-nube-densa" class="quarto-xref">Figura&nbsp;<span>6.6</span></a> muestra las nubes de palabras de las características positivas y negativas, se puede observar que una característica significativa de la clase positiva corresponde al modelo <strong>robo</strong>, <strong>muere</strong>, entre otros y de la clase negativa se observa <strong>comentando</strong>, **ocurrir*, entre otras.</p>
 <div id="cell-fig-nube-densa" class="cell" data-execution_count="25">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>word_pos <span class="op">=</span> WordCloud().generate_from_frequencies(carac_pos)</span>
 <span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>word_neg <span class="op">=</span> WordCloud().generate_from_frequencies(carac_neg)</span>
@@ -561,12 +589,12 @@ Figura&nbsp;6.5: Histogramas de f1 por clase
 <span id="cb25-13"><a href="#cb25-13" aria-hidden="true" tabindex="-1"></a>    ax.set_title(title)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-nube-densa" class="quarto-figure quarto-figure-center anchored" width="540" height="157">
+<div id="fig-nube-densa" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-nube-densa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="06ClasificacionTexto_files/figure-html/fig-nube-densa-output-1.png" width="540" height="157" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-nube-densa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nube-densa-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;6.6: Nube de características positivas y negativas
 </figcaption>
 </figure>
@@ -643,7 +671,7 @@ Figura&nbsp;6.6: Nube de características positivas y negativas
 </div>
 <p>La <a href="#fig-nube-ej-pos" class="quarto-xref">Figura&nbsp;<span>6.7</span></a> muestra la nube de palabras de los términos y características más significativas para la predicción del ejemplo positivo (<em>Asesinan a persona en Jalisco</em>). La nube de palabras para el ejemplo negativo (<em>La asesina vivía en Jalisco</em>) se muestra en la <a href="#fig-nube-ej" class="quarto-xref">Figura&nbsp;<span>6.8</span></a>. La nube de palabras está codificada de la siguiente manera, las palabras que corresponden a la clase positiva está en mayúsculas y las de la clase negativa en minúsculas. Por ejemplo, en <a href="#fig-nube-ej-pos" class="quarto-xref">Figura&nbsp;<span>6.7</span></a> se observa que la palabra <em>asesinan</em> es relevante para la clasificación del ejemplo así como la característica <strong>ocurrir</strong>.</p>
 <div id="cell-fig-nube-ej-pos" class="cell" data-execution_count="33">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb39"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb39-1"><a href="#cb39-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> codifica(names, vec):</span>
 <span id="cb39-2"><a href="#cb39-2" aria-hidden="true" tabindex="-1"></a>    carac_pos <span class="op">=</span> <span class="bu">dict</span>()</span>
@@ -680,12 +708,12 @@ Figura&nbsp;6.6: Nube de características positivas y negativas
 <span id="cb39-33"><a href="#cb39-33" aria-hidden="true" tabindex="-1"></a>    ax.set_title(title)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-nube-ej-pos" class="quarto-figure quarto-figure-center anchored" width="540" height="157">
+<div id="fig-nube-ej-pos" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-nube-ej-pos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="06ClasificacionTexto_files/figure-html/fig-nube-ej-pos-output-1.png" width="540" height="157" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-nube-ej-pos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nube-ej-pos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;6.7: Nube de características ejemplo positivo
 </figcaption>
 </figure>
@@ -694,7 +722,7 @@ Figura&nbsp;6.7: Nube de características ejemplo positivo
 </div>
 <p>En el caso del ejemplo negativo, la <a href="#fig-nube-ej" class="quarto-xref">Figura&nbsp;<span>6.8</span></a> muestra q-gramas de caracteres asociados a la clase positiva y también es evidente la palabra <em>asesina</em>. En el caso del clasificador denso también se observan características positivas como <strong>ocurrir</strong> y características negativas como <strong>critican</strong> y <strong>empleados</strong>.</p>
 <div id="cell-fig-nube-ej" class="cell" data-execution_count="34">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'La asesina vivía en Jalisco.'</span></span>
 <span id="cb40-2"><a href="#cb40-2" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> dense.transform([txt])[<span class="dv">0</span>] <span class="op">*</span> dense.estimator_instance.coef_[<span class="dv">0</span>]</span>
@@ -722,12 +750,12 @@ Figura&nbsp;6.7: Nube de características ejemplo positivo
 <span id="cb40-24"><a href="#cb40-24" aria-hidden="true" tabindex="-1"></a>    ax.set_title(title)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-nube-ej" class="quarto-figure quarto-figure-center anchored" width="540" height="157">
+<div id="fig-nube-ej" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-nube-ej-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="06ClasificacionTexto_files/figure-html/fig-nube-ej-output-1.png" width="540" height="157" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-nube-ej-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nube-ej-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;6.8: Nube de características ejemplo negativo
 </figcaption>
 </figure>
@@ -736,7 +764,7 @@ Figura&nbsp;6.8: Nube de características ejemplo negativo
 </div>
 <p>Complementando los ejemplos anteriores, la <a href="#fig-nube-ej-error" class="quarto-xref">Figura&nbsp;<span>6.9</span></a> muestra la nube de palabras obtenidas al calcular la función de decisión del texto <em>Le acaban de robar la bicicleta a mi hijo.</em> Se observa que este texto corresponde a la clase positiva y la función de decisión normalizada del clasificador disperso es <span class="math inline">\(-0.0335\)</span> y del clasificador denso corresponde a <span class="math inline">\(-0.0798\)</span>. Ambas funciones de decisión indican que la clase es negativa, lo cual es un error. La figura muestra que los q-gramas de caracteres y las características positivas dominan las nubes, pero estas no tienen el peso suficiente para realizar una predicción correcta.</p>
 <div id="cell-fig-nube-ej-error" class="cell" data-execution_count="36">
-<details>
+<details class="code-fold">
 <summary>Código</summary>
 <div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'Le acaban de robar la bicicleta a mi hijo.'</span></span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> dense.transform([txt])[<span class="dv">0</span>] <span class="op">*</span> dense.estimator_instance.coef_[<span class="dv">0</span>]</span>
@@ -764,12 +792,12 @@ Figura&nbsp;6.8: Nube de características ejemplo negativo
 <span id="cb41-24"><a href="#cb41-24" aria-hidden="true" tabindex="-1"></a>    ax.set_title(title)</span></code><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </details>
 <div class="cell-output cell-output-display">
-<div id="fig-nube-ej-error" class="quarto-figure quarto-figure-center anchored" width="540" height="157">
+<div id="fig-nube-ej-error" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-nube-ej-error-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <img src="06ClasificacionTexto_files/figure-html/fig-nube-ej-error-output-1.png" width="540" height="157" class="figure-img">
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-nube-ej-error-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-nube-ej-error-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;6.9: Nube de características en un ejemplo positivo con predicción negativa
 </figcaption>
 </figure>
@@ -779,9 +807,9 @@ Figura&nbsp;6.9: Nube de características en un ejemplo positivo con predicción
 </section>
 <section id="combinando-modelos" class="level2" data-number="6.5">
 <h2 data-number="6.5" class="anchored" data-anchor-id="combinando-modelos"><span class="header-section-number">6.5</span> Combinando Modelos</h2>
-<div class="cell">
+<div class="cell" data-layout-align="default">
 <div class="cell-output-display">
-<div id="fig-prediccion-1-estimador" class="quarto-figure quarto-figure-center anchored">
+<div id="fig-prediccion-1-estimador" class="quarto-figure quarto-figure-center quarto-float anchored">
 <figure class="quarto-float quarto-float-fig figure">
 <div aria-describedby="fig-prediccion-1-estimador-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div>
@@ -814,7 +842,7 @@ Figura&nbsp;6.9: Nube de características en un ejemplo positivo con predicción
 </pre>
 </div>
 </div>
-<figcaption class="figure quarto-float-caption quarto-float-fig" id="fig-prediccion-1-estimador-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-bottom quarto-float-caption quarto-float-fig" id="fig-prediccion-1-estimador-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Figura&nbsp;6.10: Diagrama de predicción en mezcla de modelos
 </figcaption>
 </figure>
@@ -835,14 +863,14 @@ Figura&nbsp;6.10: Diagrama de predicción en mezcla de modelos
 </div>
 <p>Para poder comparar el rendimiento de los tres clasificadores desarrollados, la <a href="#tbl-performance-recall-precision-delitos" class="quarto-xref">Tabla&nbsp;<span>6.1</span></a> presenta el rendimiento con las medidas recall y precision en las dos clases. Se puede observar que el <code>bow</code> tiene el mejor recall en la clase negativa y mejor precision en la clase positiva. Por otro lado el mejor recall en la clase positiva y precision en la clase negativa lo tiene <code>stack</code>.</p>
 <div class="cell" data-execution_count="39">
-<div id="tbl-performance-recall-precision-delitos" class="cell anchored" data-execution_count="39">
+<div id="tbl-performance-recall-precision-delitos" class="cell quarto-float anchored" data-execution_count="39">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="table quarto-float-caption quarto-float-tbl" id="tbl-performance-recall-precision-delitos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-performance-recall-precision-delitos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Tabla&nbsp;6.1: Rendimiento
 </figcaption>
 <div aria-describedby="tbl-performance-recall-precision-delitos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-display" data-execution_count="39">
-<table class="cell table table-sm table-striped small">
+<table class="do-not-create-environment cell table table-sm table-striped small">
 <colgroup>
 <col style="width: 20%">
 <col style="width: 20%">
@@ -890,14 +918,14 @@ Tabla&nbsp;6.1: Rendimiento
 </div>
 <p>Con respecto al rendimiento en términos de <span class="math inline">\(f_1\)</span>, la <a href="#tbl-performance-f1-delitos" class="quarto-xref">Tabla&nbsp;<span>6.2</span></a> presenta la información con respecto a cada clase y la última columna contiene el macro-<span class="math inline">\(f_1\)</span>. Los valores indican que en la clase positiva el mejor valor corresponde a <code>stack</code> lo cual se ve reflejado en el macro-<span class="math inline">\(f_1\)</span>. El algoritmo de Stack Generalization nos indica que se hizo una mejora en la predicción de la clase positiva y la clase negativa se mantuvo constante al menos con respecto de la medida <span class="math inline">\(f_1\)</span>.</p>
 <div class="cell" data-execution_count="40">
-<div id="tbl-performance-f1-delitos" class="cell anchored" data-execution_count="40">
+<div id="tbl-performance-f1-delitos" class="cell quarto-float anchored" data-execution_count="40">
 <figure class="quarto-float quarto-float-tbl figure">
-<figcaption class="table quarto-float-caption quarto-float-tbl" id="tbl-performance-f1-delitos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
+<figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-tbl" id="tbl-performance-f1-delitos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 Tabla&nbsp;6.2: Rendimiento
 </figcaption>
 <div aria-describedby="tbl-performance-f1-delitos-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-display" data-execution_count="40">
-<table class="cell table table-sm table-striped small">
+<table class="do-not-create-environment cell table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th></th>
@@ -1126,38 +1154,28 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       }
     }
     stripColumnClz(note)
-    const typesetMath = (el) => {
-      if (window.MathJax) {
-        // MathJax Typeset
-        window.MathJax.typeset([el]);
-      } else if (window.katex) {
-        // KaTeX Render
-        var mathElements = el.getElementsByClassName("math");
-        var macros = [];
-        for (var i = 0; i < mathElements.length; i++) {
-          var texText = mathElements[i].firstChild;
-          if (mathElements[i].tagName == "SPAN") {
-            window.katex.render(texText.data, mathElements[i], {
-              displayMode: mathElements[i].classList.contains('display'),
-              throwOnError: false,
-              macros: macros,
-              fleqn: false
-            });
-          }
-        }
-      }
-    }
     if (id === null || id.startsWith('sec-')) {
       // Special case sections, only their first couple elements
       const container = document.createElement("div");
       if (note.children && note.children.length > 2) {
-        for (let i = 0; i < 2; i++) {
-          container.appendChild(note.children[i].cloneNode(true));
+        container.appendChild(note.children[0].cloneNode(true));
+        for (let i = 1; i < note.children.length; i++) {
+          const child = note.children[i];
+          if (child.tagName === "P" && child.innerText === "") {
+            continue;
+          } else {
+            container.appendChild(child.cloneNode(true));
+            break;
+          }
         }
-        typesetMath(container);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(container);
+        }
         return container.innerHTML
       } else {
-        typesetMath(note);
+        if (window.Quarto?.typesetMath) {
+          window.Quarto.typesetMath(note);
+        }
         return note.innerHTML;
       }
     } else {
@@ -1166,8 +1184,15 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
       if (anchorLink) {
         anchorLink.remove();
       }
-      typesetMath(note);
-      return note.innerHTML;
+      if (window.Quarto?.typesetMath) {
+        window.Quarto.typesetMath(note);
+      }
+      // TODO in 1.5, we should make sure this works without a callout special case
+      if (note.classList.contains("callout")) {
+        return note.outerHTML;
+      } else {
+        return note.innerHTML;
+      }
     }
   }
   for (var i=0; i<xrefs.length; i++) {
@@ -1390,12 +1415,12 @@ window.document.addEventListener("DOMContentLoaded", function (event) {
 </script>
 <nav class="page-navigation">
   <div class="nav-page nav-page-previous">
-      <a href="../capitulos/05RepresentacionTexto.html" class="pagination-link">
+      <a href="../capitulos/05RepresentacionTexto.html" class="pagination-link" aria-label="Representación de Texto">
         <i class="bi bi-arrow-left-short"></i> <span class="nav-page-text"><span class="chapter-number">5</span>&nbsp; <span class="chapter-title">Representación de Texto</span></span>
       </a>          
   </div>
   <div class="nav-page nav-page-next">
-      <a href="../capitulos/07TareasClasificacion.html" class="pagination-link">
+      <a href="../capitulos/07TareasClasificacion.html" class="pagination-link" aria-label="Tareas de Clasificación de Texto">
         <span class="nav-page-text"><span class="chapter-number">7</span>&nbsp; <span class="chapter-title">Tareas de Clasificación de Texto</span></span> <i class="bi bi-arrow-right-short"></i>
       </a>
   </div>
