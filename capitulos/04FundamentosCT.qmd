@@ -171,7 +171,7 @@ D = [(x['text'], x['klass'])
 
 Como se puede observar, $\mathcal D$ es equivalente al usado en el ejemplo de la @sec-categorical-distribution. La diferencia es que la secuencia de letras está cambiada con un enunciado. Aún así, es una metodología factible es obtener los tokens using el método `split`. Otro método es obtener los tokens usando el segmentador descrito en la @sec-TextModel. 
 
-The following code uses the `TextModel` class to tokenize the text using words as the tokenizer; the tokenized text is stored in the variable `D.`
+El siguiente código usa la clase `TextModel` para segmentar el texto considerando solamente las palabras. El texto segmentado se guarda en la variable `D.`
 
 ```python
 tm = TextModel(token_list=[-1])
@@ -179,7 +179,7 @@ tok = tm.tokenize
 D = [(tok(x), y) for x, y in D]
 ```
 
-Before estimating the likelihood parameters, it is needed to encode the tokens using an index; by doing it, it is possible to store the parameters in an array and compute everything `numpy` operations. The following code encodes each token with a unique index; the mapping is in the dictionary `w2id`. 
+Antes de estimar la verosimilitud, es necesario codificar los tokens usando un índice. Esto se realiza para guardar los parámetros en un arreglo y poder hacer operaciones utilizando la librería `numpy`. El siguiente código asocia un índice a cada token y el esta asociación se guarda en el diccionario `w2id.` 
 
 ```python
 words = set()
@@ -187,7 +187,7 @@ words = set()
 w2id = {v: k for k, v in enumerate(words)}
 ```
 
-Previously, the classes have been represented using natural numbers. The positive class has been associated with the number $1$, whereas the negative class with $0$. However, in this dataset, the classes are strings. It was decided to encode them as numbers to facilitate subsequent operations. The encoding process can be performed simultaneously with the estimation of the prior of each class. Please note that the priors are stored using the logarithm in the variable `priors.` 
+Anteriormente, las cases se habían representado de manera numérica; donde la clase positiva se había asociado al número $1$, mientras que la clase negativa se había asociado al número $0$. En esta ocasión las clases son cadenas de caracteres, para seguir con un procedimiento similar al presentado previamente, se decide codificar las clases con un número natural, este procedimiento se hace al mismo tiempo que se calcula la distribución a priori. El siguiente código muestra este procedimiento, con la característica de que el logaritmo de la distribución a prior se guarda en la variable `priors.` 
 
 ```python
 uniq_labels, priors = np.unique([k for _, k in D], return_counts=True)
@@ -195,7 +195,7 @@ priors = np.log(priors / priors.sum())
 uniq_labels = {str(v): k for k, v in enumerate(uniq_labels)}
 ```
 
-It is time to estimate the likelihood parameters for each of the classes. It is assumed that the data comes from a Categorical distribution and that each token is independent. The likelihood parameters can be stored in a matrix (variable `l_tokens`) with $K$ rows, each row contains the parameters of the class, and the number of columns corresponds to the vocabulary's size. The first step is to calculate the frequency of each token per class which can be done with the following code. 
+En este momento se está en la posibilidad de estimar los parámetros de la verosimilitud para cada clase. Se asume que los datos provienen de una distribución Categórica y que cada token es independiente. Los parámetros de la verosimilitud se pueden guardar en una matriz (variable `l_tokens \in \mathbb R^{K,d}`) con $K$ renglones, que corresponden a los parámetros de cada clase y $d$ columnas que son el vocabulario, es decir, los diferentes tokens que tiene la representación. El primer paso es calcular la frecuencia de cada token por clase, lo cual se puede realizar con el siguiente código.  
 
 ```python
 l_tokens = np.zeros((len(uniq_labels), len(w2id)))
@@ -206,7 +206,7 @@ for x, y in D:
         w[w2id[i]] += v
 ```
 
-The next step is to normalize the frequency. However, before normalizing it, it is being used a Laplace smoothing with a value $0.1$. Therefore, the constant $0.1$ is added to all the matrix elements. The next step is to normalize (second line), and finally, the parameters are stored using the logarithm. 
+El siguiente paso es normalizar la frecuencia, el algoritmo que se utiliza para normalizar es el suavizado de Laplace, por lo cual se le añade un valor pequeño, en este caso, $0.1$ a cada frecuencia, esto se observa en la primera línea del siguiente código. La segunda linea normaliza las frecuencia y finalmente se guarda el logaritmo de la frecuencia normalizada.
 
 ```python
 l_tokens += 0.1
