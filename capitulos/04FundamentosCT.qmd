@@ -214,9 +214,9 @@ l_tokens = l_tokens / np.atleast_2d(l_tokens.sum(axis=1)).T
 l_tokens = np.log(l_tokens)
 ```
 
-#### Prediction
+#### Predicción
 
-Once all the parameters have been estimated, it is time to use the model to classify any text. The following function computes the posterior distribution. The first step is to tokenize the text (second line) and compute the frequency of each token in the text. The frequency stored in the dictionary `cnt` is converted into the vector `x` using the mapping function `w2id`. The final step is to compute the product of the likelihood and the prior. The product is computed in log-space; thus, this is done using the likelihood and the prior sum. The last step is to compute the evidence and normalize the result; the evidence is computed with the function `logsumexp.` 
+Una vez que todos los parámetros han sido estimados, es tiempo de usar el modelo para clasificar cualquier texto dato. La siguiente función calcula la distribución posterior. El primer paso es segmentar el texto (segunda línea) y calcular la frecuencia de cada término en el texto. La frecuencia se guarda en el diccionario `cnt`, el cual se convierte en el vector `x` usando la función de `w2id`. El siguiente paso es calcular la verosimilitud y la probabilidad a priori. El producto se calcula en el espacio de los logaritmos, por lo tanto se observa que la verosimilitud y la probabilidad a priori se suman. El último paso es calcular la evidencia y normalizar el resultado; la evidencia se calcula utilizando la función `logsumexp.` 
 
 ```python
 def posterior(txt):
@@ -266,7 +266,3 @@ def training(D, tm):
     l_tokens = np.log(l_tokens)
     return w2id, uniq_labels, l_tokens, priors
 ```
-
-## Modelado Vectorial {#sec-tc-vectorial} 
-
-xxx
