@@ -60,7 +60,7 @@ $$
 \mathbb P(\mathcal X) = \sum_{y \in \mathcal Y} \mathbb P(\mathcal X \mid \mathcal Y=y) \mathbb P(\mathcal Y=y).
 $$ {#eq-evidencia}
 
-## Modelado Probabilistico (Distribución Categórica) {#sec-categorical-distribution}
+## Modelado Probabilístico (Distribución Categórica) {#sec-categorical-distribution}
 
 Se inicia la descripción de clasificación de texto presentando un ejemplo sintético que ejemplifica los supuestos que se realizan en el modelo. La distribución categórica modela el evento de seleccionar $K$ eventos, los cuales pueden estar codificados como caracteres. Si esta selección se realiza $\ell$ veces se cuenta con una secuencia de eventos representados por caracteres. Por ejemplo, los $K$ eventos pueden ser representados por los caracteres *w*, *x*, *y* y *z*. Utilizando este proceso se puede utilizar para ejemplificar el proceso de asociar una secuencia a una clase, e.g., positiva o negativa.
 
@@ -130,7 +130,9 @@ prior_neg = priors[0] / N
 
 Una ves que se han identificador los parámetros, estos pueden ser utilizados para predecir la clase dada una secuencia. El primer paso es calcular la verosimilitud, e.g., $\mathbb P($w w x z$\mid \mathcal Y)$. Se observa que la secuencia tiene se tiene que transformar en términos, esto se puede realizar con el método `split`. Después, los términos se convierten al identificador que corresponde al parámetro del token con el mapa `w2id`. Una vez que se identifica el índice se conoce el valor del parámetro, se calcula el producto (como o la suma si se hace todo en términos del logaritmo) y se regresa el valor de la verosimilitud. 
 
-```python
+```{python}
+#| echo: true
+
 def likelihood(params, txt):
     params = np.log(params)
     _ = [params[w2id[x]] for x in txt.split()]
@@ -140,7 +142,9 @@ def likelihood(params, txt):
 
 La verosimilitud se combina con la probabilidad a priori, con esta información se calcula la evidencia y para obtener la probabilidad a posteriori tanto para la clase positiva (`post_pos`) como para la negativa (`post_neg`). La clase corresponde a la etiqueta que presenta la máxima probabilidad, última línea (`hy`).
 
-```python
+```{python}
+#| echo: true
+
 post_pos = [likelihood(l_pos, x) * prior_pos for x, _ in D]
 post_neg = [likelihood(l_neg, x) * prior_neg for x, _ in D]
 evidence = np.vstack([post_pos, post_neg]).sum(axis=0)
@@ -165,6 +169,8 @@ Este conjunto se usa dentro de [EvoMSA](https://evomsa.readthedocs.io) (@EvoMSA)
 El conjunto de datos se obtiene con la siguiente instrucción.
 
 ```{python}
+#| echo: true
+
 D = [(x['text'], x['klass'])
      for x in tweet_iterator(TWEETS)]
 ```
@@ -173,7 +179,9 @@ Como se puede observar, $\mathcal D$ es equivalente al usado en el ejemplo de la
 
 El siguiente código usa la clase `TextModel` para segmentar el texto considerando solamente las palabras. El texto segmentado se guarda en la variable `D.`
 
-```python
+```{python}
+#| echo: true
+
 tm = TextModel(token_list=[-1])
 tok = tm.tokenize
 D = [(tok(x), y) for x, y in D]
@@ -181,7 +189,9 @@ D = [(tok(x), y) for x, y in D]
 
 Antes de estimar la verosimilitud, es necesario codificar los tokens usando un índice. Esto se realiza para guardar los parámetros en un arreglo y poder hacer operaciones utilizando la librería `numpy`. El siguiente código asocia un índice a cada token y el esta asociación se guarda en el diccionario `w2id.` 
 
-```python
+```{python}
+#| echo: true
+
 words = set()
 [words.update(x) for x, y in D]
 w2id = {v: k for k, v in enumerate(words)}
@@ -189,15 +199,19 @@ w2id = {v: k for k, v in enumerate(words)}
 
 Anteriormente, las cases se habían representado de manera numérica; donde la clase positiva se había asociado al número $1$, mientras que la clase negativa se había asociado al número $0$. En esta ocasión las clases son cadenas de caracteres, para seguir con un procedimiento similar al presentado previamente, se decide codificar las clases con un número natural, este procedimiento se hace al mismo tiempo que se calcula la distribución a priori. El siguiente código muestra este procedimiento, con la característica de que el logaritmo de la distribución a prior se guarda en la variable `priors.` 
 
-```python
+```{python}
+#| echo: true
+
 uniq_labels, priors = np.unique([k for _, k in D], return_counts=True)
 priors = np.log(priors / priors.sum())
 uniq_labels = {str(v): k for k, v in enumerate(uniq_labels)}
 ```
 
-En este momento se está en la posibilidad de estimar los parámetros de la verosimilitud para cada clase. Se asume que los datos provienen de una distribución Categórica y que cada token es independiente. Los parámetros de la verosimilitud se pueden guardar en una matriz (variable `l_tokens \in \mathbb R^{K,d}`) con $K$ renglones, que corresponden a los parámetros de cada clase y $d$ columnas que son el vocabulario, es decir, los diferentes tokens que tiene la representación. El primer paso es calcular la frecuencia de cada token por clase, lo cual se puede realizar con el siguiente código.  
+En este momento se está en la posibilidad de estimar los parámetros de la verosimilitud para cada clase. Se asume que los datos provienen de una distribución Categórica y que cada token es independiente. Los parámetros de la verosimilitud se pueden guardar en una matriz (variable `l_tokens` $\in \mathbb R^{K,d}$) con $K$ renglones, que corresponden a los parámetros de cada clase y $d$ columnas que son el vocabulario, es decir, los diferentes tokens que tiene la representación. El primer paso es calcular la frecuencia de cada token por clase, lo cual se puede realizar con el siguiente código.  
 
-```python
+```{python}
+#| echo: true
+
 l_tokens = np.zeros((len(uniq_labels), len(w2id)))
 for x, y in D:
     w = l_tokens[uniq_labels[y]]
@@ -208,7 +222,9 @@ for x, y in D:
 
 El siguiente paso es normalizar la frecuencia, el algoritmo que se utiliza para normalizar es el suavizado de Laplace, por lo cual se le añade un valor pequeño, en este caso, $0.1$ a cada frecuencia, esto se observa en la primera línea del siguiente código. La segunda linea normaliza las frecuencia y finalmente se guarda el logaritmo de la frecuencia normalizada.
 
-```python
+```{python}
+#| echo: true
+
 l_tokens += 0.1
 l_tokens = l_tokens / np.atleast_2d(l_tokens.sum(axis=1)).T
 l_tokens = np.log(l_tokens)
@@ -218,7 +234,9 @@ l_tokens = np.log(l_tokens)
 
 Una vez que todos los parámetros han sido estimados, es tiempo de usar el modelo para clasificar cualquier texto dato. La siguiente función calcula la distribución posterior. El primer paso es segmentar el texto (segunda línea) y calcular la frecuencia de cada término en el texto. La frecuencia se guarda en el diccionario `cnt`, el cual se convierte en el vector `x` usando la función de `w2id`. El siguiente paso es calcular la verosimilitud y la probabilidad a priori. El producto se calcula en el espacio de los logaritmos, por lo tanto se observa que la verosimilitud y la probabilidad a priori se suman. El último paso es calcular la evidencia y normalizar el resultado; la evidencia se calcula utilizando la función `logsumexp.` 
 
-```python
+```{python}
+#| echo: true
+
 def posterior(txt):
     x = np.zeros(len(w2id))
     cnt = Counter(tm.tokenize(txt))
@@ -232,20 +250,23 @@ def posterior(txt):
     return l
 ```
 
-The posterior function can predict all the text in $\mathcal D$; the predictions are used to compute the model's accuracy. In order to compute the accuracy, the classes in $\mathcal D$ need to be transformed using the nomenclature of the likelihood matrix and priors vector; this is done with the `uniq_labels` dictionary (second line). 
+La función `posterior` predice todos los textos en $\mathcal D$; las predicciones se utilizan para estimar la exactitud. Para poder estimar la exactitud, las clases en $\mathcal D$ se tienen que codificar con la nomenclatura utilizada previamente, la cual es encuentra en el diccionario `uniq_labels` tal y como se muestra en la segunda linea del siguiente código. 
 
-```python
+```{python}
+#| echo: true
+
 hy = np.array([posterior(x).argmax() for x, _ in D])
 y = np.array([uniq_labels[y] for _, y in D])
 (y == hy).mean()
-0.974
 ```
 
-#### Training
+#### Entrenamiento
 
-Solving supervised learning problems requires two phases; one is the training phase, and the other is the prediction. The posterior function handles the later phase, and it is missing to organize the code described in a training function. The following code describes the training function; it requires the dataset's parameters and an instance of `TextModel.`
+El procedimiento utilizado en aprendizaje supervisado está dividido en dos etapas; la primera etapa es el entrenamiento y la otra es la etapa de predicción. La función `posterior` atiende la segunda etapa. La función `training`, que se muestra a continuación, presenta el procedimiento de entrenamiento. La función requiere el conjunto de datos (`D`) y una instancia de `TextModel` (`tm`) para realizar la segmentación. 
 
-```python
+```{python}
+#| echo: true
+
 def training(D, tm):
     tok = tm.tokenize
     D =[(tok(x), y) for x, y in D]
