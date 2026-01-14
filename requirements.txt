@@ -1,2 +1,15 @@
+cython
 numpy
 scikit-learn
+numba
+seaborn
+nltk
+umap-learn
+wordcloud
+pandas
+jupyterlab
+jupyter
+plotly
+b4msa
+encexp
+pyyaml
