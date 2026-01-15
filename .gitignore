@@ -5,3 +5,5 @@ Gemfile.lock
 _book/
 .vscode/settings.json
 capitulos/.vdoc.py
+capitulos/*_files/
+capitulos/*quarto_ipynb
