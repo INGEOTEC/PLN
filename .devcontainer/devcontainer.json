@@ -1,4 +1,4 @@
-{"image": "mcr.microsoft.com/devcontainers/python:3",
+{"image": "mcr.microsoft.com/devcontainers/python:3.13",
 "features": {
     "ghcr.io/rocker-org/devcontainer-features/quarto-cli": 
         {"installChromium": true, "installTinyTex": true},

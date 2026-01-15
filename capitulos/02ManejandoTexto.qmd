@@ -10,7 +10,6 @@ from collections import Counter
 import unicodedata
 import re
 import numpy as np
-from tqdm import tqdm
 import pandas as pd
 import seaborn as sns
 from microtc import TextModel
@@ -29,10 +28,17 @@ from nltk.stem.snowball import SnowballStemmer
 ```{python}
 #| echo: false
 from IPython.display import Markdown
+try:
+    spacy.load("es_core_news_lg")
+except IOError:
+    import subprocess
+    import sys
+    subprocess.check_call([sys.executable,
+                           "-m", "spacy", "download",
+                           "es_core_news_lg"])
 ```
 
 ## Introducción 
-
 
 Se podría suponer que el texto se que se analizará está bien escrito y tiene un formato adecuado para su procesamiento. Desafortunadamente, la realidad es que en la mayoría de aplicaciones el texto que se analiza tiene errores de ortográficos, errores de formato y además no es trivial identificar la unidad mínima de procesamiento que podría ser de manera natural, en el español, las palabras. Por este motivo, esta unidad trata técnicas comunes que se utilizan para normalizar el texto, esta normalización es un proceso previo al desarrollo de los algoritmos de PLN. 
 
@@ -303,9 +309,9 @@ Por ejemplo, utilizando las normalizaciones que se tienen por defecto, el siguie
 
 ```{python}
 #| echo: true
-
-tm = TextModel(token_list=[4])
-tm.tokenize('buenos días')
+txt = 'buenos días, bienvenidos al curso de Procesamiento de Lenguaje Natural.'
+microTC_qgrams = TextModel(token_list=[4])
+microTC_qgrams.tokenize(txt)
 ```
 
 para poder identificar cuando se trata de un segmento que corresponde a una palabra o un grama de caracteres, a los últimos se les agrega el prefijo `q:`. Cabe mencionar que por defecto se remueven los símbolos diacríticos.
@@ -316,7 +322,7 @@ El ejemplo anterior, se utiliza para generar un grama de palabras de tamaño $2.
 #| echo: true
 
 tm = TextModel(token_list=[-2])
-tm.tokenize('buenos días')
+tm.tokenize(txt)
 ```
 
 Para completar la explicación, se combinan la segmentación de gramas de caracteres y palabras además de incluir las palabras en la segmentación. 
@@ -325,11 +331,10 @@ Para completar la explicación, se combinan la segmentación de gramas de caract
 #| echo: true
 
 tm = TextModel(token_list=[4, -2, -1])
-tm.tokenize('buenos días')
+tm.tokenize(txt)
 ```
-# spaCy 
 
-## spaCy
+# spaCy 
 
 spaCy es una librería general para el procesamiento de lenguaje natural PLN. El primer paso en cualquier tarea de PLN corresponde a la segmentación, en este apartado se da un ejemplo de como se realiza la segmentación con esta librería.
 
@@ -341,3 +346,147 @@ El primer paso es cargar el modelo de español en la librería lo cual se hace c
 pln = spacy.load("es_core_news_lg")
 ```
 
+La variable `pln` es la instancia que permite manipular los textos en español. Tiene el comportamiento de una función y para usarla solamente es necesario ejecutarla con el texto que se quiere procesar tal y como se indica en la siguiente instrucción.
+
+```{python}
+#| echo: true
+
+doc = pln(txt)
+```
+
+El texto es procesado es organizado en una instancia de la clase `Doc` la cual es iterable. Los elementos corresponden a las palabras de la oración, así como a otros componentes, como los signos de puntuación. Además la librería proporciona información sintáctica y semántica de cada palabra, en el siguiente ejemplo se muestra las partes de la oración.
+
+```{python}
+#| echo: true
+
+[(w.text, w.pos_) for w in doc]
+```
+
+# Modelo Mexicano
+
+Los procedimientos anteriores segmentan un texto utilizando un conjunto de reglas y pueden generar un número infinito de palabras. En el otro extremo de los segmentadores se encuentran aquellos que utilizan un vocabulario fijo y que se basan en representar cualquier texto utilizando ese vocabulario. Por supuesto el vocabulario está compuesto por palabras, caracteres, sufijos, infijos y prefijos.
+
+En la siguiente instrucción utilizamos el segmentador implementado en el modelo **bilmaLAT**.
+
+```{python}
+#| echo: true
+#| warning: false
+bilmaLAT = AutoTokenizer.from_pretrained('guillermoruiz/bilmaLAT')
+```
+
+La variable `bilmaLAT` funciona como una función que recibe el texto y regresa el texto segmentado y una máscara de atención que se verá en una unidad posterior.
+
+El resultado de la siguiente instrucción indica en el campo `input_ids` el texto segmentado aunque se encuentra codificado, es decir, el valor 12658 corresponde a la palabra *buenos*. Es importante notar que cada valor en el arreglo corresponde a una secuencia de caracteres, esta secuencia en algunas ocasiones representan una palabra y en otras solamente una parte de la palabra. Por ejemplo los valores 26563 y 5892 corresponden a la palabra *bienvenidos*.
+
+```{python}
+#| echo: true
+code = bilmaLAT(txt)
+code
+```
+
+El método `bilmaLAT.decode` decodifica el texto y como se muestra en el resultado de la siguiente instrucción, se le añadió **[CLS]** al inicio de la frase y **[SEP]** al final. Este comportamiento es normal en este tipo de modelado y quedará claro en las siguiente unidades.
+
+```{python}
+#| echo: true
+bilmaLAT.decode(code['input_ids'])
+```
+
+# RoBERTuito
+
+Un modelo similar a `bilmaLAT` que fue entrenado con otro conjunto de datos y con algunas características particulares es RoBERTuito. Este modelo se puede obtener con la siguiente instrucción.
+
+```{python}
+#| echo: true
+#| warning: false
+robertuito = AutoTokenizer.from_pretrained('pysentimiento/robertuito-base-cased')
+```
+
+Los autores de RoBERTuito mencionan que antes de pasar el texto al segmentador se deben de realizar un pre-procesamiento con la función `preprocess_tweet` tal y como se muetra en la siguiente instrucción.
+
+El texto segmentado se representa en la misma estructura de datos que la utilizada por `bilmaLAT`.
+
+```{python}
+#| echo: true
+code = robertuito(preprocess_tweet(txt))
+code
+```
+
+La secuencia se decodifica utilizando el método `robertuito.decode` como se observa en la siguiente instrucción. En el salida de la celda se observa como al inicio de la frase se coloca la etiqueta **\<s\>** y al final la etiqueta **\</s\>**.
+
+```{python}
+#| echo: true
+robertuito.decode(code['input_ids'])
+```
+
+# Crecimiento del vocabulario
+
+En este apartado se utilizan diferentes segmentadores de texto para medir el crecimiento del vocabulario con respecto al número de palabras leidas.
+
+Se utiliza un conjunto de datos que se obtiene con la función `load_dataset` utilizando los parámetros que se muestran en la siguiente instrucción.
+
+```{python}
+#| echo: true
+dataset = load_dataset(lang='es', dataset='dev')
+```
+
+El crecimiento del vocabulario se mide utilizando la función `dinamica_vocabulario` la cual recibe una función (argumento `tokenizer`) que segmenta el texto y esta función la aplica a cada elemento del conjunto de datos (variable `dataset`). En cada paso del ciclo se actualiza el vocabulario (variable `voc`) y se guarda la cantidad de palabras leidas y el tamaño del vocabulario en la lista `data`.
+
+```{python}
+#| echo: true
+def dinamica_vocabulario(tokenizer):
+  voc = set()
+  data = []
+  prev = 0
+  for ele in dataset:
+    words = tokenizer(ele)
+    voc.update(words)
+    prev += len(words)
+    data.append([prev, len(voc)])
+  return data
+```
+
+El primer sistema de segmentación analizado es `microTC`, tal y como se muestra en la primer línea de las siguientes instrucciones. La segunda y tercera línea tienen el objetivo de guardar la información en un marco de datos.
+
+```{python}
+#| echo: true
+microTC = TextModel(token_list=[-1])
+data = dinamica_vocabulario(microTC.tokenize)
+df = pd.DataFrame(data, columns=['Segmentos', 'Vocabulario'])
+df['Tipo'] = 'microTC'
+```
+
+La dinámica del crecimiento de vocabulario con respecto a la cantidad de palabras procesadas se puede observar en la salida de la celda siguiente.
+
+```{python}
+#| echo: true
+sns.lineplot(data=df, x='Segmentos', y='Vocabulario', hue='Tipo')
+```
+
+El segundo sistema analizado es `microTC_qgrams` que corresponde al segmentador que procesa gramas de caracteres de tamañano 4.
+
+```{python}
+#| echo: true
+data = dinamica_vocabulario(microTC_qgrams.tokenize)
+_ = pd.DataFrame(data, columns=['Segmentos', 'Vocabulario'])
+_['Tipo'] = 'microTC_qgrams'
+df = pd.concat([df, _])
+sns.lineplot(data=df, x='Segmentos', y='Vocabulario', hue='Tipo')
+```
+
+La figura anterior muestra el comportamiento del vocabulario con respecto a palabras y gramas de caracteres. Los gramas de caracteres generan un vocabulario mayor en el conjunto analizado, pero también se puede observar que el vocabulario es finito y va a estabilizarse en algún momento. Esto se puede observar fácilmente en el caso límite, es decir, cuando el tamaño del grama es 1, en este caso el vocabulario corresponde a la codificación utilizada para representar cada caracter.
+
+El siguiente segmentador a analizar es `bilmaLAT`. En este caso se requiere una función auxiliar `bilmaLAT_tok` que solamente extrae el campo texto del diccionario utilizado para guardar cada elemento del conjunto de datos utilizado.
+
+El crecimiento del vocabulario de estos tres modelos se muestra en la salida de la siguiente celda. Se puede observar como el vocabulario de `bilmaLAT` se estabiliza, esto es porque este modelo tiene un vocabulario fijo y lo único que se observa es la cantidad de texto que se require procesar para cubrir ese vocabulario.
+
+```{python}
+#| echo: true
+def bilmaLAT_tok(data):
+  return bilmaLAT(data['text'])['input_ids']
+
+data = dinamica_vocabulario(bilmaLAT_tok)
+_ = pd.DataFrame(data, columns=['Segmentos', 'Vocabulario'])
+_['Tipo'] = 'bilmaLAT'
+df = pd.concat([df, _])
+sns.lineplot(data=df, x='Segmentos', y='Vocabulario', hue='Tipo')
+```
