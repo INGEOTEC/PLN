@@ -14,3 +14,5 @@ pyyaml
 b4msa
 encexp
 evomsa
+spacy
+pysentimiento

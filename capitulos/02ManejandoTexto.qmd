@@ -1,19 +1,29 @@
 # Manejando Texto {#sec-manejando-texto}
 
-El **objetivo** de la unidad es 
+El **objetivo** de la unidad es analizar la implementación de diferentes componentes de un sistema de procesamiento de lenguaje natural (PLN), incluyendo la normalización del texto y su segmentación para comprender las etapas comunes a los sistemas de PLN. 
 
 ## Paquetes usados {.unnumbered}
 
 ```{python}
 #| echo: true
-from microtc.params import OPTION_GROUP, OPTION_DELETE,\
-                           OPTION_NONE
+from collections import Counter
+import unicodedata
+import re
+import numpy as np
+from tqdm import tqdm
+import pandas as pd
+import seaborn as sns
+from microtc import TextModel
 from microtc.textmodel import SKIP_SYMBOLS
 from b4msa.textmodel import TextModel
 from b4msa.lang_dependency import LangDependency
+import spacy
+from transformers import AutoTokenizer
+from encexp.utils import load_dataset
+from pysentimiento.preprocessing import preprocess_tweet
+from microtc.params import OPTION_GROUP, OPTION_DELETE,\
+                           OPTION_NONE
 from nltk.stem.snowball import SnowballStemmer
-import unicodedata
-import re
 ```
 
 ```{python}
@@ -224,7 +234,7 @@ for a in zip(*[text[i:] for i in range(q)]):
 q_grams
 ```
 
-## TextModel {#sec-TextModel}
+## $\mu$TC {#sec-TextModel}
 
 Habiendo descrito diferentes tipos de normalización (sintáctica y semántica) y el proceso de segmentación es momento para describir la librería [B4MSA](https://b4msa.readthedocs.io/) (@B4MSA) que implementa estos procedimientos; específicamente, el punto de acceso de estos procedimientos corresponde a la clase `TextModel`. El método `TextModel.text_transformations` es el que realiza todos los métodos de normalización (@sec-normalizacion y @sec-normalizacion-semantica) y el método `TextModel.tokenize` es el encargado de realizar la segmentación (@sec-segmentacion) siguiendo el flujo mostrado en la @fig-pre-procesamiento.
 
@@ -317,3 +327,17 @@ Para completar la explicación, se combinan la segmentación de gramas de caract
 tm = TextModel(token_list=[4, -2, -1])
 tm.tokenize('buenos días')
 ```
+# spaCy 
+
+## spaCy
+
+spaCy es una librería general para el procesamiento de lenguaje natural PLN. El primer paso en cualquier tarea de PLN corresponde a la segmentación, en este apartado se da un ejemplo de como se realiza la segmentación con esta librería.
+
+El primer paso es cargar el modelo de español en la librería lo cual se hace con la siguiente instrucción.
+
+```{python}
+#| echo: true
+
+pln = spacy.load("es_core_news_lg")
+```
+

@@ -7,3 +7,6 @@ _book/
 capitulos/.vdoc.py
 capitulos/*_files/
 capitulos/*quarto_ipynb
+**/*.quarto_ipynb
+delitos.zip
+capitulos/delitos/*
