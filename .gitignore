@@ -10,3 +10,4 @@ capitulos/*quarto_ipynb
 **/*.quarto_ipynb
 delitos.zip
 capitulos/delitos/*
+_freeze/
