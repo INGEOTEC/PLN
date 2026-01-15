@@ -36,15 +36,6 @@ if not isdir('delitos'):
     !unzip -Pingeotec delitos.zip
 ```
 
-
-::: {.content-visible when-format="html"}
----
-
-**Video explicando la unidad**
-
----
-:::
-
 ## Bolsa de Palabras Dispersa 
 
 La idea de una bolsa de palabras discretas es que después de haber normalizado y segmentado el texto (@sec-manejando-texto), cada término $t$ sea asociado a un vector único $\mathbf{v_t} \in \mathbb R^d$ donde la $i$-ésima componente, i.e., $\mathbf{v_t}_i$, es diferente de cero y $\forall_{j \neq i} \mathbf{v_t}_j=0$. Es decir la $i$-ésima componente está asociada al término $t$, se podría pensar que si el vocabulario está ordenado de alguna manera, entonces $t$ está en la posición $i$. Por otro lado el valor que contiene la componente se usa para representar alguna característica del término. 

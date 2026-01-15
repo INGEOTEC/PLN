@@ -10,6 +10,7 @@ pandas
 jupyterlab
 jupyter
 plotly
+pyyaml
 b4msa
 encexp
-pyyaml
+evomsa

@@ -21,14 +21,6 @@ import re
 from IPython.display import Markdown
 ```
 
-::: {.content-visible when-format="html"}
----
-
-**Video explicando la unidad**
-
----
-:::
-
 ## Introducción 
 
 
