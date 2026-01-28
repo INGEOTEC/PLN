@@ -10,9 +10,9 @@ from EvoMSA import BoW,\
                    DenseBoW,\
                    StackGeneralization
 from microtc.utils import tweet_iterator
-from IngeoML import CI, SelectFromModelCV
-from sklearn.metrics import f1_score,\
-                            recall_score,\
+from IngeoML import SelectFromModelCV
+from CompStats.metrics import f1_score
+from sklearn.metrics import recall_score,\
                             precision_score
 from wordcloud import WordCloud                            
 import numpy as np
@@ -24,7 +24,9 @@ import seaborn as sns
 ```{python}
 #| echo: false
 from IPython.display import Markdown
+import CompStats
 sns.set_style('whitegrid')
+CompStats.utils.USE_TQDM = False
 ```
 
 ```{python}
@@ -40,14 +42,6 @@ if not isfile('delitos.zip'):
 if not isdir('delitos'):
     !unzip -Pingeotec delitos.zip
 ```
-
-::: {.content-visible when-format="html"}
----
-
-**Video explicando la unidad**
-
----
-:::
 
 ## Introducción 
 
@@ -111,7 +105,7 @@ hy_bow = bow.predict(Dtest)
 ```{python} 
 #| echo: false
 y = np.r_[[x['klass'] for x in Dtest]]
-a = f1_score(y, hy_bow, average=None)
+a = f1_score(y, hy_bow, average=None).statistic
 f1_0 = Markdown(f'${a[0]:0.4f}$')
 f1_1 = Markdown(f'${a[1]:0.4f}$')
 ```
@@ -121,16 +115,15 @@ Habiendo realizado la predicciones en el conjunto de prueba ($\mathcal D$), es m
 ```{python}
 #| echo: true
 y = np.r_[[x['klass'] for x in Dtest]]
-f1_score(y, hy_bow, average=None)
+f1_score(y, hy_bow, average=None).statistic
 ```
 
 Con el objetivo de conocer la variabilidad del rendimiento del clasificador en este conjunto de datos, la siguientes instrucciones calcula el intervalo de confianza; para realizarlo se utiliza la clase `CI` la cual recibe la estadística a calcular, en este caso medida $f_1$. El siguiente paso es llamar a la clase con las entradas para calcular el intervalo, estas corresponden a las mediciones y predicciones del conjunto de prueba. 
  
 ```{python}
 #| echo: true
-ci = CI(statistic=lambda y, hy: f1_score(y, hy, 
-                                         average=None))
-ci_izq, ci_der = ci(y, hy_bow)
+score = f1_score(y, hy_bow, average=None)
+ci_izq, ci_der = score.ci
 ```
 
 ```{python}
