@@ -11,7 +11,7 @@ from EvoMSA import BoW,\
                    StackGeneralization
 from microtc.utils import tweet_iterator
 from IngeoML import SelectFromModelCV
-from CompStats.metrics import f1_score
+from CompStats.metrics import f1_score, macro_f1
 from sklearn.metrics import recall_score,\
                             precision_score
 from wordcloud import WordCloud                            
@@ -122,7 +122,9 @@ Con el objetivo de conocer la variabilidad del rendimiento del clasificador en e
  
 ```{python}
 #| echo: true
-score = f1_score(y, hy_bow, average=None)
+score = f1_score(y, hy_bow,
+                 average=None,
+                 name='BoW')
 ci_izq, ci_der = score.ci
 ```
 
@@ -140,10 +142,9 @@ El intervalo izquierdo es `{python} ci_izq_f` y el derecho tiene los valores `{p
 #| code-fold: true
 #| fig-cap: Histograma de f1 por clase
 #| label: fig-hist-f1-bow
-df_bow = pd.DataFrame(ci.statistic_samples, columns=['f1-neg', 'f1-pos'])
-df_bow['Tipo'] = 'BoW'
-sns.set_style('whitegrid')
-sns.displot(df_bow, kde=True)
+df_bow = score.dataframe()
+sns.displot(df_bow, x='Score', 
+            col='Performance', kde=True)
 ```
 
 Una manera de poder analizar el comportamiento del clasificador de texto implementado es visualizar en una nube de palabras las características que tienen el mayor peso en la decisión. Esto se realiza en las siguientes instrucciones siendo el primer paso obtener los coeficientes de la máquina de soporte vectorial lineal, los cuales se guardan en la variable `ws`. El segundo componente es el valor de IDF que tiene cada uno de los términos, esto se encuentran en el atributo `BoW.weights` tal y como se muestra en la segunda instrucción del siguiente código. 
@@ -207,11 +208,11 @@ Para seleccionar las características que mejor representan al problema de delit
 ```{python}
 #| echo: true
 #| output: false
-macro_f1 = lambda y, hy: f1_score(y, hy, average='macro')
+_macro_f1 = lambda y, hy: macro_f1(y, hy).statistic
 kwargs = dense.estimator_kwargs
 estimator = dense.estimator_class(**kwargs)
 kwargs = dict(estimator=estimator,
-              scoring=macro_f1)
+              scoring=_macro_f1)
 dense.select(D=D,
              feature_selection=SelectFromModelCV,
              feature_selection_kwargs=kwargs)
