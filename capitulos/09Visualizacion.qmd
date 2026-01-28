@@ -42,14 +42,6 @@ if not isdir('delitos'):
     !unzip -Pingeotec delitos.zip
 ```
 
-::: {.content-visible when-format="html"}
----
-
-**Video explicando la unidad**
-
----
-:::
-
 ## Introducción 
 
 El conjunto de datos se puede conseguir en la página de [Delitos](https://ingeotec.github.io/Delitos) aunque en esta dirección es necesario poblar los textos dado que solamente se encuentra el identificador del Tweet.

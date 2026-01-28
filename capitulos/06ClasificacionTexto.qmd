@@ -11,9 +11,9 @@ from EvoMSA import BoW,\
                    StackGeneralization
 from microtc.utils import tweet_iterator
 from IngeoML import SelectFromModelCV
-from CompStats.metrics import f1_score, macro_f1
-from sklearn.metrics import recall_score,\
-                            precision_score
+from CompStats.metrics import f1_score, macro_f1,\
+                              recall_score,\
+                              precision_score
 from wordcloud import WordCloud                            
 import numpy as np
 import pandas as pd
@@ -244,27 +244,22 @@ Después de haber seleccionado el número de características, se utiliza un có
 hy_dense = dense.predict(Dtest)
 ```
 
-El rendimiento en $f_1$ del clasificador basado en una bolsa se muestra con el siguiente código. Este valor puntual se complementa con la @fig-hist-f1-bow-dense donde se muestra la distribución de esta medición y se compara con la obtenida con el clasificador de bolsa de palabras dispersa (i.e., `bow`).
+El rendimiento en $f_1$ del clasificador basado en una bolsa de palabras densa se calcula con el siguiente código. Este valor puntual se complementa con la @fig-hist-f1-bow-dense donde se muestra el rendimiento entre las dos bolsas de palabras.
 
 ```{python}
 #| echo: true
-f1_score(y, hy_dense, average=None)
+score(hy_dense, name='Densa')
+score.statistic['Densa']
 ```
 
 ```{python}
 #| code-fold: true
 #| fig-cap: Histogramas de f1 por clase
 #| label: fig-hist-f1-bow-dense
-ci(y, hy_dense)
-df_dense = pd.DataFrame(ci.statistic_samples, columns=['f1-neg', 'f1-pos'])
-df_dense['Tipo'] = 'Dense'
-
-_ = df_bow.melt(id_vars=['Tipo'], value_name='value', var_name='f1')
-_2 = df_dense.melt(id_vars=['Tipo'], value_name='value', var_name='f1')
-_ = pd.concat((_, _2))
-sns.set_style("whitegrid")
-fig = sns.displot(_, x='value', hue='f1', kde=True, col='Tipo')
-# plt.grid()
+score.plot(var_name='Rendimiento', alg_legend='Algoritmo',
+           comp_legend='Comparasion', winner_legend='Mejor',
+           tie_legend='Equivalente', loser_legend='Diferente',
+           value_name='Valor')
 ```
 
 En un clasificador basado en palabras densas también se puede comprender su comportamiento mostrando aquellas características que tiene un mayor peso al momento de decidir la clase. En las siguientes instrucciones se agrupan las características positivas y las negativas, utilizando el valor estimado por la máquina de soporte vectorial lineal (`w`). Considerando que cada característica está asociada a una palabra o emoji, entonces se pueden visualizar mediante una nube de palabras.
@@ -523,7 +518,7 @@ Siguiendo el procedimiento de los clasificadores dispersos y densos, la siguient
 ```{python}
 #| echo: true
 hy_stack = stack.predict(Dtest)
-f1_score(y, hy_stack, average=None)
+f1_score(y, hy_stack, average=None).statistic
 ```
 
 Para poder comparar el rendimiento de los tres clasificadores desarrollados, la @tbl-performance-recall-precision-delitos presenta el rendimiento con las medidas recall y precision en las dos clases. Se puede observar que el `bow` tiene el mejor recall en la clase negativa y mejor precision en la clase positiva. Por otro lado el mejor recall en la clase positiva y precision en la clase negativa lo tiene `stack`.
@@ -535,12 +530,12 @@ Para poder comparar el rendimiento de los tres clasificadores desarrollados, la 
 headers = '|              |   Recall neg | Recall pos | Precision neg | Precision pos |'
 linea =   '|--------------|--------------|------------|---------------|---------------|'
 
-recall_bow = recall_score(y, hy_bow, average=None)
-recall_dense = recall_score(y, hy_dense, average=None)
-recall_stack = recall_score(y, hy_stack, average=None)
-pr_bow = precision_score(y, hy_bow, average=None)
-pr_dense = precision_score(y, hy_dense, average=None)
-pr_stack = precision_score(y, hy_stack, average=None)
+recall_bow = recall_score(y, hy_bow, average=None).statistic
+recall_dense = recall_score(y, hy_dense, average=None).statistic
+recall_stack = recall_score(y, hy_stack, average=None).statistic
+pr_bow = precision_score(y, hy_bow, average=None).statistic
+pr_dense = precision_score(y, hy_dense, average=None).statistic
+pr_stack = precision_score(y, hy_stack, average=None).statistic
 
 recall_bow_f = ' | '.join([f'${x:0.4f}$' for x in np.r_[recall_bow, pr_bow]])
 recall_dense_f = ' | '.join([f'${x:0.4f}$' for x in np.r_[recall_dense, pr_dense]])
@@ -563,13 +558,13 @@ Con respecto al rendimiento en términos de $f_1$, la @tbl-performance-f1-delito
 headers = '|              | f1 neg | f1 pos | macro-f1 |'
 linea =   '|--------------|--------|--------|----------|'
 
-f1_bow =   f1_score(y, hy_bow, average=None)
-f1_dense = f1_score(y, hy_dense, average=None)
-f1_stack = f1_score(y, hy_stack, average=None)
+f1_bow =   f1_score(y, hy_bow, average=None).statistic
+f1_dense = f1_score(y, hy_dense, average=None).statistic
+f1_stack = f1_score(y, hy_stack, average=None).statistic
 
-f1_macro_bow =   f1_score(y, hy_bow,   average="macro")
-f1_macro_dense = f1_score(y, hy_dense, average="macro")
-f1_macro_stack = f1_score(y, hy_stack, average="macro")
+f1_macro_bow =   f1_score(y, hy_bow,   average="macro").statistic
+f1_macro_dense = f1_score(y, hy_dense, average="macro").statistic
+f1_macro_stack = f1_score(y, hy_stack, average="macro").statistic
 
 
 recall_bow_f = ' | '.join([f'${x:0.4f}$' for x in   np.r_[f1_bow, f1_macro_bow]])
