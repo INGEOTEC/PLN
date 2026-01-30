@@ -88,9 +88,9 @@ Completando el ejemplo anterior, la siguiente instrucción muestra la secuencia 
 
 Seleccione de los siguientes trigamas aquel que tenga una mayor frecuencia:
 
-[CLS] _usr _usr
-. Más en
-) _url [SEP]
+* [CLS] _usr _usr
+* . Más en
+* ) _url [SEP]
 :::
 
 # Probabilidad
