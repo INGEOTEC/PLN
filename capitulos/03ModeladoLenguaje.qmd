@@ -1,3 +1,245 @@
 # Modelado de Lenguaje
 
-El **objetivo** de la unidad es 
+El **objetivo** de la unidad es desarrollar un modelo de lenguaje basado en gramas. 
+
+## Paquetes usados {.unnumbered}
+
+```{python}
+#| echo: true
+from collections import Counter
+import numpy as np
+import pandas as pd
+import seaborn as sns
+from transformers import AutoTokenizer
+from encexp.utils import load_dataset
+```
+
+```{python}
+#| echo: false
+from IPython.display import Markdown
+```
+
+# Introducción 
+
+Un modelo de lenguaje es una función que permite estimar la probabilidad de un texto, i.e., $\mathbb P(w_1, w_2, w_N).$  
+
+$$
+\mathbb P(w_N \mid w_{N-1},w_{N-2},\ldots,w_1)
+$$
+
+La segunda parte de esta libreta ejemplifica la creación de modelo de lenguaje utilizando gramas y además hace una suposición de Markov.
+
+El siguiente código asume un modelo de bigramas ($N=2$), es decir, la probabilidad de la siguiente palabra solamente depende de la palabra previa.
+
+```{python}
+#| echo: true
+N = 2
+```
+
+Para el modelo de lenguaje se requiere calcular la frecuencia de la secuencia (variable `sentence`) y la frecuencia de las palabras previas (variable `history`), dependiendo de $N$. Adicionalmente, se guarda el vocabulario en la variable `voc`.  
+
+```{python}
+#| echo: true
+voc = Counter()
+sentence = Counter()
+history = Counter()
+```
+
+El conjunto de datos que se utilizará para generar el modelo es el que se obtiene con la función `load_dataset` y se guarda en la variable `dataset`.
+
+```{python}
+#| echo: true
+dataset = load_dataset(lang='es', dataset='dev')
+```
+
+El siguiente paso es iterar por todos los elementos del conjunto de datos (variable `dataset`). En el ciclo se segmenta cada texto y se actualiza el vocabulario con el método `voc.update`. Después se genera una ventana de tamaño $N$, donde los índices que corresponden a elementos del vocabulario se concatenan con el caracter \|. El siguiente paso es actualizar la frecuencia de la secuencia con el método `sentence.update`. Se realiza un procedimiento equivalente pero para una ventana de tamaño $N-1$ que corresponde a las palabras previas, actualizando con el método `history.update`.  
+
+```{python}
+#| echo: true
+
+bilmaLAT = AutoTokenizer.from_pretrained('guillermoruiz/bilmaLAT')
+for ele in dataset:
+  tokens = bilmaLAT(ele['text']).input_ids
+  voc.update(tokens)
+  _ = ["|".join(map(str, lst))
+       for lst in zip(*[tokens[i:] for i in range(N)])]
+  sentence.update(_)
+  _ = ["|".join(map(str, lst))
+       for lst in zip(*[tokens[i:] for i in range(N-1)])]
+  history.update(_)
+```
+
+La siguiente instrucción muestra las diez secuencias más frecuentes en el conjunto de datos analizado.
+
+```{python}
+#| echo: true
+[bilmaLAT.decode(list(map(int, k.split("|")))) for k, v in sentence.most_common(10)]
+```
+
+Completando el ejemplo anterior, la siguiente instrucción muestra la secuencia de palabras previas que tiene la mayor frecuencia.
+
+```{python}
+#| echo: true
+[bilmaLAT.decode(list(map(int, k.split("|")))) for k, v in history.most_common(10)]
+```
+
+::: {.callout-tip collapse="true"}
+## Actividad
+
+Seleccione de los siguientes trigamas aquel que tenga una mayor frecuencia:
+
+[CLS] _usr _usr
+. Más en
+) _url [SEP]
+:::
+
+# Probabilidad
+
+Después de calcular las frecuencia, es posible estimar la probabilidad de una frase. Considerando que $N=2$ entonces es directo calcular la probabilidad de la siguiete frase.
+
+```{python}
+#| echo: true
+txt = 'buenos días'
+```
+
+Lo primero es verficar que la frase se codifica en 2 índices, tal y como se muestra a continuación.
+
+```{python}
+#| echo: true
+code = bilmaLAT(txt)['input_ids'][1:-1]
+code
+```
+
+El siguiente paso es dividir la frecuencia de la cadena *buenos dias* entre l frecuencia de *buenos* tal y como se muestra en la siguiente instrucción.
+
+```{python}
+#| echo: true
+sentence["|".join(map(str, code))] / history["|".join(map(str, code[:-1]))]
+```
+
+Otro ejemplo similar es calcular la probabilidad de *buenox*. Como se puede observar en el siguiente código, esa palabra se codifica en dos índices, entonces se puede seguir un procedimiento equivalente.
+
+```{python}
+#| echo: true
+txt = 'buenox'
+code = bilmaLAT(txt)['input_ids'][1:-1]
+code
+```
+
+Como muestra el resultado de la siguiente celda la probabilidad de *buenox* es cero, dado que esa palabra no fue vista en el conjunto de datos donde se estimó la frecuencia.
+
+```{python}
+#| echo: true
+sentence["|".join(map(str, code))] / history["|".join(map(str, code[:-1]))]
+```
+
+## $k$-suavizado
+
+Para poder calcular la probabilidad de una secuencia, es necesario calcular una probabilidad diferente de cero a cualquier palabra que no ha sido vista en el conjunto donde se estiman las frecuencias. Una manera para realizar esto es asignar una pequeña masa a todas las palabras que no fueron vistas, a eso se le conoce como suavizado.
+
+La función `prob` implementa un tipo de suavisado donde se le asigna un valor de $\frac{1}{\mid V \mid}$ a todas las palabras que no son vistas, donde $\mid V \mid$ es el tamaño del vocabulario.
+
+```{python}
+#| echo: true
+def prob(txt, k=0.01):
+  code = bilmaLAT(txt)['input_ids'][1:-1]
+  num = sentence["|".join(map(str, code))] + k
+  den = history["|".join(map(str, code[:-1]))] + k * len(voc)
+  return num / den
+```
+
+Se puede observar que la probabilidad de la siguiente frase es menor que cuando no se usa el suavizado, esto es porque una fracción de la masa de probabilidad se está utilizando en elementos no vistos.
+
+```{python}
+#| echo: true
+prob('buenos días')
+```
+
+Complementando lo anterior, la palabra *buenox* presenta una probabilidad mayor a cero utilizando el suavizado.
+
+```{python}
+#| echo: true
+prob('buenox')
+```
+
+## Probabilidad de una secuencia
+
+La implementación anterior se puede adaptar para calcular la probabilidad de una frase de cualquier longitud mayor o igual a $N$.
+
+La idea es crear una ventana movil de tamaño $N$ y multiplicar todas las probabilidades obtenidas, considerando que la multiplicación entre números menores a $1$ resulta en un número menor, es más conveniente por razones numéricas el calcular la suma del logaritmo de la probabilidad.
+
+La siguiente función calcula la suma y el promedio del logaritmo de la probabilidad.
+
+```{python}
+#| echo: true
+def log_prob(ele, k=1, average=True):
+  tokens = bilmaLAT(ele['text']).input_ids
+  acc = 0
+  for code in zip(*[tokens[i:] for i in range(N)]):
+    num = np.log(sentence["|".join(map(str, code))] + k)
+    den = np.log(history["|".join(map(str, code[:-1]))] + k * len(voc))
+    acc += num - den
+  if average:
+    return acc / len(tokens)
+  return acc
+```
+
+La función `log_prob` se puede utilizar para calcular la probabilidad de todas las frases en el conjunto utilizado para estimar las frecuencias tal y como se muestra en la siguiente instrucción.
+
+```{python}
+#| echo: true
+acc = [log_prob(ele) for ele in dataset]
+```
+
+La distribución del promedio del logaritmo de probabilidad se muestra en la siguiente figura.
+
+```{python}
+#| echo: true
+df = pd.DataFrame()
+df['log-prob'] = acc
+df['Conjunto'] = 'dev'
+sns.displot(data=df, x='log-prob', hue='Conjunto',
+            kind='kde', fill=False)
+```
+
+Para poder presentar otro análisis del modelo, se utiliza otro conjunto de datos, donde cada elemento del conjunto de datos tiene asociado el país de origen. Este valor se encuentra en la clave `country` de cada diccionario.
+
+*Nota: La siguiente celda puede tardar unos cuantos minutos en ejecutarse.*
+
+```{python}
+#| echo: true
+paises = load_dataset(lang='es', dataset='train')
+```
+
+La siguientes instrucciones modelan los datos obtenidos de México y Argentina respectivamente.
+
+```{python}
+#| echo: true
+mex = [log_prob(ele) for ele in paises if ele['country'] == 'mx']
+arg = [log_prob(ele) for ele in paises if ele['country'] == 'ar']
+```
+
+La distribución obtenida al modelar estos dos conjuntos de datos se muestra en la siguiente figura.
+
+```{python}
+#| echo: true
+df = pd.DataFrame()
+df['log-prob'] = mex
+df['Conjunto'] = 'México'
+_ = pd.DataFrame()
+_['log-prob'] = arg
+_['Conjunto'] = 'Argentina'
+df = pd.concat([df, _])
+sns.displot(data=df, x='log-prob', hue='Conjunto',
+            kind='kde', fill=False)
+```
+
+De la figura se puede observar que las dos distribuciones son muy similares, lo cual es de esperarse dado que los datos con los que fueron entrenados tiene el mismo número de ejemplos provenientes de México que de Argentina, pero aun así se observan unas leves diferencias.
+
+Habiendo calculado el promedio del logaritmo de la probabilidad, uno se puede preguntar ¿cuál es la frase más probable en México? la siguiente instrucción muesta esta frase para el conjunto de datos analizado.
+
+```{python}
+#| echo: true
+mex_ds = [x for x in paises if x['country'] == 'mx']
+mex_ds[np.argmax(mex)]
+```
