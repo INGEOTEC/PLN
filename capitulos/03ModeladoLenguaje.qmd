@@ -21,11 +21,9 @@ from IPython.display import Markdown
 
 # Introducción 
 
-Un modelo de lenguaje es una función que permite estimar la probabilidad de un texto, i.e., $\mathbb P(w_1, w_2, w_N).$  
+Un modelo de lenguaje es una función que permite estimar la probabilidad de un texto, i.e., $\mathbb P(w_1, w_2, w_n).$ Comunmente, se trata de modelar  $\mathbb P(w_n \mid w_{n-1}, w_{n-2}, \ldots, w_1),$ es decir, encontrar una función que estime la probabilidad de la siguiente palabra o segmento, i.e., $w_N$, dada la historia. 
 
-$$
-\mathbb P(w_N \mid w_{N-1},w_{N-2},\ldots,w_1)
-$$
+Realizando una suposición de Markov, es decir, que el segmento $w_n$, es independiente de los segmentos iguales y mayores a $N$, es decir, $\mathbb P(w_n \mid w_{n-1}, w_{n-2}, \ldots, w_1)=\mathbb P(w_n \mid w_{n-1}, w_{n-2}, \ldots, w_{n-N+1}).$
 
 La segunda parte de esta libreta ejemplifica la creación de modelo de lenguaje utilizando gramas y además hace una suposición de Markov.
 
