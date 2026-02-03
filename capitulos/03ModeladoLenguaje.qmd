@@ -19,18 +19,16 @@ from encexp.utils import load_dataset
 from IPython.display import Markdown
 ```
 
-# Introducción 
+## Introducción 
 
-Un modelo de lenguaje es una función que permite estimar la probabilidad de un texto, i.e., $\mathbb P(w_1, w_2, w_n).$ Comunmente, se trata de modelar  $\mathbb P(w_n \mid w_{n-1}, w_{n-2}, \ldots, w_1),$ es decir, encontrar una función que estime la probabilidad de la siguiente palabra o segmento, i.e., $w_N$, dada la historia. 
+Un modelo de lenguaje es una función que permite estimar la probabilidad de un texto, i.e., $\mathbb P(w_1, w_2, w_n).$ Comunmente, se trata de modelar  $\mathbb P(w_n \mid w_1, w_2, \ldots,w_{n-1}),$ es decir, encontrar una función que estime la probabilidad de la siguiente palabra o segmento, i.e., $w_N$, dada la historia. 
 
-Realizando una suposición de Markov, es decir, que el segmento $w_n$, es independiente de los segmentos iguales y mayores a $N$, es decir, $\mathbb P(w_n \mid w_{n-1}, w_{n-2}, \ldots, w_1)=\mathbb P(w_n \mid w_{n-1}, w_{n-2}, \ldots, w_{n-N+1}).$
-
-La segunda parte de esta libreta ejemplifica la creación de modelo de lenguaje utilizando gramas y además hace una suposición de Markov.
+Realizando una suposición de Markov, es decir, que el segmento $w_n$, es independiente de los segmentos iguales y mayores a $N$, es decir, $\mathbb P(w_n \mid w_1, w_2, \ldots,w_{n-1})=\mathbb P(w_n \mid w_{n-N-1}, \ldots, w_{n-1}),$ para $N < n.$ Por ejemplo, para $N=2$ el modelo con esta suposición quedaría como $\mathbb P(w_n \mid w_{n-1})$, en el caso $N=3$ sería: $\mathbb P(w_n \mid w_{n-2}, w_{n-1})$ y así sucesivamente. 
 
 El siguiente código asume un modelo de bigramas ($N=2$), es decir, la probabilidad de la siguiente palabra solamente depende de la palabra previa.
 
 ```{python}
-#| echo: true
+#| echo: false
 N = 2
 ```
 
@@ -82,7 +80,7 @@ Completando el ejemplo anterior, la siguiente instrucción muestra la secuencia 
 ```
 
 ::: {.callout-tip collapse="true"}
-## Actividad
+### Actividad
 
 Seleccione de los siguientes trigamas aquel que tenga una mayor frecuencia:
 
@@ -91,7 +89,7 @@ Seleccione de los siguientes trigamas aquel que tenga una mayor frecuencia:
 * ) _url [SEP]
 :::
 
-# Probabilidad
+## Probabilidad
 
 Después de calcular las frecuencia, es posible estimar la probabilidad de una frase. Considerando que $N=2$ entonces es directo calcular la probabilidad de la siguiete frase.
 
@@ -131,7 +129,7 @@ Como muestra el resultado de la siguiente celda la probabilidad de *buenox* es c
 sentence["|".join(map(str, code))] / history["|".join(map(str, code[:-1]))]
 ```
 
-## $k$-suavizado
+### $k$-suavizado
 
 Para poder calcular la probabilidad de una secuencia, es necesario calcular una probabilidad diferente de cero a cualquier palabra que no ha sido vista en el conjunto donde se estiman las frecuencias. Una manera para realizar esto es asignar una pequeña masa a todas las palabras que no fueron vistas, a eso se le conoce como suavizado.
 
@@ -160,7 +158,7 @@ Complementando lo anterior, la palabra *buenox* presenta una probabilidad mayor 
 prob('buenox')
 ```
 
-## Probabilidad de una secuencia
+### Probabilidad de una secuencia
 
 La implementación anterior se puede adaptar para calcular la probabilidad de una frase de cualquier longitud mayor o igual a $N$.
 
