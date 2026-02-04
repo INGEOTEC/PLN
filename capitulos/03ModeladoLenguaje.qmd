@@ -23,7 +23,20 @@ from IPython.display import Markdown
 
 Un modelo de lenguaje es una función que permite estimar la probabilidad de un texto, i.e., $\mathbb P(w_1, w_2, w_n).$ Comunmente, se trata de modelar  $\mathbb P(w_n \mid w_1, w_2, \ldots,w_{n-1}),$ es decir, encontrar una función que estime la probabilidad de la siguiente palabra o segmento, i.e., $w_N$, dada la historia. 
 
-Realizando una suposición de Markov, es decir, que el segmento $w_n$, es independiente de los segmentos iguales y mayores a $N$, es decir, $\mathbb P(w_n \mid w_1, w_2, \ldots,w_{n-1})=\mathbb P(w_n \mid w_{n-N-1}, \ldots, w_{n-1}),$ para $N < n.$ Por ejemplo, para $N=2$ el modelo con esta suposición quedaría como $\mathbb P(w_n \mid w_{n-1})$, en el caso $N=3$ sería: $\mathbb P(w_n \mid w_{n-2}, w_{n-1})$ y así sucesivamente. 
+Realizando la suposición de Markov, es decir, que el segmento $w_n$, es independiente de los segmentos iguales y mayores a $N$, es decir, $\mathbb P(w_n \mid w_1, w_2, \ldots,w_{n-1})=\mathbb P(w_n \mid w_{n-N-1}, \ldots, w_{n-1}),$ para $N < n.$ Por ejemplo, para $N=2$ el modelo con esta suposición quedaría como $\mathbb P(w_n \mid w_{n-1})$, en el caso $N=3$ sería: $\mathbb P(w_n \mid w_{n-2}, w_{n-1})$ y así sucesivamente. 
+
+## Modelo de lenguaje
+
+En este caso el modelo para el siguiente segmento quedaría como
+
+$$
+\begin{split}
+\mathbb P(w_n \mid w_{n-N-1}, \ldots, w_{n-1})&=\frac{\#(w_{n-N-1}, \ldots, w_{n-1}, w_n)}{\sum_{\ell} \#(w_{n-N-1}, \ldots, w_{n-1}, \ell)}\\
+&=\frac{\#(w_{n-N-1}, \ldots, w_{n-1}, w_n)}{\#(w_{n-N-1}, \ldots, w_{n-1})},
+\end{split}
+$$ {#eq-modelo-qgrams}
+
+donde $\#$ corresponde a la frecuencia medida en un conjunto de entrenamiento. Por ejemplo, para $N=3$ la @eq-modelo-qgrams 
 
 El siguiente código asume un modelo de bigramas ($N=2$), es decir, la probabilidad de la siguiente palabra solamente depende de la palabra previa.
 
