@@ -46,16 +46,11 @@ if not isdir('delitos'):
 ## Introducción 
 
 
-```{mermaid}
-%%| echo: false
-%%| fig-cap: Diagrama de predicción 
-%%| label: fig-prediccion-1-estimador
-
-flowchart LR
-    Repr([Representación]) -- Clasificación --> Clasificador[Clasificador]
-    Repr -- Regresión --> Regresor[Regresor]
-    Clasificador --> Prediccion([Predicción])
-    Regresor --> Prediccion
+```{dot}
+//| echo: false
+//| fig-cap: Diagrama de predicción 
+//| label: fig-prediccion-1-estimador
+//| file: fig/repr-estimador.dot
 ```
 
 
@@ -471,37 +466,11 @@ for ax, title in zip([ax1, ax2], ['BoW', 'DenseBoW']):
 ## Combinando Modelos
 
 
-```{mermaid}
-%%| echo: false
-%%| fig-cap: Diagrama de predicción en mezcla de modelos
-%%| label: fig-prediccion-1-estimador
-
-flowchart TB
-    Conc[Concatenación]
-    Representación --> Estimadores --> Conc
-    Conc --> Predicción
-    subgraph Representación [Representaciones]
-        direction TB
-        Repr1([Representación 1])
-        Repr2([Representación 2])
-        ReprI([...])
-        ReprM([Representación M])
-    end
-    subgraph Estimadores
-        direction TB    
-        Est1[Estimador 1] 
-        Est2[Estimador 2]
-        EstI[...]
-        EstM[Estimador M]
-    end
-    subgraph Predicción [Etapa de Predicción]
-        direction TB
-        Entrada
-        Entrada -- Clasificación --> Clasificador[Clasificador]
-        Entrada -- Regresión --> Regresor[Regresor]
-        Clasificador --> Prediccion([Predicción])
-        Regresor --> Prediccion
-    end
+```{dot}
+//| echo: false
+//| fig-cap: Diagrama de predicción en mezcla de modelos
+//| label: fig-prediccion-1-estimador
+//| file: fig/stack_generalization.dot
 ```
 
 

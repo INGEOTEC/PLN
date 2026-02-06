@@ -44,18 +44,12 @@ Se podría suponer que el texto se que se analizará está bien escrito y tiene 
 
 La @fig-pre-procesamiento esquematiza el procedimiento que se presenta en esta unidad, la idea es que se un texto pasa primeramente a un proceso de normalización (@sec-normalizacion y @sec-normalizacion-semantica), para después ser segmentado (ver @sec-segmentacion) y el resultado es lo que se utiliza para modelar el lenguaje. 
 
-```{mermaid}
-%%| echo: false
-%%| fig-cap: Diagrama de Pre-procesamiento
-%%| label: fig-pre-procesamiento
-
-flowchart LR
-    Entrada([Texto]) -->  Norm[Normalización de Texto]
-    Norm --> Seg[Segmentación]
-    Seg --> Terminos(...)
+```{dot}
+//| echo: false
+//| fig-cap: Diagrama de Pre-procesamiento
+//| label: fig-pre-procesamiento
+//| file: fig/pre-procesamiento.dot
 ```
-
-
 
 Las normalizaciones y segmentaciones descritas en esta unidad se basan principalmente en las utilizadas en los siguientes artículos científicos.
 
@@ -370,7 +364,7 @@ El texto es procesado es organizado en una instancia de la clase `Doc` la cual e
 
 # Modelo Mexicano
 
-Los procedimientos anteriores segmentan un texto utilizando un conjunto de reglas y pueden generar un número infinito de palabras. En el otro extremo de los segmentadores se encuentran aquellos que utilizan un vocabulario fijo y que se basan en representar cualquier texto utilizando ese vocabulario. Por supuesto el vocabulario está compuesto por palabras, caracteres, sufijos, infijos y prefijos.
+Los procedimientos anteriores segmentan un texto utilizando un conjunto de reglas y pueden generar un número infinito de palabras. En el otro extremo de los segmentadores se encuentran aquellos que utilizan un vocabulario fijo y que se basan en representar cualquier texto utilizando ese vocabulario. Por supuesto el vocabulario está compuesto por palabras, caracteres, sufijos, infijos y prefijos. Uno de estos algoritmos es el Byte Pair Encoding @sennrich-etal-2016-neural.
 
 En la siguiente instrucción utilizamos el segmentador implementado en el modelo **bilmaLAT**.
 

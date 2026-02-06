@@ -1,0 +1,15 @@
+digraph G {
+    rankdir=LR;
+
+    Terminos [label="Texto\nSegmentado", shape=oval];
+    A [label="Asociación", shape=box];
+    Entrenamiento [label="Estimación\n de Pesos", shape=box];
+    Corpus [label="Corpus", shape=oval];
+    Repr [label="Representación", shape=oval];
+
+    Terminos -> A [label="Pre-entrenados"];
+    Terminos -> Entrenamiento;
+    Corpus -> Entrenamiento [style=dashed];
+    Entrenamiento -> A;
+    A -> Repr;
+}

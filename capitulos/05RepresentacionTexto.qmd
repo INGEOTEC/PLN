@@ -50,17 +50,11 @@ $$ {#eq-bolsa-palabras}
 
 donde la suma se hace para todos los elementos de la secuencia, $\mathbf x \in \mathbb R^d$, y $\lVert \mathbf w \rVert$ es la norma Euclideana del vector $\mathbf w.$
 
-```{mermaid}
-%%| echo: false
-%%| fig-cap: Diagrama Bolsa de Palabras Dispersa
-%%| label: fig-repr-texto-bolsa-dispersa
-
-flowchart LR
-    Terminos([Texto\n Segmentado]) -- Pre-entrenados -->  A[Asociación]
-    Terminos --> Entrenamiento[Estimación\n de Pesos]
-    Corpus([Corpus]) -.-> Entrenamiento
-    Entrenamiento --> A
-    A --> Repr([Representación])
+```{dot}
+//| echo: false
+//| fig-cap: Diagrama Bolsa de Palabras Dispersa
+//| label: fig-repr-texto-bolsa-dispersa
+//| file: fig/repr-bolsa-dispersa.dot
 ```
 
 Antes de iniciar la descripción detallada del proceso de representación utilizando una bolsa de palabras dispersas, es conveniente ilustrar este proceso mediante la @fig-repr-texto-bolsa-dispersa. El **texto segmentado** es el resultado del proceso ilustrado en @fig-pre-procesamiento. El texto segmentado puede seguir dos caminos, en la parte superior se encuentra el caso cuando los pesos han sido identificados previamente y en la parte inferior es el procedimiento cuando los pesos se estiman mediante un corpus específico que normalmente es un conjunto de entrenamiento. 
@@ -190,14 +184,11 @@ sns.displot(sim.data)
 
 La @fig-repr-texto-bolsa-densa muestra el procedimiento que se sigue para representar un texto en una bolsa de palabras dispersa. En primer lugar la bolsa de palabras densa considera que los vectores asociados a los términos se encuentra pre-entrenados y en general no es factible entrenarlos en el momento, esto por el tiempo que lleva estimar estos vectores. 
 
-```{mermaid}
-%%| echo: false
-%%| fig-cap: Diagrama Bolsa de Palabras Densa
-%%| label: fig-repr-texto-bolsa-densa
-
-flowchart LR
-    Terminos([Texto\n Segmentado]) -- Pre-entrenados -->  A[Asociación]
-    A --> Repr([Representación])
+```{dot}
+//| echo: false
+//| fig-cap: Diagrama Bolsa de Palabras Densa
+//| label: fig-repr-texto-bolsa-densa
+//| file: fig/repr-bolsa-densa.dot
 ```
 
 El texto se representa como el vector $\mathbf u$ que se calcula usando la @eq-bolsa-densas donde se observa que es la suma de los vectores asociados a cada término más un coeficiente $\mathbf{w_0}$. En particular el coeficiente $\mathbf{w_0} \in \mathbb R^{M}$ no se encuentra en todas las representaciones densas, pero en la representación que se usará contiene este vector, $M$ es la dimensión de la representación densa. 

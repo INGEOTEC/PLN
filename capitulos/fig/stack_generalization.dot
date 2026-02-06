@@ -1,0 +1,66 @@
+digraph G {
+    rankdir=TB;
+    compound=true;
+    nodesep=0.5; // Espacio horizontal entre nodos
+    ranksep=0.4; // Espacio vertical entre niveles
+    splines=line;
+    
+    node [shape=rect, style=filled, fillcolor=white, fontname="Arial"];
+
+    // --- Subgrafo Representaciones ---
+    subgraph cluster_Representacion {
+        label = "Representaciones";
+        style = dashed;
+        color = lightgrey;
+
+        
+        // Forzamos que todos los nodos de este grupo estén en el mismo nivel horizontal
+        { rank=same; Repr1 Repr2 ReprI ReprM }
+        
+        Repr1 [label="Representación 1", shape=capsule];
+        Repr2 [label="Representación 2", shape=capsule];
+        ReprI [label="...", shape=none, style="", width=0.5];
+        ReprM [label="Representación M", shape=capsule];
+    }
+
+    // --- Subgrafo Estimadores ---
+    subgraph cluster_Estimadores {
+        label = "Estimadores";
+        style = dashed;
+        color = lightgrey;
+        
+        { rank=same; Est1 Est2 EstI EstM }
+        
+        Est1 [label="Estimador 1"];
+        Est2 [label="Estimador 2"];
+        EstI [label="...", shape=none, style="", width=0.5];
+        EstM [label="Estimador M"];
+    }
+
+    Conc [label="Concatenación", width=2];
+
+    // --- Subgrafo Predicción ---
+    subgraph cluster_Prediccion {
+        label = "Etapa de Predicción";
+        style = dashed;
+        color = lightgrey;
+        
+        Entrada;
+        { rank=same; Clasificador Regresor }
+        Prediccion [label="Predicción", shape=capsule];
+
+        Entrada:s -> Clasificador [label="Clasificación"];
+        Entrada:s -> Regresor [label="Regresión"];
+        Clasificador -> Prediccion;
+        Regresor -> Prediccion;
+    }
+
+    // --- Conexiones para mantener la alineación vertical central ---
+    // Conectamos los elementos centrales para forzar el eje
+    Repr2 -> Est2 [ltail=cluster_Representacion, lhead=cluster_Estimadores];
+    Est2 -> Conc [ltail=cluster_Estimadores];
+    Conc -> Entrada [lhead=cluster_Prediccion];
+
+    // Flechas invisibles para ayudar a Graphviz a centrar (opcional si hay desvío)
+    ReprI -> EstI [style=invis];
+}
