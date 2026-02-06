@@ -42,9 +42,9 @@ $$
 \mathbb P(w_n \mid w_{n-2}, w_{n-1})=\frac{\#(w_{n-2}, w_{n-1}, w_n)}{\#(w_{n-2}, w_{n-1})}.
 $$
 
-### Implementación
+### Cálculo de frecuencias en un corpus
 
-Para el modelo de lenguaje se requiere calcular la frecuencia de la secuencia (variable `sentence`) y la frecuencia de las palabras previas (variable `history`), dependiendo de $N$. Adicionalmente, se guarda el vocabulario en la variable `voc`.  
+Para el modelo de lenguaje se requiere calcular la frecuencia de la secuencia (variable `sentence`), i.e., $\#(w_{n-N+1}, \ldots, w_{n-1}, w_n)$ y la frecuencia de las palabras previas (variable `history`), i.e., $\#(w_{n-N+1}, \ldots, w_{n-1})$, dependiendo de $N$. Adicionalmente, se guarda el vocabulario en la variable `voc`.  
 
 ```{python}
 #| echo: true
