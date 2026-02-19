@@ -6,12 +6,15 @@ El **objetivo** de la unidad es desarrollar un modelo de lenguaje basado en gram
 
 ```{python}
 #| echo: true
+from dataclasses import dataclass
+import pprint
 from collections import Counter
 import numpy as np
 import pandas as pd
 import seaborn as sns
 from transformers import AutoTokenizer
 from encexp.utils import load_dataset
+pp = pprint.PrettyPrinter(width=60, compact=True).pprint
 ```
 
 ```{python}
@@ -82,14 +85,16 @@ La siguiente instrucción muestra las diez secuencias más frecuentes en el conj
 
 ```{python}
 #| echo: true
-[bilmaLAT.decode(list(map(int, k.split("|")))) for k, v in sentence.most_common(10)]
+pp([bilmaLAT.decode(list(map(int, k.split("|"))))
+    for k, v in sentence.most_common(10)])
 ```
 
 Completando el ejemplo anterior, la siguiente instrucción muestra la secuencia de palabras previas que tiene la mayor frecuencia.
 
 ```{python}
 #| echo: true
-[bilmaLAT.decode(list(map(int, k.split("|")))) for k, v in history.most_common(10)]
+pp([bilmaLAT.decode(list(map(int, k.split("|"))))
+    for k, v in history.most_common(10)])
 ```
 
 ::: {.callout-tip collapse="true"}
@@ -252,3 +257,59 @@ Habiendo calculado el promedio del logaritmo de la probabilidad, uno se puede pr
 mex_ds = [x for x in paises if x['country'] == 'mx']
 mex_ds[np.argmax(mex)]
 ```
+
+## Encapsulando el modelo de lenguaje
+
+```{python}
+#| echo: true
+
+@dataclass
+class Model:
+  voc: int=None
+  frase: Counter=None
+  hist: Counter=None
+  segmentador: object=AutoTokenizer.from_pretrained('guillermoruiz/bilmaLAT')
+  k_suavizado: float=1
+  promedio: bool=False
+  N: int=3
+
+  def get_text(self, ele):
+    if isinstance(ele, dict):
+      return ele['text']
+    return ele
+
+  def fit(self, X, y=None):
+    voc = Counter()
+    self.frase = Counter()
+    self.hist = Counter()
+    seg = self.segmentador
+    N = self.N
+    for ele in X:
+      _ = self.get_text(ele)
+      tokens = seg(_).input_ids
+      voc.update(tokens)
+      _ = ["|".join(map(str, lst))
+          for lst in zip(*[tokens[i:] for i in range(N)])]
+      self.frase.update(_)
+      _ = ["|".join(map(str, lst))
+          for lst in zip(*[tokens[i:] for i in range(N-1)])]
+      self.hist.update(_)
+    self.voc = len(voc)
+    return self
+
+  def _log_prob(self, ele):
+    tokens = self.segmentador(self.get_text(ele)).input_ids
+    acc = 0
+    k = self.k_suavizado
+    for code in zip(*[tokens[i:] for i in range(self.N)]):
+      num = np.log(self.frase["|".join(map(str, code))] + k)
+      den = np.log(self.hist["|".join(map(str, code[:-1]))] + k * self.voc)
+      acc += num - den
+    if self.promedio:
+      return acc / len(tokens)
+    return acc
+
+  def log_prob(self, X):
+    _log_prob = self._log_prob
+    return np.c_[[_log_prob(x) for x in X]]
+``` 

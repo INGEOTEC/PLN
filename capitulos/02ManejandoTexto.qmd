@@ -7,6 +7,7 @@ El **objetivo** de la unidad es analizar la implementación de diferentes compon
 ```{python}
 #| echo: true
 from collections import Counter
+import pprint
 import unicodedata
 import re
 import numpy as np
@@ -23,6 +24,7 @@ from pysentimiento.preprocessing import preprocess_tweet
 from microtc.params import OPTION_GROUP, OPTION_DELETE,\
                            OPTION_NONE
 from nltk.stem.snowball import SnowballStemmer
+pp = pprint.PrettyPrinter(width=60, compact=True).pprint
 ```
 
 ```{python}
@@ -176,8 +178,7 @@ for word in text.split():
     if word.lower() in lang.stopwords[len(word)]:
         continue
     output.append(word)
-output = " ".join(output) 
-output
+pp(output)
 ```
 
 ### Lematización y Reducción a la Raíz
@@ -195,8 +196,7 @@ output = []
 for word in text.split():
     w = stemmer.stem(word)
     output.append(w)
-output = " ".join(output) 
-output
+pp(output)
 ```
 
 ## Segmentación {#sec-segmentacion}
@@ -215,7 +215,7 @@ n = 3
 n_grams = []
 for a in zip(*[words[i:] for i in range(n)]):
     n_grams.append("~".join(a))
-n_grams
+pp(n_grams)
 ```
 
 ### Gramas de Caracteres (q-grams)
@@ -231,7 +231,7 @@ q = 4
 q_grams = []
 for a in zip(*[text[i:] for i in range(q)]):
     q_grams.append("".join(a))
-q_grams
+pp(q_grams)
 ```
 
 ## $\mu$TC {#sec-TextModel}
@@ -305,7 +305,7 @@ Por ejemplo, utilizando las normalizaciones que se tienen por defecto, el siguie
 #| echo: true
 txt = 'buenos días, bienvenidos al curso de Procesamiento de Lenguaje Natural.'
 microTC_qgrams = TextModel(token_list=[4])
-microTC_qgrams.tokenize(txt)
+pp(microTC_qgrams.tokenize(txt))
 ```
 
 para poder identificar cuando se trata de un segmento que corresponde a una palabra o un grama de caracteres, a los últimos se les agrega el prefijo `q:`. Cabe mencionar que por defecto se remueven los símbolos diacríticos.
@@ -316,7 +316,7 @@ El ejemplo anterior, se utiliza para generar un grama de palabras de tamaño $2.
 #| echo: true
 
 tm = TextModel(token_list=[-2])
-tm.tokenize(txt)
+pp(tm.tokenize(txt))
 ```
 
 Para completar la explicación, se combinan la segmentación de gramas de caracteres y palabras además de incluir las palabras en la segmentación. 
@@ -325,7 +325,7 @@ Para completar la explicación, se combinan la segmentación de gramas de caract
 #| echo: true
 
 tm = TextModel(token_list=[4, -2, -1])
-tm.tokenize(txt)
+pp(tm.tokenize(txt))
 ```
 
 ::: {.callout-tip collapse="true"}
@@ -359,7 +359,7 @@ El texto es procesado es organizado en una instancia de la clase `Doc` la cual e
 ```{python}
 #| echo: true
 
-[(w.text, w.pos_) for w in doc]
+pp([(w.text, w.pos_) for w in doc])
 ```
 
 # Modelo Mexicano
@@ -381,7 +381,7 @@ El resultado de la siguiente instrucción indica en el campo `input_ids` el text
 ```{python}
 #| echo: true
 code = bilmaLAT(txt)
-code
+pp(code)
 ```
 
 El método `bilmaLAT.decode` decodifica el texto y como se muestra en el resultado de la siguiente instrucción, se le añadió **[CLS]** al inicio de la frase y **[SEP]** al final. Este comportamiento es normal en este tipo de modelado y quedará claro en las siguiente unidades.
@@ -414,7 +414,7 @@ El texto segmentado se representa en la misma estructura de datos que la utiliza
 ```{python}
 #| echo: true
 code = robertuito(preprocess_tweet(txt))
-code
+pp(code)
 ```
 
 La secuencia se decodifica utilizando el método `robertuito.decode` como se observa en la siguiente instrucción. En el salida de la celda se observa como al inicio de la frase se coloca la etiqueta **\<s\>** y al final la etiqueta **\</s\>**.
@@ -496,7 +496,6 @@ _['Tipo'] = 'bilmaLAT'
 df = pd.concat([df, _])
 sns.lineplot(data=df, x='Segmentos', y='Vocabulario', hue='Tipo')
 ```
-
 
 ::: {.callout-tip collapse="true"}
 ## Actividad

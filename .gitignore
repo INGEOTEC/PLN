@@ -11,3 +11,4 @@ capitulos/*quarto_ipynb
 delitos.zip
 capitulos/delitos/*
 _freeze/
+capitulos/*.html
