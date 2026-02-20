@@ -116,12 +116,14 @@ Seleccione de los siguientes trigamas aquel que tenga una mayor frecuencia:
 * ) _url [SEP]
 :::
 
-### Clase 
+### Organizando en una clase 
 
-@lst-estimacion-frecuencia
+La implementación del modelo de lenguaje, en particular de la estimación de las frecuecias descrita en @lst-estimacion-frecuencia se organiza en la clase `Frec` que se muestra en @lst-frec-modelo-lenguaje. La clase recibe el parámetro `N` que indica el tamaño de la ventana y inicializa las variables `voc`, `frase`, y `hist` donde se guardará la frecuencia del vocabulario, de los gramas y de los $N-1$ gramas. 
 
 ```{python}
 #| echo: true
+#| lst-label: lst-frec-modelo-lenguaje
+#| lst-cap: Clase que estima la frecuencia de los segmentos de un corpus 
 
 class Frec:
   def __init__(self, N: int=2):
@@ -132,7 +134,7 @@ class Frec:
 
   @property
   def segmentador(self):
-    try: # <1>
+    try: # <5>
       return self._segmentador # <5>
     except AttributeError: # <5>
       _ = AutoTokenizer.from_pretrained('guillermoruiz/bilmaLAT') # <5>
@@ -156,16 +158,17 @@ class Frec:
     return self 
 
   def get_text(self, ele):
-    if isinstance(ele, dict):
-      return ele['text']
-    return ele    
+    if isinstance(ele, dict): # <7>
+      return ele['text'] # <7>
+    return ele
 ```
 1. Tamaño de la ventana
 2. Vocabulario
-3. Frecuencia de frases
-4. Frecuencia de segmentos previos
+3. Frecuencia de los gramas 
+4. Frecuencia de los gramas previos
 5. Segmentador mediante el modelo bilmaLAT
 6. Estimación de frecuencias
+7. Función auxiliar para utilizar una lista de diccionarios. 
 
 ## Probabilidad
 
