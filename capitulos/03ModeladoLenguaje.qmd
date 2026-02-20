@@ -47,13 +47,13 @@ $$
 
 ### Cálculo de frecuencias en un corpus
 
-Para el modelo de lenguaje se requiere calcular la frecuencia de la secuencia (variable `sentence`), i.e., $\#(w_{n-N+1}, \ldots, w_{n-1}, w_n)$ y la frecuencia de las palabras previas (variable `history`), i.e., $\#(w_{n-N+1}, \ldots, w_{n-1})$, dependiendo de $N$. Adicionalmente, se guarda el vocabulario en la variable `voc`.  
+Para el modelo de lenguaje se requiere calcular la frecuencia de la secuencia (variable `frase`), i.e., $\#(w_{n-N+1}, \ldots, w_{n-1}, w_n)$ y la frecuencia de las palabras previas (variable `hist`), i.e., $\#(w_{n-N+1}, \ldots, w_{n-1})$, dependiendo de $N$. Adicionalmente, se guarda el vocabulario en la variable `voc`.  
 
 ```{python}
 #| echo: true
 voc = Counter()
-sentence = Counter()
-history = Counter()
+frase = Counter()
+hist = Counter()
 ```
 
 El conjunto de datos que se utilizará para generar el modelo es el que se obtiene con la función `load_dataset` y se guarda en la variable `dataset`.
@@ -63,30 +63,37 @@ El conjunto de datos que se utilizará para generar el modelo es el que se obtie
 dataset = load_dataset(lang='es', dataset='dev')
 ```
 
-El siguiente paso es iterar por todos los elementos del conjunto de datos (variable `dataset`). En el ciclo se segmenta cada texto y se actualiza el vocabulario con el método `voc.update`. Después se genera una ventana de tamaño $N$, donde los índices que corresponden a elementos del vocabulario se concatenan con el caracter \|. El siguiente paso es actualizar la frecuencia de la secuencia con el método `sentence.update`. Se realiza un procedimiento equivalente pero para una ventana de tamaño $N-1$ que corresponde a las palabras previas, actualizando con el método `history.update`.  
+El siguiente paso es iterar por todos los elementos del conjunto de datos (variable `dataset`). En el ciclo se segmenta cada texto y se actualiza el vocabulario con el método `voc.update`. Después se genera una ventana de tamaño $N$, donde los índices que corresponden a elementos del vocabulario se concatenan con el caracter \|. El siguiente paso es actualizar la frecuencia de la secuencia con el método `frase.update`. Se realiza un procedimiento equivalente pero para una ventana de tamaño $N-1$ que corresponde a las palabras previas, actualizando con el método `hist.update`.  
 
 ```{python}
 #| echo: true
 
 N = 2
-bilmaLAT = AutoTokenizer.from_pretrained('guillermoruiz/bilmaLAT')
-for ele in dataset:
-  tokens = bilmaLAT(ele['text']).input_ids
-  voc.update(tokens)
+bilmaLAT = AutoTokenizer.from_pretrained('guillermoruiz/bilmaLAT') # <1>
+for ele in dataset: # <2>
+  tokens = bilmaLAT(ele['text']).input_ids # <3>
+  voc.update(tokens) # <4>
   _ = ["|".join(map(str, lst))
-       for lst in zip(*[tokens[i:] for i in range(N)])]
-  sentence.update(_)
+       for lst in zip(*[tokens[i:] for i in range(N)])] # <5>
+  frase.update(_) # <5>
   _ = ["|".join(map(str, lst))
-       for lst in zip(*[tokens[i:] for i in range(N-1)])]
-  history.update(_)
+       for lst in zip(*[tokens[i:] for i in range(N-1)])] # <6>
+  hist.update(_) # <6>
 ```
+
+1. Carga el modelo bilmaLAT
+2. Iteración por todos los textos
+3. Segmentación de un texto
+4. Actualización de vocabulario
+5. Iteración para estimar y actualizar la frecuencia de frases
+6. Iteración para estimar y actualizar la frecuencia de historia
 
 La siguiente instrucción muestra las diez secuencias más frecuentes en el conjunto de datos analizado.
 
 ```{python}
 #| echo: true
 pp([bilmaLAT.decode(list(map(int, k.split("|"))))
-    for k, v in sentence.most_common(10)])
+    for k, v in frase.most_common(10)])
 ```
 
 Completando el ejemplo anterior, la siguiente instrucción muestra la secuencia de palabras previas que tiene la mayor frecuencia.
@@ -94,7 +101,7 @@ Completando el ejemplo anterior, la siguiente instrucción muestra la secuencia 
 ```{python}
 #| echo: true
 pp([bilmaLAT.decode(list(map(int, k.split("|"))))
-    for k, v in history.most_common(10)])
+    for k, v in hist.most_common(10)])
 ```
 
 ::: {.callout-tip collapse="true"}
@@ -106,6 +113,50 @@ Seleccione de los siguientes trigamas aquel que tenga una mayor frecuencia:
 * . Más en
 * ) _url [SEP]
 :::
+
+### Clase 
+
+```{python}
+#| echo: true
+
+class Frec:
+  def __init__(self, N: int=2):
+    self.N = N
+    self.voc = Counter()
+    self.frase = Counter()
+    self.hist = Counter()
+
+  @property
+  def segmentador(self):
+    try: # <1>
+      return self._segmentador # <1>
+    except AttributeError: # <1>
+      _ = AutoTokenizer.from_pretrained('guillermoruiz/bilmaLAT') # <1>
+      self._segmentador = _ # <1>
+      return _ # <1>
+
+  def fit(self, X, y=None):
+    seg = self.segmentador
+    N = self.N
+    for ele in X:
+      _ = self.get_text(ele)
+      tokens = seg(_).input_ids
+      voc.update(tokens)
+      _ = ["|".join(map(str, lst))
+          for lst in zip(*[tokens[i:] for i in range(N)])]
+      self.frase.update(_)
+      _ = ["|".join(map(str, lst))
+          for lst in zip(*[tokens[i:] for i in range(N-1)])]
+      self.hist.update(_)
+    self.voc = len(voc)
+    return self 
+
+  def get_text(self, ele):
+    if isinstance(ele, dict):
+      return ele['text']
+    return ele    
+```
+1. Segmentador mediante el modelo bilmaLAT
 
 ## Probabilidad
 
@@ -128,7 +179,7 @@ El siguiente paso es dividir la frecuencia de la cadena *buenos dias* entre l fr
 
 ```{python}
 #| echo: true
-sentence["|".join(map(str, code))] / history["|".join(map(str, code[:-1]))]
+frase["|".join(map(str, code))] / hist["|".join(map(str, code[:-1]))]
 ```
 
 Otro ejemplo similar es calcular la probabilidad de *buenox*. Como se puede observar en el siguiente código, esa palabra se codifica en dos índices, entonces se puede seguir un procedimiento equivalente.
@@ -144,7 +195,7 @@ Como muestra el resultado de la siguiente celda la probabilidad de *buenox* es c
 
 ```{python}
 #| echo: true
-sentence["|".join(map(str, code))] / history["|".join(map(str, code[:-1]))]
+frase["|".join(map(str, code))] / hist["|".join(map(str, code[:-1]))]
 ```
 
 ### $k$-suavizado
@@ -157,8 +208,8 @@ La función `prob` implementa un tipo de suavisado donde se le asigna un valor d
 #| echo: true
 def prob(txt, k=0.01):
   code = bilmaLAT(txt)['input_ids'][1:-1]
-  num = sentence["|".join(map(str, code))] + k
-  den = history["|".join(map(str, code[:-1]))] + k * len(voc)
+  num = frase["|".join(map(str, code))] + k
+  den = hist["|".join(map(str, code[:-1]))] + k * len(voc)
   return num / den
 ```
 
@@ -190,8 +241,8 @@ def log_prob(ele, k=1, average=True):
   tokens = bilmaLAT(ele['text']).input_ids
   acc = 0
   for code in zip(*[tokens[i:] for i in range(N)]):
-    num = np.log(sentence["|".join(map(str, code))] + k)
-    den = np.log(history["|".join(map(str, code[:-1]))] + k * len(voc))
+    num = np.log(frase["|".join(map(str, code))] + k)
+    den = np.log(hist["|".join(map(str, code[:-1]))] + k * len(voc))
     acc += num - den
   if average:
     return acc / len(tokens)

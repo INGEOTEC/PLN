@@ -34,6 +34,7 @@ book:
 
 bibliography: references.bib
 title-block-banner: false
+code-annotations: select
 
 format:
   html:
