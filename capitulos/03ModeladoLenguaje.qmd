@@ -67,6 +67,8 @@ El siguiente paso es iterar por todos los elementos del conjunto de datos (varia
 
 ```{python}
 #| echo: true
+#| lst-label: lst-estimacion-frecuencia
+#| lst-cap: Estimación de frecuencias
 
 N = 2
 bilmaLAT = AutoTokenizer.from_pretrained('guillermoruiz/bilmaLAT') # <1>
@@ -116,39 +118,41 @@ Seleccione de los siguientes trigamas aquel que tenga una mayor frecuencia:
 
 ### Clase 
 
+@lst-estimacion-frecuencia
+
 ```{python}
 #| echo: true
 
 class Frec:
   def __init__(self, N: int=2):
-    self.N = N
-    self.voc = Counter()
-    self.frase = Counter()
-    self.hist = Counter()
+    self.N = N # <1>
+    self.voc = Counter() # <2>
+    self.frase = Counter() # <3>
+    self.hist = Counter() # <4>
 
   @property
   def segmentador(self):
     try: # <1>
-      return self._segmentador # <1>
-    except AttributeError: # <1>
-      _ = AutoTokenizer.from_pretrained('guillermoruiz/bilmaLAT') # <1>
-      self._segmentador = _ # <1>
-      return _ # <1>
+      return self._segmentador # <5>
+    except AttributeError: # <5>
+      _ = AutoTokenizer.from_pretrained('guillermoruiz/bilmaLAT') # <5>
+      self._segmentador = _ # <5>
+      return _ # <5>
 
   def fit(self, X, y=None):
     seg = self.segmentador
     N = self.N
-    for ele in X:
-      _ = self.get_text(ele)
-      tokens = seg(_).input_ids
-      voc.update(tokens)
+    for ele in X: # <6>
+      _ = self.get_text(ele) # <6>
+      tokens = seg(_).input_ids # <6>
+      voc.update(tokens) # <6>
       _ = ["|".join(map(str, lst))
-          for lst in zip(*[tokens[i:] for i in range(N)])]
-      self.frase.update(_)
-      _ = ["|".join(map(str, lst))
-          for lst in zip(*[tokens[i:] for i in range(N-1)])]
-      self.hist.update(_)
-    self.voc = len(voc)
+          for lst in zip(*[tokens[i:] for i in range(N)])] # <6>
+      self.frase.update(_) # <6>
+      _ = ["|".join(map(str, lst)) # <6>
+          for lst in zip(*[tokens[i:] for i in range(N-1)])] # <6>
+      self.hist.update(_) # <6>
+    self.voc = len(voc) # <6>
     return self 
 
   def get_text(self, ele):
@@ -156,7 +160,12 @@ class Frec:
       return ele['text']
     return ele    
 ```
-1. Segmentador mediante el modelo bilmaLAT
+1. Tamaño de la ventana
+2. Vocabulario
+3. Frecuencia de frases
+4. Frecuencia de segmentos previos
+5. Segmentador mediante el modelo bilmaLAT
+6. Estimación de frecuencias
 
 ## Probabilidad
 
