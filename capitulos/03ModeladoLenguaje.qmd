@@ -158,7 +158,7 @@ class Frec:
     return self 
 
   def get_text(self, ele):
-    if isinstance(ele, dict): # <7>
+    if isinstance(ele, dict): # <7>
       return ele['text'] # <7>
     return ele
 ```
@@ -167,8 +167,27 @@ class Frec:
 3. Frecuencia de los gramas 
 4. Frecuencia de los gramas previos
 5. Segmentador mediante el modelo bilmaLAT
-6. Estimación de frecuencias
+6. Estimación de frecuencias ver @lst-estimacion-frecuencia
 7. Función auxiliar para utilizar una lista de diccionarios. 
+
+::: {.callout-note}
+Calculando las diez secuencias más frecuentes en el conjunto de datos utilizando la clase Frac. Lo primero que se tiene que realizar es estimar las frecuencias como se muestra en el siguiente código. 
+
+```{python}
+#| echo: true
+
+frec = Frec().fit(dataset)
+```
+
+El siguiente código utiliza las frecuencias estimadas para mostrar las diez más frecuentes. 
+
+```{python}
+#| echo: true
+pp([bilmaLAT.decode(list(map(int, k.split("|"))))
+    for k, v in frec.frase.most_common(10)])
+```
+
+:::
 
 ## Probabilidad
 
@@ -249,17 +268,23 @@ La siguiente función calcula la suma y el promedio del logaritmo de la probabil
 
 ```{python}
 #| echo: true
+#| lst-label: lst-log-prob-frase
+#| lst-cap: Logaritmo de la probabilidad de una frase
+
 def log_prob(ele, k=1, average=True):
   tokens = bilmaLAT(ele['text']).input_ids
   acc = 0
-  for code in zip(*[tokens[i:] for i in range(N)]):
-    num = np.log(frase["|".join(map(str, code))] + k)
-    den = np.log(hist["|".join(map(str, code[:-1]))] + k * len(voc))
+  for code in zip(*[tokens[i:] for i in range(N)]): # <1> 
+    num = np.log(frase["|".join(map(str, code))] + k) # <2>
+    den = np.log(hist["|".join(map(str, code[:-1]))] + k * len(voc)) # <2>
     acc += num - den
-  if average:
-    return acc / len(tokens)
+  if average: # <3>
+    return acc / len(tokens) # <3>
   return acc
 ```
+1. Iteración por todos los gramas de la frase
+2. Numerador y denominador de la @eq-modelo-qgrams
+3. Calculando el promedio
 
 La función `log_prob` se puede utilizar para calcular la probabilidad de todas las frases en el conjunto utilizado para estimar las frecuencias tal y como se muestra en la siguiente instrucción.
 
@@ -321,58 +346,58 @@ mex_ds = [x for x in paises if x['country'] == 'mx']
 mex_ds[np.argmax(mex)]
 ```
 
-## Encapsulando el modelo de lenguaje
+## Encapsulando el modelo de lenguaje de gramas
+
+El modelo de lenguaje de gramas se organiza en la clase `ModeloNGram`. Esta clase hereda la funcionalidad de la clase `Frec` (ver @lst-frec-modelo-lenguaje) y lo complementa implementando el cálculo de la probabilidad de una frase utilizando k-suavizado (ver @lst-log-prob-frase).
+
+```{python}
+#| echo: true
+#| lst-label: lst-modelo-n-gram
+#| lst-cap: Modelo de lenguaje de gramas
+
+class ModeloNGram(Frec):
+  def __init__(self, N: int=2,
+               k_suavizado: float=1,
+               promedio: bool=False):
+    super(ModeloNGram, self).__init__(N)
+    self.k_suavizado = k_suavizado # <1>
+    self.promedio = promedio # <2>
+
+  def _log_prob(self, ele):
+    tokens = self.segmentador(self.get_text(ele)).input_ids # <3>
+    acc = 0 # <3>
+    k = self.k_suavizado # <3>
+    for code in zip(*[tokens[i:] for i in range(self.N)]): # <3>
+      num = np.log(self.frase["|".join(map(str, code))] + k) # <3>
+      den = np.log(self.hist["|".join(map(str, code[:-1]))] + k * self.voc) # <3>
+      acc += num - den # <3>
+    if self.promedio: # <3>
+      return acc / len(tokens) # <3>
+    return acc # <3>
+
+  def log_prob(self, X):
+    _log_prob = self._log_prob # <4>
+    return np.c_[[_log_prob(x) for x in X]] # <4>
+``` 
+1. Valor del suavizado
+2. Bandera que indica el cálculo del promedio
+3. Logaritmo de la probabilidad de la frase, ver @lst-log-prob-frase
+4. Calcula el logaritmo de la probabilidad para una lista de textos
+
+::: {.callout-note}
+```{python}
+#| echo: true
+
+modeloNGram = ModeloNGram(promedio=True).fit(dataset)
+```
+
+El logaritmo de la probabilidad de la primera frase de `dataset`, calculada previamente (variable `acc`), tiene un valor de `{python} f'{acc[0]:0.4f}'`. Utilizando la implementación del modelo de lenguaje de gramas (ver @lst-modelo-n-gram), inicializado con `dataset`, y contenido en la variable `modeloNGram` se obtiene el logaritmo mostrado en la siguiente instrucción.
 
 ```{python}
 #| echo: true
 
-@dataclass
-class Model:
-  voc: int=None
-  frase: Counter=None
-  hist: Counter=None
-  segmentador: object=AutoTokenizer.from_pretrained('guillermoruiz/bilmaLAT')
-  k_suavizado: float=1
-  promedio: bool=False
-  N: int=3
+modeloNGram.log_prob(dataset[:1])
+```
 
-  def get_text(self, ele):
-    if isinstance(ele, dict):
-      return ele['text']
-    return ele
+:::
 
-  def fit(self, X, y=None):
-    voc = Counter()
-    self.frase = Counter()
-    self.hist = Counter()
-    seg = self.segmentador
-    N = self.N
-    for ele in X:
-      _ = self.get_text(ele)
-      tokens = seg(_).input_ids
-      voc.update(tokens)
-      _ = ["|".join(map(str, lst))
-          for lst in zip(*[tokens[i:] for i in range(N)])]
-      self.frase.update(_)
-      _ = ["|".join(map(str, lst))
-          for lst in zip(*[tokens[i:] for i in range(N-1)])]
-      self.hist.update(_)
-    self.voc = len(voc)
-    return self
-
-  def _log_prob(self, ele):
-    tokens = self.segmentador(self.get_text(ele)).input_ids
-    acc = 0
-    k = self.k_suavizado
-    for code in zip(*[tokens[i:] for i in range(self.N)]):
-      num = np.log(self.frase["|".join(map(str, code))] + k)
-      den = np.log(self.hist["|".join(map(str, code[:-1]))] + k * self.voc)
-      acc += num - den
-    if self.promedio:
-      return acc / len(tokens)
-    return acc
-
-  def log_prob(self, X):
-    _log_prob = self._log_prob
-    return np.c_[[_log_prob(x) for x in X]]
-``` 
