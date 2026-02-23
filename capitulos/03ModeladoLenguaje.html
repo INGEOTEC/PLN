@@ -298,7 +298,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es desarrollar un modelo de lenguaje basado en gramas.</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="d22ca0b7" class="cell" data-execution_count="1">
+<div id="39d71cfa" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pprint</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
@@ -320,7 +320,7 @@ window.Quarto = {
 <p>En este caso el modelo para el siguiente segmento quedaría como</p>
 <p><span id="eq-modelo-qgrams"><span class="math display">\[
 \begin{split}
-\mathbb P(w_n \mid w_{n-N+1}, \ldots, w_{n-1})&amp;=\frac{\#(w_{n-N+1}, \ldots, w_{n-1}, w_n)}{\sum_{\ell} \#(w_{n-N-1}, \ldots, w_{n-1}, \ell)}\\
+\mathbb P(w_n \mid w_{n-N+1}, \ldots, w_{n-1})&amp;=\frac{\#(w_{n-N+1}, \ldots, w_{n-1}, w_n)}{\sum_{\ell} \#(w_{n-N+1}, \ldots, w_{n-1}, \ell)}\\
 &amp;=\frac{\#(w_{n-N+1}, \ldots, w_{n-1}, w_n)}{\#(w_{n-N+1}, \ldots, w_{n-1})},
 \end{split}
 \tag{3.1}\]</span></span></p>
@@ -331,17 +331,17 @@ window.Quarto = {
 <section id="cálculo-de-frecuencias-en-un-corpus" class="level3" data-number="3.2.1">
 <h3 data-number="3.2.1" class="anchored" data-anchor-id="cálculo-de-frecuencias-en-un-corpus"><span class="header-section-number">3.2.1</span> Cálculo de frecuencias en un corpus</h3>
 <p>Para el modelo de lenguaje se requiere calcular la frecuencia de la secuencia (variable <code>frase</code>), i.e., <span class="math inline">\(\#(w_{n-N+1}, \ldots, w_{n-1}, w_n)\)</span> y la frecuencia de las palabras previas (variable <code>hist</code>), i.e., <span class="math inline">\(\#(w_{n-N+1}, \ldots, w_{n-1})\)</span>, dependiendo de <span class="math inline">\(N\)</span>. Adicionalmente, se guarda el vocabulario en la variable <code>voc</code>.</p>
-<div id="ae068d9f" class="cell" data-execution_count="3">
+<div id="86c2a35e" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>voc <span class="op">=</span> Counter()</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>frase <span class="op">=</span> Counter()</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>hist <span class="op">=</span> Counter()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El conjunto de datos que se utilizará para generar el modelo es el que se obtiene con la función <code>load_dataset</code> y se guarda en la variable <code>dataset</code>.</p>
-<div id="4e47d8a3" class="cell" data-execution_count="4">
+<div id="d45e5c2e" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> load_dataset(lang<span class="op">=</span><span class="st">'es'</span>, dataset<span class="op">=</span><span class="st">'dev'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El siguiente paso es iterar por todos los elementos del conjunto de datos (variable <code>dataset</code>). En el ciclo se segmenta cada texto y se actualiza el vocabulario con el método <code>voc.update</code>. Después se genera una ventana de tamaño <span class="math inline">\(N\)</span>, donde los índices que corresponden a elementos del vocabulario se concatenan con el caracter |. El siguiente paso es actualizar la frecuencia de la secuencia con el método <code>frase.update</code>. Se realiza un procedimiento equivalente pero para una ventana de tamaño <span class="math inline">\(N-1\)</span> que corresponde a las palabras previas, actualizando con el método <code>hist.update</code>.</p>
-<div id="7585882d" class="cell" data-execution_count="5">
+<div id="d4bfa83f" class="cell" data-execution_count="5">
 <div id="lst-estimacion-frecuencia" class="python cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-estimacion-frecuencia-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -392,7 +392,7 @@ Listado&nbsp;3.1: Estimación de frecuencias
 </div>
 </div>
 <p>La siguiente instrucción muestra las diez secuencias más frecuentes en el conjunto de datos analizado.</p>
-<div id="232676d3" class="cell" data-execution_count="6">
+<div id="3b2d0bf3" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pp([bilmaLAT.decode(<span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">int</span>, k.split(<span class="st">"|"</span>))))</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k, v <span class="kw">in</span> frase.most_common(<span class="dv">10</span>)])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -401,7 +401,7 @@ Listado&nbsp;3.1: Estimación de frecuencias
 </div>
 </div>
 <p>Completando el ejemplo anterior, la siguiente instrucción muestra la secuencia de palabras previas que tiene la mayor frecuencia.</p>
-<div id="1bf040a1" class="cell" data-execution_count="7">
+<div id="bd5abcaf" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pp([bilmaLAT.decode(<span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">int</span>, k.split(<span class="st">"|"</span>))))</span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k, v <span class="kw">in</span> hist.most_common(<span class="dv">10</span>)])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -433,7 +433,7 @@ Listado&nbsp;3.1: Estimación de frecuencias
 <section id="encapsulando-la-estimación-de-frecuencias" class="level3" data-number="3.2.2">
 <h3 data-number="3.2.2" class="anchored" data-anchor-id="encapsulando-la-estimación-de-frecuencias"><span class="header-section-number">3.2.2</span> Encapsulando la estimación de frecuencias</h3>
 <p>La implementación del modelo de lenguaje, en particular de la estimación de las frecuecias descrita en <a href="#lst-estimacion-frecuencia" class="quarto-xref">Listado&nbsp;<span>3.1</span></a> se organiza en la clase <code>Frec</code> que se muestra en <a href="#lst-frec-modelo-lenguaje" class="quarto-xref">Listado&nbsp;<span>3.2</span></a>. La clase recibe el parámetro <code>N</code> que indica el tamaño de la ventana y inicializa las variables <code>voc</code>, <code>frase</code>, y <code>hist</code> donde se guardará la frecuencia del vocabulario, de los gramas y de los <span class="math inline">\(N-1\)</span> gramas.</p>
-<div id="5b470d4e" class="cell" data-execution_count="8">
+<div id="175ce101" class="cell" data-execution_count="8">
 <div id="lst-frec-modelo-lenguaje" class="python cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-frec-modelo-lenguaje-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -529,11 +529,11 @@ Listado&nbsp;3.2: Clase que estima la frecuencia de los segmentos de un corpus
 </div>
 <div class="callout-body-container callout-body">
 <p>Calculando las diez secuencias más frecuentes en el conjunto de datos utilizando la clase Frac. Lo primero que se tiene que realizar es estimar las frecuencias como se muestra en el siguiente código.</p>
-<div id="325c7bd6" class="cell" data-execution_count="9">
+<div id="8134a0f7" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>frec <span class="op">=</span> Frec().fit(dataset)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El siguiente código utiliza las frecuencias estimadas para mostrar las diez más frecuentes.</p>
-<div id="91fb8f5d" class="cell" data-execution_count="10">
+<div id="0a150d30" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pp([bilmaLAT.decode(<span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">int</span>, k.split(<span class="st">"|"</span>))))</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k, v <span class="kw">in</span> frec.frase.most_common(<span class="dv">10</span>)])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -548,11 +548,11 @@ Listado&nbsp;3.2: Clase que estima la frecuencia de los segmentos de un corpus
 <section id="probabilidad" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="probabilidad"><span class="header-section-number">3.3</span> Probabilidad</h2>
 <p>Después de calcular las frecuencia, es posible estimar la probabilidad de una frase. Considerando que <span class="math inline">\(N=2\)</span> entonces es directo calcular la probabilidad de la siguiete frase.</p>
-<div id="665664c4" class="cell" data-execution_count="11">
+<div id="32147ef7" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'buenos días'</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Lo primero es verficar que la frase se codifica en 2 índices, tal y como se muestra a continuación.</p>
-<div id="6eac8a08" class="cell" data-execution_count="12">
+<div id="c4450580" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>code <span class="op">=</span> bilmaLAT(txt)[<span class="st">'input_ids'</span>][<span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>]</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>code</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="12">
@@ -560,14 +560,14 @@ Listado&nbsp;3.2: Clase que estima la frecuencia de los segmentos de un corpus
 </div>
 </div>
 <p>El siguiente paso es dividir la frecuencia de la cadena <em>buenos dias</em> entre l frecuencia de <em>buenos</em> tal y como se muestra en la siguiente instrucción.</p>
-<div id="3875a400" class="cell" data-execution_count="13">
+<div id="b8753bd0" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">/</span> hist[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code[:<span class="op">-</span><span class="dv">1</span>]))]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
 <pre><code>0.2724795640326976</code></pre>
 </div>
 </div>
 <p>Otro ejemplo similar es calcular la probabilidad de <em>buenox</em>. Como se puede observar en el siguiente código, esa palabra se codifica en dos índices, entonces se puede seguir un procedimiento equivalente.</p>
-<div id="c6395a81" class="cell" data-execution_count="14">
+<div id="e65ada84" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'buenox'</span></span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>code <span class="op">=</span> bilmaLAT(txt)[<span class="st">'input_ids'</span>][<span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>]</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>code</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -576,7 +576,7 @@ Listado&nbsp;3.2: Clase que estima la frecuencia de los segmentos de un corpus
 </div>
 </div>
 <p>Como muestra el resultado de la siguiente celda la probabilidad de <em>buenox</em> es cero, dado que esa palabra no fue vista en el conjunto de datos donde se estimó la frecuencia.</p>
-<div id="f7cdb995" class="cell" data-execution_count="15">
+<div id="6a3bf415" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">/</span> hist[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code[:<span class="op">-</span><span class="dv">1</span>]))]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="15">
 <pre><code>0.0</code></pre>
@@ -586,7 +586,7 @@ Listado&nbsp;3.2: Clase que estima la frecuencia de los segmentos de un corpus
 <h3 data-number="3.3.1" class="anchored" data-anchor-id="k-suavizado"><span class="header-section-number">3.3.1</span> <span class="math inline">\(k\)</span>-suavizado</h3>
 <p>Para poder calcular la probabilidad de una secuencia, es necesario calcular una probabilidad diferente de cero a cualquier palabra que no ha sido vista en el conjunto donde se estiman las frecuencias. Una manera para realizar esto es asignar una pequeña masa a todas las palabras que no fueron vistas, a eso se le conoce como suavizado.</p>
 <p>La función <code>prob</code> implementa un tipo de suavisado donde se le asigna un valor de <span class="math inline">\(\frac{1}{\mid V \mid}\)</span> a todas las palabras que no son vistas, donde <span class="math inline">\(\mid V \mid\)</span> es el tamaño del vocabulario.</p>
-<div id="880eb33c" class="cell" data-execution_count="16">
+<div id="8cd67065" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prob(txt, k<span class="op">=</span><span class="fl">0.01</span>):</span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  code <span class="op">=</span> bilmaLAT(txt)[<span class="st">'input_ids'</span>][<span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>]</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  num <span class="op">=</span> frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">+</span> k</span>
@@ -594,14 +594,14 @@ Listado&nbsp;3.2: Clase que estima la frecuencia de los segmentos de un corpus
 <span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> num <span class="op">/</span> den</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Se puede observar que la probabilidad de la siguiente frase es menor que cuando no se usa el suavizado, esto es porque una fracción de la masa de probabilidad se está utilizando en elementos no vistos.</p>
-<div id="4aa603f9" class="cell" data-execution_count="17">
+<div id="fb640737" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>prob(<span class="st">'buenos días'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="17">
 <pre><code>0.17078502023600128</code></pre>
 </div>
 </div>
 <p>Complementando lo anterior, la palabra <em>buenox</em> presenta una probabilidad mayor a cero utilizando el suavizado.</p>
-<div id="51028a15" class="cell" data-execution_count="18">
+<div id="2e2c7d5d" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>prob(<span class="st">'buenox'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
 <pre><code>7.766447393968577e-06</code></pre>
@@ -613,7 +613,7 @@ Listado&nbsp;3.2: Clase que estima la frecuencia de los segmentos de un corpus
 <p>La implementación anterior se puede adaptar para calcular la probabilidad de una frase de cualquier longitud mayor o igual a <span class="math inline">\(N\)</span>.</p>
 <p>La idea es crear una ventana movil de tamaño <span class="math inline">\(N\)</span> y multiplicar todas las probabilidades obtenidas, considerando que la multiplicación entre números menores a <span class="math inline">\(1\)</span> resulta en un número menor, es más conveniente por razones numéricas el calcular la suma del logaritmo de la probabilidad.</p>
 <p>La siguiente función calcula la suma y el promedio del logaritmo de la probabilidad.</p>
-<div id="db1f293a" class="cell" data-execution_count="19">
+<div id="dce9c860" class="cell" data-execution_count="19">
 <div id="lst-log-prob-frase" class="python cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-log-prob-frase-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -651,11 +651,11 @@ Listado&nbsp;3.3: Logaritmo de la probabilidad de una frase
 </div>
 </div>
 <p>La función <code>log_prob</code> se puede utilizar para calcular la probabilidad de todas las frases en el conjunto utilizado para estimar las frecuencias tal y como se muestra en la siguiente instrucción.</p>
-<div id="af21a473" class="cell" data-execution_count="20">
+<div id="16352df9" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>acc <span class="op">=</span> [log_prob(ele) <span class="cf">for</span> ele <span class="kw">in</span> dataset]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La distribución del promedio del logaritmo de probabilidad se muestra en la siguiente figura.</p>
-<div id="ddef58ce" class="cell" data-execution_count="21">
+<div id="cf02bce7" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame()</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'log-prob'</span>] <span class="op">=</span> acc</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'dev'</span></span>
@@ -671,16 +671,16 @@ Listado&nbsp;3.3: Logaritmo de la probabilidad de una frase
 </div>
 <p>Para poder presentar otro análisis del modelo, se utiliza otro conjunto de datos, donde cada elemento del conjunto de datos tiene asociado el país de origen. Este valor se encuentra en la clave <code>country</code> de cada diccionario.</p>
 <p><em>Nota: La siguiente celda puede tardar unos cuantos minutos en ejecutarse.</em></p>
-<div id="fd33037f" class="cell" data-execution_count="22">
+<div id="a0c36cd6" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>paises <span class="op">=</span> load_dataset(lang<span class="op">=</span><span class="st">'es'</span>, dataset<span class="op">=</span><span class="st">'train'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La siguientes instrucciones modelan los datos obtenidos de México y Argentina respectivamente.</p>
-<div id="9a77ed00" class="cell" data-execution_count="23">
+<div id="3e62c760" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>mex <span class="op">=</span> [log_prob(ele) <span class="cf">for</span> ele <span class="kw">in</span> paises <span class="cf">if</span> ele[<span class="st">'country'</span>] <span class="op">==</span> <span class="st">'mx'</span>]</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>arg <span class="op">=</span> [log_prob(ele) <span class="cf">for</span> ele <span class="kw">in</span> paises <span class="cf">if</span> ele[<span class="st">'country'</span>] <span class="op">==</span> <span class="st">'ar'</span>]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La distribución obtenida al modelar estos dos conjuntos de datos se muestra en la siguiente figura.</p>
-<div id="35dd1eec" class="cell" data-execution_count="24">
+<div id="2fd2c60b" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame()</span>
 <span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'log-prob'</span>] <span class="op">=</span> mex</span>
 <span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'México'</span></span>
@@ -700,7 +700,7 @@ Listado&nbsp;3.3: Logaritmo de la probabilidad de una frase
 </div>
 <p>De la figura se puede observar que las dos distribuciones son muy similares, lo cual es de esperarse dado que los datos con los que fueron entrenados tiene el mismo número de ejemplos provenientes de México que de Argentina, pero aun así se observan unas leves diferencias.</p>
 <p>Habiendo calculado el promedio del logaritmo de la probabilidad, uno se puede preguntar ¿cuál es la frase más probable en México? la siguiente instrucción muesta esta frase para el conjunto de datos analizado.</p>
-<div id="54565492" class="cell" data-execution_count="25">
+<div id="376146cd" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>mex_ds <span class="op">=</span> [x <span class="cf">for</span> x <span class="kw">in</span> paises <span class="cf">if</span> x[<span class="st">'country'</span>] <span class="op">==</span> <span class="st">'mx'</span>]</span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>mex_ds[np.argmax(mex)]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="25">
@@ -713,7 +713,7 @@ Listado&nbsp;3.3: Logaritmo de la probabilidad de una frase
 <section id="encapsulando-el-modelo-de-lenguaje-de-gramas" class="level2" data-number="3.4">
 <h2 data-number="3.4" class="anchored" data-anchor-id="encapsulando-el-modelo-de-lenguaje-de-gramas"><span class="header-section-number">3.4</span> Encapsulando el modelo de lenguaje de gramas</h2>
 <p>El modelo de lenguaje de gramas se organiza en la clase <code>ModeloNGram</code>. Esta clase hereda la funcionalidad de la clase <code>Frec</code> (ver <a href="#lst-frec-modelo-lenguaje" class="quarto-xref">Listado&nbsp;<span>3.2</span></a>) y lo complementa implementando el cálculo de la probabilidad de una frase utilizando k-suavizado (ver <a href="#lst-log-prob-frase" class="quarto-xref">Listado&nbsp;<span>3.3</span></a>).</p>
-<div id="eeca79f3" class="cell" data-execution_count="26">
+<div id="04992d7d" class="cell" data-execution_count="26">
 <div id="lst-modelo-n-gram" class="python cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-modelo-n-gram-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -777,11 +777,11 @@ Listado&nbsp;3.4: Modelo de lenguaje de gramas
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<div id="8a42de6a" class="cell" data-execution_count="27">
+<div id="0a57c0c6" class="cell" data-execution_count="27">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>modeloNGram <span class="op">=</span> ModeloNGram(promedio<span class="op">=</span><span class="va">True</span>).fit(dataset)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El logaritmo de la probabilidad de la primera frase de <code>dataset</code>, calculada previamente (variable <code>acc</code>), tiene un valor de -7.6760. Utilizando la implementación del modelo de lenguaje de gramas (ver <a href="#lst-modelo-n-gram" class="quarto-xref">Listado&nbsp;<span>3.4</span></a>), inicializado con <code>dataset</code>, y contenido en la variable <code>modeloNGram</code> se obtiene el logaritmo mostrado en la siguiente instrucción.</p>
-<div id="fd709325" class="cell" data-execution_count="28">
+<div id="e92fae2a" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>modeloNGram.log_prob(dataset[:<span class="dv">1</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="28">
 <pre><code>array([[-9.58406353]])</code></pre>
@@ -1351,7 +1351,7 @@ Listado&nbsp;3.4: Modelo de lenguaje de gramas
 <span id="cb35-38"><a href="#cb35-38" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb35-39"><a href="#cb35-39" aria-hidden="true" tabindex="-1"></a>$$</span>
 <span id="cb35-40"><a href="#cb35-40" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
-<span id="cb35-41"><a href="#cb35-41" aria-hidden="true" tabindex="-1"></a>\mathbb P(w_n \mid w_{n-N+1}, \ldots, w_{n-1})&amp;=\frac{<span class="sc">\#</span>(w_{n-N+1}, \ldots, w_{n-1}, w_n)}{\sum_{\ell} <span class="sc">\#</span>(w_{n-N-1}, \ldots, w_{n-1}, \ell)}<span class="sc">\\</span></span>
+<span id="cb35-41"><a href="#cb35-41" aria-hidden="true" tabindex="-1"></a>\mathbb P(w_n \mid w_{n-N+1}, \ldots, w_{n-1})&amp;=\frac{<span class="sc">\#</span>(w_{n-N+1}, \ldots, w_{n-1}, w_n)}{\sum_{\ell} <span class="sc">\#</span>(w_{n-N+1}, \ldots, w_{n-1}, \ell)}<span class="sc">\\</span></span>
 <span id="cb35-42"><a href="#cb35-42" aria-hidden="true" tabindex="-1"></a>&amp;=\frac{<span class="sc">\#</span>(w_{n-N+1}, \ldots, w_{n-1}, w_n)}{<span class="sc">\#</span>(w_{n-N+1}, \ldots, w_{n-1})},</span>
 <span id="cb35-43"><a href="#cb35-43" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
 <span id="cb35-44"><a href="#cb35-44" aria-hidden="true" tabindex="-1"></a>$$ {#eq-modelo-qgrams}</span>
@@ -1392,10 +1392,10 @@ Listado&nbsp;3.4: Modelo de lenguaje de gramas
 <span id="cb35-85"><a href="#cb35-85" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ele <span class="kw">in</span> dataset: <span class="co"># &lt;2&gt;</span></span>
 <span id="cb35-86"><a href="#cb35-86" aria-hidden="true" tabindex="-1"></a>  tokens <span class="op">=</span> bilmaLAT(ele[<span class="st">'text'</span>]).input_ids <span class="co"># &lt;3&gt;</span></span>
 <span id="cb35-87"><a href="#cb35-87" aria-hidden="true" tabindex="-1"></a>  voc.update(tokens) <span class="co"># &lt;4&gt;</span></span>
-<span id="cb35-88"><a href="#cb35-88" aria-hidden="true" tabindex="-1"></a>  _ <span class="op">=</span> [<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, lst))</span>
+<span id="cb35-88"><a href="#cb35-88" aria-hidden="true" tabindex="-1"></a>  _ <span class="op">=</span> [<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, lst)) <span class="co"># &lt;5&gt;</span></span>
 <span id="cb35-89"><a href="#cb35-89" aria-hidden="true" tabindex="-1"></a>       <span class="cf">for</span> lst <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[tokens[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N)])] <span class="co"># &lt;5&gt;</span></span>
 <span id="cb35-90"><a href="#cb35-90" aria-hidden="true" tabindex="-1"></a>  frase.update(_) <span class="co"># &lt;5&gt;</span></span>
-<span id="cb35-91"><a href="#cb35-91" aria-hidden="true" tabindex="-1"></a>  _ <span class="op">=</span> [<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, lst))</span>
+<span id="cb35-91"><a href="#cb35-91" aria-hidden="true" tabindex="-1"></a>  _ <span class="op">=</span> [<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, lst)) <span class="co"># &lt;6&gt;</span></span>
 <span id="cb35-92"><a href="#cb35-92" aria-hidden="true" tabindex="-1"></a>       <span class="cf">for</span> lst <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[tokens[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N<span class="op">-</span><span class="dv">1</span>)])] <span class="co"># &lt;6&gt;</span></span>
 <span id="cb35-93"><a href="#cb35-93" aria-hidden="true" tabindex="-1"></a>  hist.update(_) <span class="co"># &lt;6&gt;</span></span>
 <span id="cb35-94"><a href="#cb35-94" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
