@@ -328,13 +328,15 @@ tm = TextModel(token_list=[4, -2, -1])
 pp(tm.tokenize(txt))
 ```
 
-::: {.callout-tip collapse="true"}
-## Actividad
+::: {.callout-tip}
+### Actividad
 
+:::: {#exr-textmodel-tokenizer}
 ¿Cuántos segmentos genera `TextModel` al procesar la frase *buenos días, bienvenidos al curso de Procesamiento de Lenguaje Natural.* cuando se usa una combinación entre palabras, 4-gramas de palabras y bigramas de caracteres?
+::::
 ::: 
 
-# spaCy 
+## spaCy 
 
 spaCy es una librería general para el procesamiento de lenguaje natural PLN. El primer paso en cualquier tarea de PLN corresponde a la segmentación, en este apartado se da un ejemplo de como se realiza la segmentación con esta librería.
 
@@ -362,7 +364,7 @@ El texto es procesado es organizado en una instancia de la clase `Doc` la cual e
 pp([(w.text, w.pos_) for w in doc])
 ```
 
-# Modelo Mexicano
+## Modelo Mexicano
 
 Los procedimientos anteriores segmentan un texto utilizando un conjunto de reglas y pueden generar un número infinito de palabras. En el otro extremo de los segmentadores se encuentran aquellos que utilizan un vocabulario fijo y que se basan en representar cualquier texto utilizando ese vocabulario. Por supuesto el vocabulario está compuesto por palabras, caracteres, sufijos, infijos y prefijos. Uno de estos algoritmos es el Byte Pair Encoding @sennrich-etal-2016-neural.
 
@@ -391,13 +393,15 @@ El método `bilmaLAT.decode` decodifica el texto y como se muestra en el resulta
 bilmaLAT.decode(code['input_ids'])
 ```
 
-::: {.callout-tip collapse="true"}
-## Actividad
+::: {.callout-tip}
+### Actividad
 
+:::: {#exr-bilmalat-tokenizer}
 ¿Cuántos diferentes `input_ids` se utilizan al segmentar la oración *buenox días* utilizando `bilmaLAT`?
+::::
 :::
 
-# RoBERTuito
+## RoBERTuito
 
 Un modelo similar a `bilmaLAT` que fue entrenado con otro conjunto de datos y con algunas características particulares es RoBERTuito. Este modelo se puede obtener con la siguiente instrucción.
 
@@ -424,7 +428,7 @@ La secuencia se decodifica utilizando el método `robertuito.decode` como se obs
 robertuito.decode(code['input_ids'])
 ```
 
-# Crecimiento del vocabulario
+## Crecimiento del vocabulario
 
 En este apartado se utilizan diferentes segmentadores de texto para medir el crecimiento del vocabulario con respecto al número de palabras leidas.
 
@@ -497,19 +501,18 @@ df = pd.concat([df, _])
 sns.lineplot(data=df, x='Segmentos', y='Vocabulario', hue='Tipo')
 ```
 
-::: {.callout-tip collapse="true"}
-## Actividad
+::: {.callout-tip}
+### Actividad
 
+:::: {#exr-herdan-law}
 Considerando Herdan's Law ($\mid V \mid)=kN^{\beta}$ (donde $k$ y $\beta$ son parámetros, $\mid V \mid$ es el vocabulario y $N$ es los segmentos) seleccione el sistema con un mayor crecimiento (i.e., $\beta$): 
 
 * `microTC` 
 * `microTC_qgrams`
 * `bilmaLAT`  
 * `robertuito` 
-::: 
-
-::: {.callout-tip collapse="true"}
-## Actividad
-
+:::: 
+:::: {#exr-herdan-law-ar-es-mx}
 Observe que el conjunto de datos obtenido mediante la función `load_dataset(lang='es')` tiene 912681 elementos, cada uno de ellos tiene la llave `country` que identifica el origen de ese texto. Realizar los cambios necesarios para medir el crecimiento del vocabulario utilizando `microTC` para Argentina (ar) España (es) y México (mx). ¿Cuál es el país que tiene el mayor crecimiento de vocabulario?
+::::
 ::: 

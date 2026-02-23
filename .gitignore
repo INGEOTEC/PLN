@@ -12,3 +12,4 @@ delitos.zip
 capitulos/delitos/*
 _freeze/
 capitulos/*.html
+site_libs/*

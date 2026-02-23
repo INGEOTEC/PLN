@@ -34,7 +34,7 @@ En este caso el modelo para el siguiente segmento quedaría como
 
 $$
 \begin{split}
-\mathbb P(w_n \mid w_{n-N+1}, \ldots, w_{n-1})&=\frac{\#(w_{n-N+1}, \ldots, w_{n-1}, w_n)}{\sum_{\ell} \#(w_{n-N-1}, \ldots, w_{n-1}, \ell)}\\
+\mathbb P(w_n \mid w_{n-N+1}, \ldots, w_{n-1})&=\frac{\#(w_{n-N+1}, \ldots, w_{n-1}, w_n)}{\sum_{\ell} \#(w_{n-N+1}, \ldots, w_{n-1}, \ell)}\\
 &=\frac{\#(w_{n-N+1}, \ldots, w_{n-1}, w_n)}{\#(w_{n-N+1}, \ldots, w_{n-1})},
 \end{split}
 $$ {#eq-modelo-qgrams}
@@ -75,10 +75,10 @@ bilmaLAT = AutoTokenizer.from_pretrained('guillermoruiz/bilmaLAT') # <1>
 for ele in dataset: # <2>
   tokens = bilmaLAT(ele['text']).input_ids # <3>
   voc.update(tokens) # <4>
-  _ = ["|".join(map(str, lst))
+  _ = ["|".join(map(str, lst)) # <5>
        for lst in zip(*[tokens[i:] for i in range(N)])] # <5>
   frase.update(_) # <5>
-  _ = ["|".join(map(str, lst))
+  _ = ["|".join(map(str, lst)) # <6>
        for lst in zip(*[tokens[i:] for i in range(N-1)])] # <6>
   hist.update(_) # <6>
 ```
@@ -106,17 +106,19 @@ pp([bilmaLAT.decode(list(map(int, k.split("|"))))
     for k, v in hist.most_common(10)])
 ```
 
-::: {.callout-tip collapse="true"}
+::: {.callout-tip}
 ### Actividad
 
+:::: {#exr-frecuencia-trigramas}
 Seleccione de los siguientes trigamas aquel que tenga una mayor frecuencia:
 
 * [CLS] _usr _usr
 * . Más en
 * ) _url [SEP]
+::::
 :::
 
-### Organizando en una clase 
+### Encapsulando la estimación de frecuencias  
 
 La implementación del modelo de lenguaje, en particular de la estimación de las frecuecias descrita en @lst-estimacion-frecuencia se organiza en la clase `Frec` que se muestra en @lst-frec-modelo-lenguaje. La clase recibe el parámetro `N` que indica el tamaño de la ventana y inicializa las variables `voc`, `frase`, y `hist` donde se guardará la frecuencia del vocabulario, de los gramas y de los $N-1$ gramas. 
 
@@ -142,11 +144,9 @@ class Frec:
       return _ # <5>
 
   def fit(self, X, y=None):
-    seg = self.segmentador
     N = self.N
     for ele in X: # <6>
-      _ = self.get_text(ele) # <6>
-      tokens = seg(_).input_ids # <6>
+      tokens = self.segmentar(ele) # <6>
       voc.update(tokens) # <6>
       _ = ["|".join(map(str, lst))
           for lst in zip(*[tokens[i:] for i in range(N)])] # <6>
@@ -155,11 +155,15 @@ class Frec:
           for lst in zip(*[tokens[i:] for i in range(N-1)])] # <6>
       self.hist.update(_) # <6>
     self.voc = len(voc) # <6>
-    return self 
+    return self
+
+  def segmentar(self, texto):
+    _ = self.get_text(ele) # <7>
+    return self.segmentador(_).input_ids # <7>
 
   def get_text(self, ele):
-    if isinstance(ele, dict): # <7>
-      return ele['text'] # <7>
+    if isinstance(ele, dict): # <8>
+      return ele['text'] # <8>
     return ele
 ```
 1. Tamaño de la ventana
@@ -168,9 +172,12 @@ class Frec:
 4. Frecuencia de los gramas previos
 5. Segmentador mediante el modelo bilmaLAT
 6. Estimación de frecuencias ver @lst-estimacion-frecuencia
-7. Función auxiliar para utilizar una lista de diccionarios. 
+7. Función que segmenta un texto dato
+8. Función auxiliar para utilizar una lista de diccionarios
 
 ::: {.callout-note}
+#### Ejemplo 
+
 Calculando las diez secuencias más frecuentes en el conjunto de datos utilizando la clase Frac. Lo primero que se tiene que realizar es estimar las frecuencias como se muestra en el siguiente código. 
 
 ```{python}
@@ -385,6 +392,7 @@ class ModeloNGram(Frec):
 4. Calcula el logaritmo de la probabilidad para una lista de textos
 
 ::: {.callout-note}
+### Ejemplo 
 ```{python}
 #| echo: true
 
@@ -398,6 +406,12 @@ El logaritmo de la probabilidad de la primera frase de `dataset`, calculada prev
 
 modeloNGram.log_prob(dataset[:1])
 ```
-
 :::
 
+::: {.callout-tip}
+### Actividad
+
+:::: {#exr-modelo-ngram-mx-ar-uy}
+Entrene dos modelos de lenguaje con $N=3$, uno de ellos usando solamente textos provenientes de México y el otro con los textos de Argentina. Medir el promedio del logaritmo de probabilidad en los textos provenientes de Uruguay. ¿Cuál es el modelo que presenta la mayor probabilidad? 
+::::
+::: 
