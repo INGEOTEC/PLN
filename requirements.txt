@@ -9,6 +9,7 @@ wordcloud
 pandas
 jupyterlab
 jupyter
+ipykernel
 plotly
 pyyaml
 b4msa
