@@ -15,7 +15,7 @@ pyyaml
 b4msa
 encexp
 evomsa
-transformers<5.0.0
+transformers
 spacy
 pysentimiento
 cvxpy

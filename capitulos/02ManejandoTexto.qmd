@@ -18,7 +18,12 @@ from microtc.textmodel import SKIP_SYMBOLS
 from b4msa.textmodel import TextModel
 from b4msa.lang_dependency import LangDependency
 import spacy
-from transformers import AutoTokenizer
+from transformers import AutoTokenizer, PreTrainedTokenizerFast
+from tokenizers import Tokenizer, pre_tokenizers, normalizers, AddedToken, Regex
+from tokenizers.models import WordPiece
+from tokenizers.trainers import WordPieceTrainer
+from tokenizers.normalizers import NFD
+from tokenizers.processors import TemplateProcessing
 from encexp.utils import load_dataset
 from pysentimiento.preprocessing import preprocess_tweet
 from microtc.params import OPTION_GROUP, OPTION_DELETE,\
@@ -58,6 +63,7 @@ Las normalizaciones y segmentaciones descritas en esta unidad se basan principal
 1. [An automated text categorization framework based on hyperparameter optimization](https://www.sciencedirect.com/science/article/pii/S0950705118301217) (@microTC)
 2. [A simple approach to multilingual polarity classification in Twitter](https://www.sciencedirect.com/science/article/abs/pii/S0167865517301721) (@B4MSA)
 3. [A case study of Spanish text transformations for twitter sentiment analysis](https://www.sciencedirect.com/science/article/abs/pii/S0957417417302312) (@TELLEZ2017)
+4. [Bag-of-Word approach is not dead: A performance analysis on a myriad of text classification challenges](https://www.sciencedirect.com/science/article/pii/S2949719125000305) (@GRAFF2025100154)
 
 ## Normalización de Texto Sintáctica {#sec-normalizacion}
 
@@ -332,7 +338,12 @@ pp(tm.tokenize(txt))
 ### Actividad
 
 :::: {#exr-textmodel-tokenizer}
-¿Cuántos segmentos genera `TextModel` al procesar la frase *buenos días, bienvenidos al curso de Procesamiento de Lenguaje Natural.* cuando se usa una combinación entre palabras, 4-gramas de palabras y bigramas de caracteres?
+Indique ¿cuántos segmentos genera `TextModel` al procesar la frase *buenos días, bienvenidos al curso de Procesamiento de Lenguaje Natural.* cuando se usa una combinación entre palabras, 4-gramas de palabras y bigramas de caracteres?
+
+* 86
+* 87
+* 88
+
 ::::
 ::: 
 
@@ -364,9 +375,9 @@ El texto es procesado es organizado en una instancia de la clase `Doc` la cual e
 pp([(w.text, w.pos_) for w in doc])
 ```
 
-## Modelo Mexicano
+## Modelo Mexicano {#sec-modelo-mexicano-tok}
 
-Los procedimientos anteriores segmentan un texto utilizando un conjunto de reglas y pueden generar un número infinito de palabras. En el otro extremo de los segmentadores se encuentran aquellos que utilizan un vocabulario fijo y que se basan en representar cualquier texto utilizando ese vocabulario. Por supuesto el vocabulario está compuesto por palabras, caracteres, sufijos, infijos y prefijos. Uno de estos algoritmos es el Byte Pair Encoding @sennrich-etal-2016-neural.
+Los procedimientos anteriores segmentan un texto utilizando un conjunto de reglas y pueden generar un número infinito de palabras. En el otro extremo de los segmentadores se encuentran aquellos que utilizan un vocabulario fijo y que se basan en representar cualquier texto utilizando ese vocabulario. Por supuesto el vocabulario está compuesto por palabras, caracteres, sufijos, infijos y prefijos. Uno de estos algoritmos es el Byte Pair Encoding (@sennrich-etal-2016-neural).
 
 En la siguiente instrucción utilizamos el segmentador implementado en el modelo **bilmaLAT**.
 
@@ -397,13 +408,18 @@ bilmaLAT.decode(code['input_ids'])
 ### Actividad
 
 :::: {#exr-bilmalat-tokenizer}
-¿Cuántos diferentes `input_ids` se utilizan al segmentar la oración *buenox días* utilizando `bilmaLAT`?
+Indique ¿cuántos diferentes `input_ids` se utilizan al segmentar la oración *buenox días* utilizando `bilmaLAT`?
+
+* 5
+* 2
+* 3
+* 4
 ::::
 :::
 
 ## RoBERTuito
 
-Un modelo similar a `bilmaLAT` que fue entrenado con otro conjunto de datos y con algunas características particulares es RoBERTuito. Este modelo se puede obtener con la siguiente instrucción.
+Un modelo similar a `bilmaLAT` que fue entrenado con otro conjunto de datos y con algunas características particulares es RoBERTuito descrito en @perez-etal-2022-robertuito. Este modelo se puede obtener con la siguiente instrucción.
 
 ```{python}
 #| echo: true
@@ -444,16 +460,23 @@ El crecimiento del vocabulario se mide utilizando la función `dinamica_vocabula
 ```{python}
 #| echo: true
 def dinamica_vocabulario(tokenizer):
-  voc = set()
-  data = []
-  prev = 0
+  voc = set() # <1>
+  data = [] # <2>
+  prev = 0 # <3>
   for ele in dataset:
-    words = tokenizer(ele)
-    voc.update(words)
-    prev += len(words)
+    words = tokenizer(ele) # <4>
+    voc.update(words) # <5>
+    prev += len(words) # <6>
     data.append([prev, len(voc)])
   return data
 ```
+
+1. Vocabulario
+2. Cantidad de palabras leídas y tamaño del vocabulario
+3. Cantidad de palabras leídas hasta el momento
+4. Segmentación del texto
+5. Actualización del vocabulario
+6. Actualización de la cantidad de palabras leídas
 
 El primer sistema de segmentación analizado es `microTC`, tal y como se muestra en la primer línea de las siguientes instrucciones. La segunda y tercera línea tienen el objetivo de guardar la información en un marco de datos.
 
@@ -514,5 +537,127 @@ Considerando Herdan's Law ($\mid V \mid)=kN^{\beta}$ (donde $k$ y $\beta$ son pa
 :::: 
 :::: {#exr-herdan-law-ar-es-mx}
 Observe que el conjunto de datos obtenido mediante la función `load_dataset(lang='es')` tiene 912681 elementos, cada uno de ellos tiene la llave `country` que identifica el origen de ese texto. Realizar los cambios necesarios para medir el crecimiento del vocabulario utilizando `microTC` para Argentina (ar) España (es) y México (mx). ¿Cuál es el país que tiene el mayor crecimiento de vocabulario?
+
+* Argentina
+* España
+* México
 ::::
 ::: 
+
+## Entrenando un segmentador
+
+Habiendo utilizado el segmentador del modelo `bilmaLAT` (@sec-modelo-mexicano-tok) es momento de describir los pasos para entrenar un segmentador de este tipo. Una de las primeras decisiones es definir las palabras especiales, que son utilizadas para identificar algunas partes del texto. Por ejemplo, es comun utilizar una marca para identificar el inicio de la oración y su final, así como palabras para que todos los textos tengan la misma cantidad de segmentos. En el siguiente código se define estas palabras en la variable `special_tokens`, el primer marcador `[UNK]` se utiliza para identificar los segmentos desconocidos, `[CLS]` es utilizado en el inicio de la oración, `[SEP]` se utiliza para identificar el final de la oración y para separar dos oraciones relacionadas, `[PAD]` se utiliza para completar un texto y que este tenga la cantidad de segmentos requeridos, `[MASK]` es la palabra que se utilizar para ocultar en segmento en la oración, finalemente `URL` y `USR` son etiquetas que se usan para sustituir las URLs y los nombres de usuario respectivamente.
+
+```{python}
+#| echo: true
+
+special_tokens = [
+    AddedToken(token, single_word=True,
+               normalized=False, special=True)
+    for token in ['[UNK]', '[CLS]', '[SEP]',
+                  '[PAD]', '[MASK]', 'URL', 'USR']
+]
+```
+
+Habiendo definido las palabras especiales, es momento de inicializar la clase que se usa para segmentar, esta clase es `Tokenizer`, la cual requiere el método que encuentra en los segmentos, en esta ocasión se utiliza el método `WordPiece` que requiere solamente conocer cual es el identificador de los segmentos desconocidos (ver primera linea). En la segunda linea se añaden los identificadores especiales al segmentador. 
+
+```{python}
+#| echo: true
+#| output: false
+
+tokenizer = Tokenizer(WordPiece(unk_token=special_tokens[0].content))
+tokenizer.add_special_tokens(special_tokens)
+```
+
+El proceso de segmentar sigue el procedimiento descrito en @fig-pre-procesamiento, donde el primer paso es normalizar el texto. En el siguiente código se definen el proceso de normalización que se utilizara. El primer proceso corresponde a la normalización de unicode implementada en la clase `NFD`. La segunda y tercera normalización corresponde a la sustitución de URL por el identificador `URL` y el cambio de cualquier usuario por la etiqueta `USR`. La última linea añade estas normalizaciones a la instancia `tokenizer`. 
+
+```{python}
+#| echo: true
+
+norm = []
+norm.append(NFD()) # <1>
+rep = normalizers.Replace(Regex(r'https?://\S+|\b_url\b'), # <2>
+                          'URL') # <2>
+norm.append(rep)
+rep = normalizers.Replace(Regex(r'@\S+|\b_usr\b'), 'USR') # <3>
+norm.append(rep)
+tokenizer.normalizer = normalizers.Sequence(norm) # <4>
+```
+
+1. Normalización de unicode
+2. Reemplazo de URLs por la etiqueta `URL`
+3. Reemplazo de nombres de usuario por la etiqueta `USR`
+4. Secuencia de normalizaciones
+
+El siguiente paso es definir el procedimiento para identificar los segmentos, en este caso se utiliza el espacio, de tal manera que cada segmento corresponde al concepto de palabra, esto se observa en la siguiente instrucción. 
+
+```{python}
+#| echo: true
+
+tokenizer.pre_tokenizer = pre_tokenizers.Whitespace()
+```
+
+```{python}
+#| echo: true
+
+post_tok = TemplateProcessing(
+    single="[CLS] $A [SEP]",
+    pair="[CLS] $A [SEP] $B:1 [SEP]:1",
+    special_tokens=[
+        ("[CLS]", tokenizer.token_to_id("[CLS]")),
+        ("[SEP]", tokenizer.token_to_id("[SEP]")),
+        ("[PAD]", tokenizer.token_to_id("[PAD]")),
+    ],
+)
+tokenizer.post_processor = post_tok
+```
+
+```{python}
+#| echo: true
+
+vocab_size = 2**15
+trainer = WordPieceTrainer(vocab_size=vocab_size,
+                           special_tokens=special_tokens)
+```
+
+```{python}
+#| echo: true
+#| output: false
+
+tokenizer.train_from_iterator(map(lambda x: x['text'],
+                                  dataset),
+                              trainer=trainer,
+                              length=len(dataset))
+```
+
+```{python}
+#| echo: true
+
+pp(tokenizer.encode(txt).ids)
+```
+
+::: {.callout-tip}
+### Actividad
+
+:::: {#exr-tokenizer-training}
+Indique ¿cuál es el identificador de la palabra *amor* en el segmentador que se encuentra en la variable `tokenizer`?
+
+* 4715
+* 4258
+* 10643
+::::
+:::
+
+```{python}
+#| echo: true
+
+tokenizer_backend = PreTrainedTokenizerFast(
+      tokenizer_object=tokenizer,
+      model_max_length=512,
+      unk_token=special_tokens[0],
+      cls_token=special_tokens[1],
+      eos_token=special_tokens[2],
+      pad_token=special_tokens[3],
+      mask_token=special_tokens[4]
+)
+```
