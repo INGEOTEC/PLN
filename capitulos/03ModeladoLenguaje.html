@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.36">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>3&nbsp; Modelado de Lenguaje – Procesamiento de Lenguaje Natural</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -69,15 +72,14 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <link href="../capitulos/02ManejandoTexto.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-8e7df6ee4b376b2593d74d7323768150.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-190b55869f1674f3654eb60e4236bfc9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -107,7 +109,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 }</script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -298,7 +300,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es desarrollar un modelo de lenguaje basado en gramas.</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="39d71cfa" class="cell" data-execution_count="1">
+<div id="17a641b0" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pprint</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
@@ -308,6 +310,12 @@ window.Quarto = {
 <span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoTokenizer</span>
 <span id="cb1-8"><a href="#cb1-8" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> encexp.utils <span class="im">import</span> load_dataset</span>
 <span id="cb1-9"><a href="#cb1-9" aria-hidden="true" tabindex="-1"></a>pp <span class="op">=</span> pprint.PrettyPrinter(width<span class="op">=</span><span class="dv">60</span>, compact<span class="op">=</span><span class="va">True</span>).pprint</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>/home/mario.graff/miniforge3/envs/pln/lib/python3.13/site-packages/tqdm/auto.py:21: TqdmWarning:
+
+IProgress not found. Please update jupyter and ipywidgets. See https://ipywidgets.readthedocs.io/en/stable/user_install.html
+</code></pre>
+</div>
 </div>
 </section>
 <section id="introducción" class="level2" data-number="3.1">
@@ -331,17 +339,17 @@ window.Quarto = {
 <section id="cálculo-de-frecuencias-en-un-corpus" class="level3" data-number="3.2.1">
 <h3 data-number="3.2.1" class="anchored" data-anchor-id="cálculo-de-frecuencias-en-un-corpus"><span class="header-section-number">3.2.1</span> Cálculo de frecuencias en un corpus</h3>
 <p>Para el modelo de lenguaje se requiere calcular la frecuencia de la secuencia (variable <code>frase</code>), i.e., <span class="math inline">\(\#(w_{n-N+1}, \ldots, w_{n-1}, w_n)\)</span> y la frecuencia de las palabras previas (variable <code>hist</code>), i.e., <span class="math inline">\(\#(w_{n-N+1}, \ldots, w_{n-1})\)</span>, dependiendo de <span class="math inline">\(N\)</span>. Adicionalmente, se guarda el vocabulario en la variable <code>voc</code>.</p>
-<div id="86c2a35e" class="cell" data-execution_count="3">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>voc <span class="op">=</span> Counter()</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>frase <span class="op">=</span> Counter()</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>hist <span class="op">=</span> Counter()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="48255259" class="cell" data-execution_count="3">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>voc <span class="op">=</span> Counter()</span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>frase <span class="op">=</span> Counter()</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>hist <span class="op">=</span> Counter()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El conjunto de datos que se utilizará para generar el modelo es el que se obtiene con la función <code>load_dataset</code> y se guarda en la variable <code>dataset</code>.</p>
-<div id="d45e5c2e" class="cell" data-execution_count="4">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> load_dataset(lang<span class="op">=</span><span class="st">'es'</span>, dataset<span class="op">=</span><span class="st">'dev'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="e8e52b71" class="cell" data-execution_count="4">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> load_dataset(lang<span class="op">=</span><span class="st">'es'</span>, dataset<span class="op">=</span><span class="st">'dev'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El siguiente paso es iterar por todos los elementos del conjunto de datos (variable <code>dataset</code>). En el ciclo se segmenta cada texto y se actualiza el vocabulario con el método <code>voc.update</code>. Después se genera una ventana de tamaño <span class="math inline">\(N\)</span>, donde los índices que corresponden a elementos del vocabulario se concatenan con el caracter |. El siguiente paso es actualizar la frecuencia de la secuencia con el método <code>frase.update</code>. Se realiza un procedimiento equivalente pero para una ventana de tamaño <span class="math inline">\(N-1\)</span> que corresponde a las palabras previas, actualizando con el método <code>hist.update</code>.</p>
-<div id="d4bfa83f" class="cell" data-execution_count="5">
+<div id="100d5f51" class="cell" data-execution_count="5">
 <div id="lst-estimacion-frecuencia" class="python cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-estimacion-frecuencia-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -353,11 +361,11 @@ Listado&nbsp;3.1: Estimación de frecuencias
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="2">2</button><span id="annotated-cell-4-3" class="code-annotation-target"><a href="#annotated-cell-4-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ele <span class="kw">in</span> dataset:</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="3">3</button><span id="annotated-cell-4-4" class="code-annotation-target"><a href="#annotated-cell-4-4" aria-hidden="true" tabindex="-1"></a>  tokens <span class="op">=</span> bilmaLAT(ele[<span class="st">'text'</span>]).input_ids</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="4">4</button><span id="annotated-cell-4-5" class="code-annotation-target"><a href="#annotated-cell-4-5" aria-hidden="true" tabindex="-1"></a>  voc.update(tokens)</span>
-<span id="annotated-cell-4-6"><a href="#annotated-cell-4-6" aria-hidden="true" tabindex="-1"></a>  _ <span class="op">=</span> [<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, lst))</span>
-<button class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="5">5</button><span id="annotated-cell-4-7" class="code-annotation-target"><a href="#annotated-cell-4-7" aria-hidden="true" tabindex="-1"></a>       <span class="cf">for</span> lst <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[tokens[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N)])]</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="5">5</button><span id="annotated-cell-4-6" class="code-annotation-target"><a href="#annotated-cell-4-6" aria-hidden="true" tabindex="-1"></a>  _ <span class="op">=</span> [<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, lst))</span>
+<span id="annotated-cell-4-7"><a href="#annotated-cell-4-7" aria-hidden="true" tabindex="-1"></a>       <span class="cf">for</span> lst <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[tokens[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N)])]</span>
 <span id="annotated-cell-4-8"><a href="#annotated-cell-4-8" aria-hidden="true" tabindex="-1"></a>  frase.update(_)</span>
-<span id="annotated-cell-4-9"><a href="#annotated-cell-4-9" aria-hidden="true" tabindex="-1"></a>  _ <span class="op">=</span> [<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, lst))</span>
-<button class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="6">6</button><span id="annotated-cell-4-10" class="code-annotation-target"><a href="#annotated-cell-4-10" aria-hidden="true" tabindex="-1"></a>       <span class="cf">for</span> lst <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[tokens[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N<span class="op">-</span><span class="dv">1</span>)])]</span>
+<button class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="6">6</button><span id="annotated-cell-4-9" class="code-annotation-target"><a href="#annotated-cell-4-9" aria-hidden="true" tabindex="-1"></a>  _ <span class="op">=</span> [<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, lst))</span>
+<span id="annotated-cell-4-10"><a href="#annotated-cell-4-10" aria-hidden="true" tabindex="-1"></a>       <span class="cf">for</span> lst <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[tokens[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N<span class="op">-</span><span class="dv">1</span>)])]</span>
 <span id="annotated-cell-4-11"><a href="#annotated-cell-4-11" aria-hidden="true" tabindex="-1"></a>  hist.update(_)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 </figure>
@@ -382,28 +390,31 @@ Listado&nbsp;3.1: Estimación de frecuencias
 </dd>
 <dt data-target-cell="annotated-cell-4" data-target-annotation="5">5</dt>
 <dd>
-<span data-code-cell="annotated-cell-4" data-code-lines="7,8" data-code-annotation="5">Iteración para estimar y actualizar la frecuencia de frases</span>
+<span data-code-cell="annotated-cell-4" data-code-lines="6,7,8" data-code-annotation="5">Iteración para estimar y actualizar la frecuencia de frases</span>
 </dd>
 <dt data-target-cell="annotated-cell-4" data-target-annotation="6">6</dt>
 <dd>
-<span data-code-cell="annotated-cell-4" data-code-lines="10,11" data-code-annotation="6">Iteración para estimar y actualizar la frecuencia de historia</span>
+<span data-code-cell="annotated-cell-4" data-code-lines="9,10,11" data-code-annotation="6">Iteración para estimar y actualizar la frecuencia de historia</span>
 </dd>
 </dl>
 </div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.</code></pre>
+</div>
 </div>
 <p>La siguiente instrucción muestra las diez secuencias más frecuentes en el conjunto de datos analizado.</p>
-<div id="3b2d0bf3" class="cell" data-execution_count="6">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pp([bilmaLAT.decode(<span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">int</span>, k.split(<span class="st">"|"</span>))))</span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k, v <span class="kw">in</span> frase.most_common(<span class="dv">10</span>)])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="2359c646" class="cell" data-execution_count="6">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pp([bilmaLAT.decode(<span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">int</span>, k.split(<span class="st">"|"</span>))))</span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k, v <span class="kw">in</span> frase.most_common(<span class="dv">10</span>)])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>['_url [SEP]', '_usr _usr', '[CLS] _usr', '. [SEP]',
  'de la', '[CLS] #', 'en el', 'en la', 'a la', '. _url']</code></pre>
 </div>
 </div>
 <p>Completando el ejemplo anterior, la siguiente instrucción muestra la secuencia de palabras previas que tiene la mayor frecuencia.</p>
-<div id="bd5abcaf" class="cell" data-execution_count="7">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>pp([bilmaLAT.decode(<span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">int</span>, k.split(<span class="st">"|"</span>))))</span>
-<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k, v <span class="kw">in</span> hist.most_common(<span class="dv">10</span>)])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="b5aa2790" class="cell" data-execution_count="7">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>pp([bilmaLAT.decode(<span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">int</span>, k.split(<span class="st">"|"</span>))))</span>
+<span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k, v <span class="kw">in</span> hist.most_common(<span class="dv">10</span>)])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>['[CLS]', '[SEP]', '_usr', 'de', ',', '.', 'que', '#', 'la',
  'y']</code></pre>
@@ -433,7 +444,7 @@ Listado&nbsp;3.1: Estimación de frecuencias
 <section id="encapsulando-la-estimación-de-frecuencias" class="level3" data-number="3.2.2">
 <h3 data-number="3.2.2" class="anchored" data-anchor-id="encapsulando-la-estimación-de-frecuencias"><span class="header-section-number">3.2.2</span> Encapsulando la estimación de frecuencias</h3>
 <p>La implementación del modelo de lenguaje, en particular de la estimación de las frecuecias descrita en <a href="#lst-estimacion-frecuencia" class="quarto-xref">Listado&nbsp;<span>3.1</span></a> se organiza en la clase <code>Frec</code> que se muestra en <a href="#lst-frec-modelo-lenguaje" class="quarto-xref">Listado&nbsp;<span>3.2</span></a>. La clase recibe el parámetro <code>N</code> que indica el tamaño de la ventana y inicializa las variables <code>voc</code>, <code>frase</code>, y <code>hist</code> donde se guardará la frecuencia del vocabulario, de los gramas y de los <span class="math inline">\(N-1\)</span> gramas.</p>
-<div id="175ce101" class="cell" data-execution_count="8">
+<div id="9ea796c8" class="cell" data-execution_count="8">
 <div id="lst-frec-modelo-lenguaje" class="python cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-frec-modelo-lenguaje-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -529,13 +540,13 @@ Listado&nbsp;3.2: Clase que estima la frecuencia de los segmentos de un corpus
 </div>
 <div class="callout-body-container callout-body">
 <p>Calculando las diez secuencias más frecuentes en el conjunto de datos utilizando la clase Frac. Lo primero que se tiene que realizar es estimar las frecuencias como se muestra en el siguiente código.</p>
-<div id="8134a0f7" class="cell" data-execution_count="9">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>frec <span class="op">=</span> Frec().fit(dataset)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="84020d6d" class="cell" data-execution_count="9">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>frec <span class="op">=</span> Frec().fit(dataset)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El siguiente código utiliza las frecuencias estimadas para mostrar las diez más frecuentes.</p>
-<div id="0a150d30" class="cell" data-execution_count="10">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>pp([bilmaLAT.decode(<span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">int</span>, k.split(<span class="st">"|"</span>))))</span>
-<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k, v <span class="kw">in</span> frec.frase.most_common(<span class="dv">10</span>)])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="6f07bbad" class="cell" data-execution_count="10">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>pp([bilmaLAT.decode(<span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">int</span>, k.split(<span class="st">"|"</span>))))</span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k, v <span class="kw">in</span> frec.frase.most_common(<span class="dv">10</span>)])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>['[CLS] _usr', '_usr Cual', 'Cual medalla', 'medalla v',
  'v y', 'y di', 'di como', 'como con', 'conñ', '##ño']</code></pre>
@@ -548,36 +559,36 @@ Listado&nbsp;3.2: Clase que estima la frecuencia de los segmentos de un corpus
 <section id="probabilidad" class="level2" data-number="3.3">
 <h2 data-number="3.3" class="anchored" data-anchor-id="probabilidad"><span class="header-section-number">3.3</span> Probabilidad</h2>
 <p>Después de calcular las frecuencia, es posible estimar la probabilidad de una frase. Considerando que <span class="math inline">\(N=2\)</span> entonces es directo calcular la probabilidad de la siguiete frase.</p>
-<div id="32147ef7" class="cell" data-execution_count="11">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'buenos días'</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="e8050796" class="cell" data-execution_count="11">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'buenos días'</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Lo primero es verficar que la frase se codifica en 2 índices, tal y como se muestra a continuación.</p>
-<div id="c4450580" class="cell" data-execution_count="12">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>code <span class="op">=</span> bilmaLAT(txt)[<span class="st">'input_ids'</span>][<span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>code</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="80ee23ec" class="cell" data-execution_count="12">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>code <span class="op">=</span> bilmaLAT(txt)[<span class="st">'input_ids'</span>][<span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>code</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="12">
 <pre><code>[12658, 11468]</code></pre>
 </div>
 </div>
 <p>El siguiente paso es dividir la frecuencia de la cadena <em>buenos dias</em> entre l frecuencia de <em>buenos</em> tal y como se muestra en la siguiente instrucción.</p>
-<div id="b8753bd0" class="cell" data-execution_count="13">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">/</span> hist[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code[:<span class="op">-</span><span class="dv">1</span>]))]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="4eeba7a2" class="cell" data-execution_count="13">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">/</span> hist[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code[:<span class="op">-</span><span class="dv">1</span>]))]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="13">
 <pre><code>0.2724795640326976</code></pre>
 </div>
 </div>
 <p>Otro ejemplo similar es calcular la probabilidad de <em>buenox</em>. Como se puede observar en el siguiente código, esa palabra se codifica en dos índices, entonces se puede seguir un procedimiento equivalente.</p>
-<div id="e65ada84" class="cell" data-execution_count="14">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'buenox'</span></span>
-<span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>code <span class="op">=</span> bilmaLAT(txt)[<span class="st">'input_ids'</span>][<span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>code</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="e0744124" class="cell" data-execution_count="14">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'buenox'</span></span>
+<span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>code <span class="op">=</span> bilmaLAT(txt)[<span class="st">'input_ids'</span>][<span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>code</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="14">
 <pre><code>[11683, 5896]</code></pre>
 </div>
 </div>
 <p>Como muestra el resultado de la siguiente celda la probabilidad de <em>buenox</em> es cero, dado que esa palabra no fue vista en el conjunto de datos donde se estimó la frecuencia.</p>
-<div id="6a3bf415" class="cell" data-execution_count="15">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">/</span> hist[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code[:<span class="op">-</span><span class="dv">1</span>]))]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="e349ec21" class="cell" data-execution_count="15">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">/</span> hist[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code[:<span class="op">-</span><span class="dv">1</span>]))]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="15">
 <pre><code>0.0</code></pre>
 </div>
@@ -586,23 +597,23 @@ Listado&nbsp;3.2: Clase que estima la frecuencia de los segmentos de un corpus
 <h3 data-number="3.3.1" class="anchored" data-anchor-id="k-suavizado"><span class="header-section-number">3.3.1</span> <span class="math inline">\(k\)</span>-suavizado</h3>
 <p>Para poder calcular la probabilidad de una secuencia, es necesario calcular una probabilidad diferente de cero a cualquier palabra que no ha sido vista en el conjunto donde se estiman las frecuencias. Una manera para realizar esto es asignar una pequeña masa a todas las palabras que no fueron vistas, a eso se le conoce como suavizado.</p>
 <p>La función <code>prob</code> implementa un tipo de suavisado donde se le asigna un valor de <span class="math inline">\(\frac{1}{\mid V \mid}\)</span> a todas las palabras que no son vistas, donde <span class="math inline">\(\mid V \mid\)</span> es el tamaño del vocabulario.</p>
-<div id="8cd67065" class="cell" data-execution_count="16">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prob(txt, k<span class="op">=</span><span class="fl">0.01</span>):</span>
-<span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>  code <span class="op">=</span> bilmaLAT(txt)[<span class="st">'input_ids'</span>][<span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>  num <span class="op">=</span> frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">+</span> k</span>
-<span id="cb20-4"><a href="#cb20-4" aria-hidden="true" tabindex="-1"></a>  den <span class="op">=</span> hist[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code[:<span class="op">-</span><span class="dv">1</span>]))] <span class="op">+</span> k <span class="op">*</span> <span class="bu">len</span>(voc)</span>
-<span id="cb20-5"><a href="#cb20-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> num <span class="op">/</span> den</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="93484671" class="cell" data-execution_count="16">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prob(txt, k<span class="op">=</span><span class="fl">0.01</span>):</span>
+<span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>  code <span class="op">=</span> bilmaLAT(txt)[<span class="st">'input_ids'</span>][<span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>  num <span class="op">=</span> frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">+</span> k</span>
+<span id="cb22-4"><a href="#cb22-4" aria-hidden="true" tabindex="-1"></a>  den <span class="op">=</span> hist[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code[:<span class="op">-</span><span class="dv">1</span>]))] <span class="op">+</span> k <span class="op">*</span> <span class="bu">len</span>(voc)</span>
+<span id="cb22-5"><a href="#cb22-5" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> num <span class="op">/</span> den</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Se puede observar que la probabilidad de la siguiente frase es menor que cuando no se usa el suavizado, esto es porque una fracción de la masa de probabilidad se está utilizando en elementos no vistos.</p>
-<div id="fb640737" class="cell" data-execution_count="17">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb21"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a>prob(<span class="st">'buenos días'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="85d68838" class="cell" data-execution_count="17">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>prob(<span class="st">'buenos días'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="17">
 <pre><code>0.17078502023600128</code></pre>
 </div>
 </div>
 <p>Complementando lo anterior, la palabra <em>buenox</em> presenta una probabilidad mayor a cero utilizando el suavizado.</p>
-<div id="2e2c7d5d" class="cell" data-execution_count="18">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb23"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a>prob(<span class="st">'buenox'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="0a1b1ec6" class="cell" data-execution_count="18">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>prob(<span class="st">'buenox'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="18">
 <pre><code>7.766447393968577e-06</code></pre>
 </div>
@@ -613,7 +624,7 @@ Listado&nbsp;3.2: Clase que estima la frecuencia de los segmentos de un corpus
 <p>La implementación anterior se puede adaptar para calcular la probabilidad de una frase de cualquier longitud mayor o igual a <span class="math inline">\(N\)</span>.</p>
 <p>La idea es crear una ventana movil de tamaño <span class="math inline">\(N\)</span> y multiplicar todas las probabilidades obtenidas, considerando que la multiplicación entre números menores a <span class="math inline">\(1\)</span> resulta en un número menor, es más conveniente por razones numéricas el calcular la suma del logaritmo de la probabilidad.</p>
 <p>La siguiente función calcula la suma y el promedio del logaritmo de la probabilidad.</p>
-<div id="dce9c860" class="cell" data-execution_count="19">
+<div id="2dc210c2" class="cell" data-execution_count="19">
 <div id="lst-log-prob-frase" class="python cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-log-prob-frase-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -651,58 +662,79 @@ Listado&nbsp;3.3: Logaritmo de la probabilidad de una frase
 </div>
 </div>
 <p>La función <code>log_prob</code> se puede utilizar para calcular la probabilidad de todas las frases en el conjunto utilizado para estimar las frecuencias tal y como se muestra en la siguiente instrucción.</p>
-<div id="16352df9" class="cell" data-execution_count="20">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb25"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a>acc <span class="op">=</span> [log_prob(ele) <span class="cf">for</span> ele <span class="kw">in</span> dataset]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="aa1dceba" class="cell" data-execution_count="20">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>acc <span class="op">=</span> [log_prob(ele) <span class="cf">for</span> ele <span class="kw">in</span> dataset]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La distribución del promedio del logaritmo de probabilidad se muestra en la siguiente figura.</p>
-<div id="cf02bce7" class="cell" data-execution_count="21">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame()</span>
-<span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'log-prob'</span>] <span class="op">=</span> acc</span>
-<span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'dev'</span></span>
-<span id="cb26-4"><a href="#cb26-4" aria-hidden="true" tabindex="-1"></a>sns.displot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'log-prob'</span>, hue<span class="op">=</span><span class="st">'Conjunto'</span>,</span>
-<span id="cb26-5"><a href="#cb26-5" aria-hidden="true" tabindex="-1"></a>            kind<span class="op">=</span><span class="st">'kde'</span>, fill<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="5667f4ef" class="cell" data-execution_count="21">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'log-prob'</span>] <span class="op">=</span> acc</span>
+<span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'dev'</span></span>
+<span id="cb28-4"><a href="#cb28-4" aria-hidden="true" tabindex="-1"></a>sns.displot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'log-prob'</span>, hue<span class="op">=</span><span class="st">'Conjunto'</span>,</span>
+<span id="cb28-5"><a href="#cb28-5" aria-hidden="true" tabindex="-1"></a>            kind<span class="op">=</span><span class="st">'kde'</span>, fill<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="03ModeladoLenguaje_files/figure-html/cell-22-output-1.png" width="551" height="470" class="figure-img"></p>
+<p><img src="03ModeladoLenguaje_files/figure-html/cell-22-output-1.png" width="550" height="468" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>Para poder presentar otro análisis del modelo, se utiliza otro conjunto de datos, donde cada elemento del conjunto de datos tiene asociado el país de origen. Este valor se encuentra en la clave <code>country</code> de cada diccionario.</p>
 <p><em>Nota: La siguiente celda puede tardar unos cuantos minutos en ejecutarse.</em></p>
-<div id="a0c36cd6" class="cell" data-execution_count="22">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb27"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>paises <span class="op">=</span> load_dataset(lang<span class="op">=</span><span class="st">'es'</span>, dataset<span class="op">=</span><span class="st">'train'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="7f78d00d" class="cell" data-execution_count="22">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>paises <span class="op">=</span> load_dataset(lang<span class="op">=</span><span class="st">'es'</span>, dataset<span class="op">=</span><span class="st">'train'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>
+/home/mario.graff/miniforge3/envs/pln/lib/python3.13/site-packages/encexp/models/dialectid_es_train.json.zip:   0%|          | 0/6480 [00:00&lt;?, ?it/s]
+/home/mario.graff/miniforge3/envs/pln/lib/python3.13/site-packages/encexp/models/dialectid_es_train.json.zip:   0%|          | 10/6480 [00:00&lt;01:05, 98.61it/s]
+/home/mario.graff/miniforge3/envs/pln/lib/python3.13/site-packages/encexp/models/dialectid_es_train.json.zip:   0%|          | 29/6480 [00:00&lt;00:47, 135.08it/s]
+/home/mario.graff/miniforge3/envs/pln/lib/python3.13/site-packages/encexp/models/dialectid_es_train.json.zip:   1%|▏         | 93/6480 [00:00&lt;00:18, 347.71it/s]
+/home/mario.graff/miniforge3/envs/pln/lib/python3.13/site-packages/encexp/models/dialectid_es_train.json.zip:   4%|▍         | 261/6480 [00:00&lt;00:07, 789.90it/s]
+/home/mario.graff/miniforge3/envs/pln/lib/python3.13/site-packages/encexp/models/dialectid_es_train.json.zip:  11%|█         | 717/6480 [00:00&lt;00:02, 2046.69it/s]
+/home/mario.graff/miniforge3/envs/pln/lib/python3.13/site-packages/encexp/models/dialectid_es_train.json.zip:  20%|█▉        | 1265/6480 [00:00&lt;00:01, 3153.68it/s]
+/home/mario.graff/miniforge3/envs/pln/lib/python3.13/site-packages/encexp/models/dialectid_es_train.json.zip:  26%|██▌       | 1665/6480 [00:00&lt;00:01, 3414.52it/s]
+/home/mario.graff/miniforge3/envs/pln/lib/python3.13/site-packages/encexp/models/dialectid_es_train.json.zip:  35%|███▍      | 2237/6480 [00:00&lt;00:01, 4127.12it/s]
+/home/mario.graff/miniforge3/envs/pln/lib/python3.13/site-packages/encexp/models/dialectid_es_train.json.zip:  43%|████▎     | 2781/6480 [00:00&lt;00:00, 4528.26it/s]
+/home/mario.graff/miniforge3/envs/pln/lib/python3.13/site-packages/encexp/models/dialectid_es_train.json.zip:  50%|█████     | 3240/6480 [00:01&lt;00:00, 4426.74it/s]
+/home/mario.graff/miniforge3/envs/pln/lib/python3.13/site-packages/encexp/models/dialectid_es_train.json.zip:  59%|█████▉    | 3825/6480 [00:01&lt;00:00, 4849.76it/s]
+/home/mario.graff/miniforge3/envs/pln/lib/python3.13/site-packages/encexp/models/dialectid_es_train.json.zip:  67%|██████▋   | 4315/6480 [00:01&lt;00:00, 4809.79it/s]
+/home/mario.graff/miniforge3/envs/pln/lib/python3.13/site-packages/encexp/models/dialectid_es_train.json.zip:  74%|███████▍  | 4800/6480 [00:01&lt;00:00, 4787.11it/s]
+/home/mario.graff/miniforge3/envs/pln/lib/python3.13/site-packages/encexp/models/dialectid_es_train.json.zip:  83%|████████▎ | 5379/6480 [00:01&lt;00:00, 5083.81it/s]
+/home/mario.graff/miniforge3/envs/pln/lib/python3.13/site-packages/encexp/models/dialectid_es_train.json.zip:  91%|█████████ | 5890/6480 [00:01&lt;00:00, 4832.92it/s]
+/home/mario.graff/miniforge3/envs/pln/lib/python3.13/site-packages/encexp/models/dialectid_es_train.json.zip: 6481it [00:01, 5142.23it/s]                          
+                                                                                                                                         </code></pre>
+</div>
 </div>
 <p>La siguientes instrucciones modelan los datos obtenidos de México y Argentina respectivamente.</p>
-<div id="3e62c760" class="cell" data-execution_count="23">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>mex <span class="op">=</span> [log_prob(ele) <span class="cf">for</span> ele <span class="kw">in</span> paises <span class="cf">if</span> ele[<span class="st">'country'</span>] <span class="op">==</span> <span class="st">'mx'</span>]</span>
-<span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>arg <span class="op">=</span> [log_prob(ele) <span class="cf">for</span> ele <span class="kw">in</span> paises <span class="cf">if</span> ele[<span class="st">'country'</span>] <span class="op">==</span> <span class="st">'ar'</span>]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="6a2cb6e3" class="cell" data-execution_count="23">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb31"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb31-1"><a href="#cb31-1" aria-hidden="true" tabindex="-1"></a>mex <span class="op">=</span> [log_prob(ele) <span class="cf">for</span> ele <span class="kw">in</span> paises <span class="cf">if</span> ele[<span class="st">'country'</span>] <span class="op">==</span> <span class="st">'mx'</span>]</span>
+<span id="cb31-2"><a href="#cb31-2" aria-hidden="true" tabindex="-1"></a>arg <span class="op">=</span> [log_prob(ele) <span class="cf">for</span> ele <span class="kw">in</span> paises <span class="cf">if</span> ele[<span class="st">'country'</span>] <span class="op">==</span> <span class="st">'ar'</span>]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La distribución obtenida al modelar estos dos conjuntos de datos se muestra en la siguiente figura.</p>
-<div id="2fd2c60b" class="cell" data-execution_count="24">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb29"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb29-1"><a href="#cb29-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame()</span>
-<span id="cb29-2"><a href="#cb29-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'log-prob'</span>] <span class="op">=</span> mex</span>
-<span id="cb29-3"><a href="#cb29-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'México'</span></span>
-<span id="cb29-4"><a href="#cb29-4" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> pd.DataFrame()</span>
-<span id="cb29-5"><a href="#cb29-5" aria-hidden="true" tabindex="-1"></a>_[<span class="st">'log-prob'</span>] <span class="op">=</span> arg</span>
-<span id="cb29-6"><a href="#cb29-6" aria-hidden="true" tabindex="-1"></a>_[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'Argentina'</span></span>
-<span id="cb29-7"><a href="#cb29-7" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.concat([df, _])</span>
-<span id="cb29-8"><a href="#cb29-8" aria-hidden="true" tabindex="-1"></a>sns.displot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'log-prob'</span>, hue<span class="op">=</span><span class="st">'Conjunto'</span>,</span>
-<span id="cb29-9"><a href="#cb29-9" aria-hidden="true" tabindex="-1"></a>            kind<span class="op">=</span><span class="st">'kde'</span>, fill<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="0ad0f11b" class="cell" data-execution_count="24">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'log-prob'</span>] <span class="op">=</span> mex</span>
+<span id="cb32-3"><a href="#cb32-3" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'México'</span></span>
+<span id="cb32-4"><a href="#cb32-4" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb32-5"><a href="#cb32-5" aria-hidden="true" tabindex="-1"></a>_[<span class="st">'log-prob'</span>] <span class="op">=</span> arg</span>
+<span id="cb32-6"><a href="#cb32-6" aria-hidden="true" tabindex="-1"></a>_[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'Argentina'</span></span>
+<span id="cb32-7"><a href="#cb32-7" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.concat([df, _])</span>
+<span id="cb32-8"><a href="#cb32-8" aria-hidden="true" tabindex="-1"></a>sns.displot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'log-prob'</span>, hue<span class="op">=</span><span class="st">'Conjunto'</span>,</span>
+<span id="cb32-9"><a href="#cb32-9" aria-hidden="true" tabindex="-1"></a>            kind<span class="op">=</span><span class="st">'kde'</span>, fill<span class="op">=</span><span class="va">False</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="03ModeladoLenguaje_files/figure-html/cell-25-output-1.png" width="592" height="470" class="figure-img"></p>
+<p><img src="03ModeladoLenguaje_files/figure-html/cell-25-output-1.png" width="591" height="468" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>De la figura se puede observar que las dos distribuciones son muy similares, lo cual es de esperarse dado que los datos con los que fueron entrenados tiene el mismo número de ejemplos provenientes de México que de Argentina, pero aun así se observan unas leves diferencias.</p>
 <p>Habiendo calculado el promedio del logaritmo de la probabilidad, uno se puede preguntar ¿cuál es la frase más probable en México? la siguiente instrucción muesta esta frase para el conjunto de datos analizado.</p>
-<div id="376146cd" class="cell" data-execution_count="25">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>mex_ds <span class="op">=</span> [x <span class="cf">for</span> x <span class="kw">in</span> paises <span class="cf">if</span> x[<span class="st">'country'</span>] <span class="op">==</span> <span class="st">'mx'</span>]</span>
-<span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>mex_ds[np.argmax(mex)]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="91d472cd" class="cell" data-execution_count="25">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>mex_ds <span class="op">=</span> [x <span class="cf">for</span> x <span class="kw">in</span> paises <span class="cf">if</span> x[<span class="st">'country'</span>] <span class="op">==</span> <span class="st">'mx'</span>]</span>
+<span id="cb33-2"><a href="#cb33-2" aria-hidden="true" tabindex="-1"></a>mex_ds[np.argmax(mex)]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="25">
 <pre><code>{'text': '_usr jajajajajajajajajajajajajajajajajajajajajajajajajajaja',
  'country': 'mx'}</code></pre>
@@ -713,7 +745,7 @@ Listado&nbsp;3.3: Logaritmo de la probabilidad de una frase
 <section id="encapsulando-el-modelo-de-lenguaje-de-gramas" class="level2" data-number="3.4">
 <h2 data-number="3.4" class="anchored" data-anchor-id="encapsulando-el-modelo-de-lenguaje-de-gramas"><span class="header-section-number">3.4</span> Encapsulando el modelo de lenguaje de gramas</h2>
 <p>El modelo de lenguaje de gramas se organiza en la clase <code>ModeloNGram</code>. Esta clase hereda la funcionalidad de la clase <code>Frec</code> (ver <a href="#lst-frec-modelo-lenguaje" class="quarto-xref">Listado&nbsp;<span>3.2</span></a>) y lo complementa implementando el cálculo de la probabilidad de una frase utilizando k-suavizado (ver <a href="#lst-log-prob-frase" class="quarto-xref">Listado&nbsp;<span>3.3</span></a>).</p>
-<div id="04992d7d" class="cell" data-execution_count="26">
+<div id="16a07969" class="cell" data-execution_count="26">
 <div id="lst-modelo-n-gram" class="python cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-modelo-n-gram-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -777,12 +809,12 @@ Listado&nbsp;3.4: Modelo de lenguaje de gramas
 </div>
 </div>
 <div class="callout-body-container callout-body">
-<div id="0a57c0c6" class="cell" data-execution_count="27">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>modeloNGram <span class="op">=</span> ModeloNGram(promedio<span class="op">=</span><span class="va">True</span>).fit(dataset)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="7d3b9bb1" class="cell" data-execution_count="27">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb35"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a>modeloNGram <span class="op">=</span> ModeloNGram(promedio<span class="op">=</span><span class="va">True</span>).fit(dataset)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El logaritmo de la probabilidad de la primera frase de <code>dataset</code>, calculada previamente (variable <code>acc</code>), tiene un valor de -7.6760. Utilizando la implementación del modelo de lenguaje de gramas (ver <a href="#lst-modelo-n-gram" class="quarto-xref">Listado&nbsp;<span>3.4</span></a>), inicializado con <code>dataset</code>, y contenido en la variable <code>modeloNGram</code> se obtiene el logaritmo mostrado en la siguiente instrucción.</p>
-<div id="e92fae2a" class="cell" data-execution_count="28">
-<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb33"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb33-1"><a href="#cb33-1" aria-hidden="true" tabindex="-1"></a>modeloNGram.log_prob(dataset[:<span class="dv">1</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
+<div id="c3ea6a38" class="cell" data-execution_count="28">
+<div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>modeloNGram.log_prob(dataset[:<span class="dv">1</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="28">
 <pre><code>array([[-9.58406353]])</code></pre>
 </div>
@@ -1315,423 +1347,423 @@ Listado&nbsp;3.4: Modelo de lenguaje de gramas
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb35" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb35-1"><a href="#cb35-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Modelado de Lenguaje</span></span>
-<span id="cb35-2"><a href="#cb35-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-3"><a href="#cb35-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es desarrollar un modelo de lenguaje basado en gramas. </span>
-<span id="cb35-4"><a href="#cb35-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-5"><a href="#cb35-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paquetes usados {.unnumbered}</span></span>
-<span id="cb35-6"><a href="#cb35-6" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-9"><a href="#cb35-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-10"><a href="#cb35-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-11"><a href="#cb35-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
-<span id="cb35-12"><a href="#cb35-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pprint</span>
-<span id="cb35-13"><a href="#cb35-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
-<span id="cb35-14"><a href="#cb35-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
-<span id="cb35-15"><a href="#cb35-15" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
-<span id="cb35-16"><a href="#cb35-16" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
-<span id="cb35-17"><a href="#cb35-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoTokenizer</span>
-<span id="cb35-18"><a href="#cb35-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> encexp.utils <span class="im">import</span> load_dataset</span>
-<span id="cb35-19"><a href="#cb35-19" aria-hidden="true" tabindex="-1"></a>pp <span class="op">=</span> pprint.PrettyPrinter(width<span class="op">=</span><span class="dv">60</span>, compact<span class="op">=</span><span class="va">True</span>).pprint</span>
-<span id="cb35-20"><a href="#cb35-20" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-21"><a href="#cb35-21" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-24"><a href="#cb35-24" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-25"><a href="#cb35-25" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
-<span id="cb35-26"><a href="#cb35-26" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
-<span id="cb35-27"><a href="#cb35-27" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-28"><a href="#cb35-28" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-29"><a href="#cb35-29" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción </span></span>
-<span id="cb35-30"><a href="#cb35-30" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-31"><a href="#cb35-31" aria-hidden="true" tabindex="-1"></a>Un modelo de lenguaje es una función que permite estimar la probabilidad de un texto, i.e., $\mathbb P(w_1, w_2, w_n).$ Comunmente, se trata de modelar  $\mathbb P(w_n \mid w_1, w_2, \ldots,w_{n-1}),$ es decir, encontrar una función que estime la probabilidad de la siguiente palabra o segmento, i.e., $w_N$, dada la historia. </span>
-<span id="cb35-32"><a href="#cb35-32" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-33"><a href="#cb35-33" aria-hidden="true" tabindex="-1"></a>Realizando la suposición de Markov, es decir, que el segmento $w_n$, es independiente de los segmentos iguales y mayores a $N$, es decir, $\mathbb P(w_n \mid w_1, w_2, \ldots,w_{n-1})=\mathbb P(w_n \mid w_{n-N+1}, \ldots, w_{n-1}),$ para $N &lt; n.$ Por ejemplo, para $N=2$ el modelo con esta suposición quedaría como $\mathbb P(w_n \mid w_{n-1})$, en el caso $N=3$ sería: $\mathbb P(w_n \mid w_{n-2}, w_{n-1})$ y así sucesivamente. </span>
-<span id="cb35-34"><a href="#cb35-34" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-35"><a href="#cb35-35" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modelo de lenguaje</span></span>
-<span id="cb35-36"><a href="#cb35-36" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-37"><a href="#cb35-37" aria-hidden="true" tabindex="-1"></a>En este caso el modelo para el siguiente segmento quedaría como</span>
-<span id="cb35-38"><a href="#cb35-38" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-39"><a href="#cb35-39" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb35-40"><a href="#cb35-40" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
-<span id="cb35-41"><a href="#cb35-41" aria-hidden="true" tabindex="-1"></a>\mathbb P(w_n \mid w_{n-N+1}, \ldots, w_{n-1})&amp;=\frac{<span class="sc">\#</span>(w_{n-N+1}, \ldots, w_{n-1}, w_n)}{\sum_{\ell} <span class="sc">\#</span>(w_{n-N+1}, \ldots, w_{n-1}, \ell)}<span class="sc">\\</span></span>
-<span id="cb35-42"><a href="#cb35-42" aria-hidden="true" tabindex="-1"></a>&amp;=\frac{<span class="sc">\#</span>(w_{n-N+1}, \ldots, w_{n-1}, w_n)}{<span class="sc">\#</span>(w_{n-N+1}, \ldots, w_{n-1})},</span>
-<span id="cb35-43"><a href="#cb35-43" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
-<span id="cb35-44"><a href="#cb35-44" aria-hidden="true" tabindex="-1"></a>$$ {#eq-modelo-qgrams}</span>
-<span id="cb35-45"><a href="#cb35-45" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-46"><a href="#cb35-46" aria-hidden="true" tabindex="-1"></a>donde $<span class="sc">\#</span>$ corresponde a la frecuencia medida en un conjunto de entrenamiento. Por ejemplo, para $N=3$ la @eq-modelo-qgrams quedaría como </span>
-<span id="cb35-47"><a href="#cb35-47" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-48"><a href="#cb35-48" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb35-49"><a href="#cb35-49" aria-hidden="true" tabindex="-1"></a>\mathbb P(w_n \mid w_{n-2}, w_{n-1})=\frac{<span class="sc">\#</span>(w_{n-2}, w_{n-1}, w_n)}{<span class="sc">\#</span>(w_{n-2}, w_{n-1})}.</span>
-<span id="cb35-50"><a href="#cb35-50" aria-hidden="true" tabindex="-1"></a>$$</span>
-<span id="cb35-51"><a href="#cb35-51" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-52"><a href="#cb35-52" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cálculo de frecuencias en un corpus</span></span>
-<span id="cb35-53"><a href="#cb35-53" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-54"><a href="#cb35-54" aria-hidden="true" tabindex="-1"></a>Para el modelo de lenguaje se requiere calcular la frecuencia de la secuencia (variable <span class="in">`frase`</span>), i.e., $<span class="sc">\#</span>(w_{n-N+1}, \ldots, w_{n-1}, w_n)$ y la frecuencia de las palabras previas (variable <span class="in">`hist`</span>), i.e., $<span class="sc">\#</span>(w_{n-N+1}, \ldots, w_{n-1})$, dependiendo de $N$. Adicionalmente, se guarda el vocabulario en la variable <span class="in">`voc`</span>.  </span>
-<span id="cb35-55"><a href="#cb35-55" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-58"><a href="#cb35-58" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-59"><a href="#cb35-59" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-60"><a href="#cb35-60" aria-hidden="true" tabindex="-1"></a>voc <span class="op">=</span> Counter()</span>
-<span id="cb35-61"><a href="#cb35-61" aria-hidden="true" tabindex="-1"></a>frase <span class="op">=</span> Counter()</span>
-<span id="cb35-62"><a href="#cb35-62" aria-hidden="true" tabindex="-1"></a>hist <span class="op">=</span> Counter()</span>
-<span id="cb35-63"><a href="#cb35-63" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-64"><a href="#cb35-64" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-65"><a href="#cb35-65" aria-hidden="true" tabindex="-1"></a>El conjunto de datos que se utilizará para generar el modelo es el que se obtiene con la función <span class="in">`load_dataset`</span> y se guarda en la variable <span class="in">`dataset`</span>.</span>
-<span id="cb35-66"><a href="#cb35-66" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-69"><a href="#cb35-69" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-70"><a href="#cb35-70" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-71"><a href="#cb35-71" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> load_dataset(lang<span class="op">=</span><span class="st">'es'</span>, dataset<span class="op">=</span><span class="st">'dev'</span>)</span>
-<span id="cb35-72"><a href="#cb35-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-73"><a href="#cb35-73" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-74"><a href="#cb35-74" aria-hidden="true" tabindex="-1"></a>El siguiente paso es iterar por todos los elementos del conjunto de datos (variable <span class="in">`dataset`</span>). En el ciclo se segmenta cada texto y se actualiza el vocabulario con el método <span class="in">`voc.update`</span>. Después se genera una ventana de tamaño $N$, donde los índices que corresponden a elementos del vocabulario se concatenan con el caracter <span class="sc">\|</span>. El siguiente paso es actualizar la frecuencia de la secuencia con el método <span class="in">`frase.update`</span>. Se realiza un procedimiento equivalente pero para una ventana de tamaño $N-1$ que corresponde a las palabras previas, actualizando con el método <span class="in">`hist.update`</span>.  </span>
-<span id="cb35-75"><a href="#cb35-75" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-78"><a href="#cb35-78" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-79"><a href="#cb35-79" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-80"><a href="#cb35-80" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-label: lst-estimacion-frecuencia</span></span>
-<span id="cb35-81"><a href="#cb35-81" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: Estimación de frecuencias</span></span>
-<span id="cb35-82"><a href="#cb35-82" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-83"><a href="#cb35-83" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="dv">2</span></span>
-<span id="cb35-84"><a href="#cb35-84" aria-hidden="true" tabindex="-1"></a>bilmaLAT <span class="op">=</span> AutoTokenizer.from_pretrained(<span class="st">'guillermoruiz/bilmaLAT'</span>) <span class="co"># &lt;1&gt;</span></span>
-<span id="cb35-85"><a href="#cb35-85" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ele <span class="kw">in</span> dataset: <span class="co"># &lt;2&gt;</span></span>
-<span id="cb35-86"><a href="#cb35-86" aria-hidden="true" tabindex="-1"></a>  tokens <span class="op">=</span> bilmaLAT(ele[<span class="st">'text'</span>]).input_ids <span class="co"># &lt;3&gt;</span></span>
-<span id="cb35-87"><a href="#cb35-87" aria-hidden="true" tabindex="-1"></a>  voc.update(tokens) <span class="co"># &lt;4&gt;</span></span>
-<span id="cb35-88"><a href="#cb35-88" aria-hidden="true" tabindex="-1"></a>  _ <span class="op">=</span> [<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, lst)) <span class="co"># &lt;5&gt;</span></span>
-<span id="cb35-89"><a href="#cb35-89" aria-hidden="true" tabindex="-1"></a>       <span class="cf">for</span> lst <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[tokens[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N)])] <span class="co"># &lt;5&gt;</span></span>
-<span id="cb35-90"><a href="#cb35-90" aria-hidden="true" tabindex="-1"></a>  frase.update(_) <span class="co"># &lt;5&gt;</span></span>
-<span id="cb35-91"><a href="#cb35-91" aria-hidden="true" tabindex="-1"></a>  _ <span class="op">=</span> [<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, lst)) <span class="co"># &lt;6&gt;</span></span>
-<span id="cb35-92"><a href="#cb35-92" aria-hidden="true" tabindex="-1"></a>       <span class="cf">for</span> lst <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[tokens[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N<span class="op">-</span><span class="dv">1</span>)])] <span class="co"># &lt;6&gt;</span></span>
-<span id="cb35-93"><a href="#cb35-93" aria-hidden="true" tabindex="-1"></a>  hist.update(_) <span class="co"># &lt;6&gt;</span></span>
-<span id="cb35-94"><a href="#cb35-94" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-95"><a href="#cb35-95" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-96"><a href="#cb35-96" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Carga el modelo bilmaLAT</span>
-<span id="cb35-97"><a href="#cb35-97" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Iteración por todos los textos</span>
-<span id="cb35-98"><a href="#cb35-98" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Segmentación de un texto</span>
-<span id="cb35-99"><a href="#cb35-99" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Actualización de vocabulario</span>
-<span id="cb35-100"><a href="#cb35-100" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Iteración para estimar y actualizar la frecuencia de frases</span>
-<span id="cb35-101"><a href="#cb35-101" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>Iteración para estimar y actualizar la frecuencia de historia</span>
-<span id="cb35-102"><a href="#cb35-102" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-103"><a href="#cb35-103" aria-hidden="true" tabindex="-1"></a>La siguiente instrucción muestra las diez secuencias más frecuentes en el conjunto de datos analizado.</span>
-<span id="cb35-104"><a href="#cb35-104" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-107"><a href="#cb35-107" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-108"><a href="#cb35-108" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-109"><a href="#cb35-109" aria-hidden="true" tabindex="-1"></a>pp([bilmaLAT.decode(<span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">int</span>, k.split(<span class="st">"|"</span>))))</span>
-<span id="cb35-110"><a href="#cb35-110" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k, v <span class="kw">in</span> frase.most_common(<span class="dv">10</span>)])</span>
-<span id="cb35-111"><a href="#cb35-111" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-112"><a href="#cb35-112" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-113"><a href="#cb35-113" aria-hidden="true" tabindex="-1"></a>Completando el ejemplo anterior, la siguiente instrucción muestra la secuencia de palabras previas que tiene la mayor frecuencia.</span>
-<span id="cb35-114"><a href="#cb35-114" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-117"><a href="#cb35-117" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-118"><a href="#cb35-118" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-119"><a href="#cb35-119" aria-hidden="true" tabindex="-1"></a>pp([bilmaLAT.decode(<span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">int</span>, k.split(<span class="st">"|"</span>))))</span>
-<span id="cb35-120"><a href="#cb35-120" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k, v <span class="kw">in</span> hist.most_common(<span class="dv">10</span>)])</span>
-<span id="cb35-121"><a href="#cb35-121" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-122"><a href="#cb35-122" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-123"><a href="#cb35-123" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
-<span id="cb35-124"><a href="#cb35-124" aria-hidden="true" tabindex="-1"></a><span class="fu">### Actividad</span></span>
-<span id="cb35-125"><a href="#cb35-125" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-126"><a href="#cb35-126" aria-hidden="true" tabindex="-1"></a>:::: {#exr-frecuencia-trigramas}</span>
-<span id="cb35-127"><a href="#cb35-127" aria-hidden="true" tabindex="-1"></a>Seleccione de los siguientes trigamas aquel que tenga una mayor frecuencia:</span>
-<span id="cb35-128"><a href="#cb35-128" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-129"><a href="#cb35-129" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="co">[</span><span class="ot">CLS</span><span class="co">]</span> _usr _usr</span>
-<span id="cb35-130"><a href="#cb35-130" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>. Más en</span>
-<span id="cb35-131"><a href="#cb35-131" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>) _url <span class="co">[</span><span class="ot">SEP</span><span class="co">]</span></span>
-<span id="cb35-132"><a href="#cb35-132" aria-hidden="true" tabindex="-1"></a>::::</span>
-<span id="cb35-133"><a href="#cb35-133" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb35-134"><a href="#cb35-134" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-135"><a href="#cb35-135" aria-hidden="true" tabindex="-1"></a><span class="fu">### Encapsulando la estimación de frecuencias  </span></span>
-<span id="cb35-136"><a href="#cb35-136" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-137"><a href="#cb35-137" aria-hidden="true" tabindex="-1"></a>La implementación del modelo de lenguaje, en particular de la estimación de las frecuecias descrita en @lst-estimacion-frecuencia se organiza en la clase <span class="in">`Frec`</span> que se muestra en @lst-frec-modelo-lenguaje. La clase recibe el parámetro <span class="in">`N`</span> que indica el tamaño de la ventana y inicializa las variables <span class="in">`voc`</span>, <span class="in">`frase`</span>, y <span class="in">`hist`</span> donde se guardará la frecuencia del vocabulario, de los gramas y de los $N-1$ gramas. </span>
-<span id="cb35-138"><a href="#cb35-138" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-141"><a href="#cb35-141" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-142"><a href="#cb35-142" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-143"><a href="#cb35-143" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-label: lst-frec-modelo-lenguaje</span></span>
-<span id="cb35-144"><a href="#cb35-144" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: Clase que estima la frecuencia de los segmentos de un corpus </span></span>
-<span id="cb35-145"><a href="#cb35-145" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-146"><a href="#cb35-146" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Frec:</span>
-<span id="cb35-147"><a href="#cb35-147" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, N: <span class="bu">int</span><span class="op">=</span><span class="dv">2</span>):</span>
-<span id="cb35-148"><a href="#cb35-148" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.N <span class="op">=</span> N <span class="co"># &lt;1&gt;</span></span>
-<span id="cb35-149"><a href="#cb35-149" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.voc <span class="op">=</span> Counter() <span class="co"># &lt;2&gt;</span></span>
-<span id="cb35-150"><a href="#cb35-150" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.frase <span class="op">=</span> Counter() <span class="co"># &lt;3&gt;</span></span>
-<span id="cb35-151"><a href="#cb35-151" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.hist <span class="op">=</span> Counter() <span class="co"># &lt;4&gt;</span></span>
-<span id="cb35-152"><a href="#cb35-152" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-153"><a href="#cb35-153" aria-hidden="true" tabindex="-1"></a>  <span class="at">@property</span></span>
-<span id="cb35-154"><a href="#cb35-154" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> segmentador(<span class="va">self</span>):</span>
-<span id="cb35-155"><a href="#cb35-155" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>: <span class="co"># &lt;5&gt;</span></span>
-<span id="cb35-156"><a href="#cb35-156" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> <span class="va">self</span>._segmentador <span class="co"># &lt;5&gt;</span></span>
-<span id="cb35-157"><a href="#cb35-157" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">AttributeError</span>: <span class="co"># &lt;5&gt;</span></span>
-<span id="cb35-158"><a href="#cb35-158" aria-hidden="true" tabindex="-1"></a>      _ <span class="op">=</span> AutoTokenizer.from_pretrained(<span class="st">'guillermoruiz/bilmaLAT'</span>) <span class="co"># &lt;5&gt;</span></span>
-<span id="cb35-159"><a href="#cb35-159" aria-hidden="true" tabindex="-1"></a>      <span class="va">self</span>._segmentador <span class="op">=</span> _ <span class="co"># &lt;5&gt;</span></span>
-<span id="cb35-160"><a href="#cb35-160" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> _ <span class="co"># &lt;5&gt;</span></span>
-<span id="cb35-161"><a href="#cb35-161" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-162"><a href="#cb35-162" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> fit(<span class="va">self</span>, X, y<span class="op">=</span><span class="va">None</span>):</span>
-<span id="cb35-163"><a href="#cb35-163" aria-hidden="true" tabindex="-1"></a>    N <span class="op">=</span> <span class="va">self</span>.N</span>
-<span id="cb35-164"><a href="#cb35-164" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> ele <span class="kw">in</span> X: <span class="co"># &lt;6&gt;</span></span>
-<span id="cb35-165"><a href="#cb35-165" aria-hidden="true" tabindex="-1"></a>      tokens <span class="op">=</span> <span class="va">self</span>.segmentar(ele) <span class="co"># &lt;6&gt;</span></span>
-<span id="cb35-166"><a href="#cb35-166" aria-hidden="true" tabindex="-1"></a>      voc.update(tokens) <span class="co"># &lt;6&gt;</span></span>
-<span id="cb35-167"><a href="#cb35-167" aria-hidden="true" tabindex="-1"></a>      _ <span class="op">=</span> [<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, lst))</span>
-<span id="cb35-168"><a href="#cb35-168" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> lst <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[tokens[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N)])] <span class="co"># &lt;6&gt;</span></span>
-<span id="cb35-169"><a href="#cb35-169" aria-hidden="true" tabindex="-1"></a>      <span class="va">self</span>.frase.update(_) <span class="co"># &lt;6&gt;</span></span>
-<span id="cb35-170"><a href="#cb35-170" aria-hidden="true" tabindex="-1"></a>      _ <span class="op">=</span> [<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, lst)) <span class="co"># &lt;6&gt;</span></span>
-<span id="cb35-171"><a href="#cb35-171" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> lst <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[tokens[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N<span class="op">-</span><span class="dv">1</span>)])] <span class="co"># &lt;6&gt;</span></span>
-<span id="cb35-172"><a href="#cb35-172" aria-hidden="true" tabindex="-1"></a>      <span class="va">self</span>.hist.update(_) <span class="co"># &lt;6&gt;</span></span>
-<span id="cb35-173"><a href="#cb35-173" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.voc <span class="op">=</span> <span class="bu">len</span>(voc) <span class="co"># &lt;6&gt;</span></span>
-<span id="cb35-174"><a href="#cb35-174" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">self</span></span>
-<span id="cb35-175"><a href="#cb35-175" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-176"><a href="#cb35-176" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> segmentar(<span class="va">self</span>, texto):</span>
-<span id="cb35-177"><a href="#cb35-177" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> <span class="va">self</span>.get_text(ele) <span class="co"># &lt;7&gt;</span></span>
-<span id="cb35-178"><a href="#cb35-178" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">self</span>.segmentador(_).input_ids <span class="co"># &lt;7&gt;</span></span>
-<span id="cb35-179"><a href="#cb35-179" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-180"><a href="#cb35-180" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> get_text(<span class="va">self</span>, ele):</span>
-<span id="cb35-181"><a href="#cb35-181" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">isinstance</span>(ele, <span class="bu">dict</span>): <span class="co"># &lt;8&gt;</span></span>
-<span id="cb35-182"><a href="#cb35-182" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> ele[<span class="st">'text'</span>] <span class="co"># &lt;8&gt;</span></span>
-<span id="cb35-183"><a href="#cb35-183" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ele</span>
-<span id="cb35-184"><a href="#cb35-184" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-185"><a href="#cb35-185" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Tamaño de la ventana</span>
-<span id="cb35-186"><a href="#cb35-186" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Vocabulario</span>
-<span id="cb35-187"><a href="#cb35-187" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Frecuencia de los gramas </span>
-<span id="cb35-188"><a href="#cb35-188" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Frecuencia de los gramas previos</span>
-<span id="cb35-189"><a href="#cb35-189" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Segmentador mediante el modelo bilmaLAT</span>
-<span id="cb35-190"><a href="#cb35-190" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>Estimación de frecuencias ver @lst-estimacion-frecuencia</span>
-<span id="cb35-191"><a href="#cb35-191" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>Función que segmenta un texto dato</span>
-<span id="cb35-192"><a href="#cb35-192" aria-hidden="true" tabindex="-1"></a><span class="ss">8. </span>Función auxiliar para utilizar una lista de diccionarios</span>
-<span id="cb35-193"><a href="#cb35-193" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-194"><a href="#cb35-194" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
-<span id="cb35-195"><a href="#cb35-195" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Ejemplo </span></span>
-<span id="cb35-196"><a href="#cb35-196" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-197"><a href="#cb35-197" aria-hidden="true" tabindex="-1"></a>Calculando las diez secuencias más frecuentes en el conjunto de datos utilizando la clase Frac. Lo primero que se tiene que realizar es estimar las frecuencias como se muestra en el siguiente código. </span>
-<span id="cb35-198"><a href="#cb35-198" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-201"><a href="#cb35-201" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-202"><a href="#cb35-202" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-203"><a href="#cb35-203" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-204"><a href="#cb35-204" aria-hidden="true" tabindex="-1"></a>frec <span class="op">=</span> Frec().fit(dataset)</span>
-<span id="cb35-205"><a href="#cb35-205" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-206"><a href="#cb35-206" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-207"><a href="#cb35-207" aria-hidden="true" tabindex="-1"></a>El siguiente código utiliza las frecuencias estimadas para mostrar las diez más frecuentes. </span>
-<span id="cb35-208"><a href="#cb35-208" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-211"><a href="#cb35-211" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-212"><a href="#cb35-212" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-213"><a href="#cb35-213" aria-hidden="true" tabindex="-1"></a>pp([bilmaLAT.decode(<span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">int</span>, k.split(<span class="st">"|"</span>))))</span>
-<span id="cb35-214"><a href="#cb35-214" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k, v <span class="kw">in</span> frec.frase.most_common(<span class="dv">10</span>)])</span>
-<span id="cb35-215"><a href="#cb35-215" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-216"><a href="#cb35-216" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-217"><a href="#cb35-217" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb35-218"><a href="#cb35-218" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-219"><a href="#cb35-219" aria-hidden="true" tabindex="-1"></a><span class="fu">## Probabilidad</span></span>
-<span id="cb35-220"><a href="#cb35-220" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-221"><a href="#cb35-221" aria-hidden="true" tabindex="-1"></a>Después de calcular las frecuencia, es posible estimar la probabilidad de una frase. Considerando que $N=2$ entonces es directo calcular la probabilidad de la siguiete frase.</span>
-<span id="cb35-222"><a href="#cb35-222" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-225"><a href="#cb35-225" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-226"><a href="#cb35-226" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-227"><a href="#cb35-227" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'buenos días'</span></span>
-<span id="cb35-228"><a href="#cb35-228" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-229"><a href="#cb35-229" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-230"><a href="#cb35-230" aria-hidden="true" tabindex="-1"></a>Lo primero es verficar que la frase se codifica en 2 índices, tal y como se muestra a continuación.</span>
-<span id="cb35-231"><a href="#cb35-231" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-234"><a href="#cb35-234" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-235"><a href="#cb35-235" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-236"><a href="#cb35-236" aria-hidden="true" tabindex="-1"></a>code <span class="op">=</span> bilmaLAT(txt)[<span class="st">'input_ids'</span>][<span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb35-237"><a href="#cb35-237" aria-hidden="true" tabindex="-1"></a>code</span>
-<span id="cb35-238"><a href="#cb35-238" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-239"><a href="#cb35-239" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-240"><a href="#cb35-240" aria-hidden="true" tabindex="-1"></a>El siguiente paso es dividir la frecuencia de la cadena *buenos dias* entre l frecuencia de *buenos* tal y como se muestra en la siguiente instrucción.</span>
-<span id="cb35-241"><a href="#cb35-241" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-244"><a href="#cb35-244" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-245"><a href="#cb35-245" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-246"><a href="#cb35-246" aria-hidden="true" tabindex="-1"></a>frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">/</span> hist[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code[:<span class="op">-</span><span class="dv">1</span>]))]</span>
-<span id="cb35-247"><a href="#cb35-247" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-248"><a href="#cb35-248" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-249"><a href="#cb35-249" aria-hidden="true" tabindex="-1"></a>Otro ejemplo similar es calcular la probabilidad de *buenox*. Como se puede observar en el siguiente código, esa palabra se codifica en dos índices, entonces se puede seguir un procedimiento equivalente.</span>
-<span id="cb35-250"><a href="#cb35-250" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-253"><a href="#cb35-253" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-254"><a href="#cb35-254" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-255"><a href="#cb35-255" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'buenox'</span></span>
-<span id="cb35-256"><a href="#cb35-256" aria-hidden="true" tabindex="-1"></a>code <span class="op">=</span> bilmaLAT(txt)[<span class="st">'input_ids'</span>][<span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb35-257"><a href="#cb35-257" aria-hidden="true" tabindex="-1"></a>code</span>
-<span id="cb35-258"><a href="#cb35-258" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-259"><a href="#cb35-259" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-260"><a href="#cb35-260" aria-hidden="true" tabindex="-1"></a>Como muestra el resultado de la siguiente celda la probabilidad de *buenox* es cero, dado que esa palabra no fue vista en el conjunto de datos donde se estimó la frecuencia.</span>
-<span id="cb35-261"><a href="#cb35-261" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-264"><a href="#cb35-264" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-265"><a href="#cb35-265" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-266"><a href="#cb35-266" aria-hidden="true" tabindex="-1"></a>frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">/</span> hist[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code[:<span class="op">-</span><span class="dv">1</span>]))]</span>
-<span id="cb35-267"><a href="#cb35-267" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-268"><a href="#cb35-268" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-269"><a href="#cb35-269" aria-hidden="true" tabindex="-1"></a><span class="fu">### $k$-suavizado</span></span>
-<span id="cb35-270"><a href="#cb35-270" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-271"><a href="#cb35-271" aria-hidden="true" tabindex="-1"></a>Para poder calcular la probabilidad de una secuencia, es necesario calcular una probabilidad diferente de cero a cualquier palabra que no ha sido vista en el conjunto donde se estiman las frecuencias. Una manera para realizar esto es asignar una pequeña masa a todas las palabras que no fueron vistas, a eso se le conoce como suavizado.</span>
-<span id="cb35-272"><a href="#cb35-272" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-273"><a href="#cb35-273" aria-hidden="true" tabindex="-1"></a>La función <span class="in">`prob`</span> implementa un tipo de suavisado donde se le asigna un valor de $\frac{1}{\mid V \mid}$ a todas las palabras que no son vistas, donde $\mid V \mid$ es el tamaño del vocabulario.</span>
-<span id="cb35-274"><a href="#cb35-274" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-277"><a href="#cb35-277" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-278"><a href="#cb35-278" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-279"><a href="#cb35-279" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prob(txt, k<span class="op">=</span><span class="fl">0.01</span>):</span>
-<span id="cb35-280"><a href="#cb35-280" aria-hidden="true" tabindex="-1"></a>  code <span class="op">=</span> bilmaLAT(txt)[<span class="st">'input_ids'</span>][<span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>]</span>
-<span id="cb35-281"><a href="#cb35-281" aria-hidden="true" tabindex="-1"></a>  num <span class="op">=</span> frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">+</span> k</span>
-<span id="cb35-282"><a href="#cb35-282" aria-hidden="true" tabindex="-1"></a>  den <span class="op">=</span> hist[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code[:<span class="op">-</span><span class="dv">1</span>]))] <span class="op">+</span> k <span class="op">*</span> <span class="bu">len</span>(voc)</span>
-<span id="cb35-283"><a href="#cb35-283" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> num <span class="op">/</span> den</span>
-<span id="cb35-284"><a href="#cb35-284" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-285"><a href="#cb35-285" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-286"><a href="#cb35-286" aria-hidden="true" tabindex="-1"></a>Se puede observar que la probabilidad de la siguiente frase es menor que cuando no se usa el suavizado, esto es porque una fracción de la masa de probabilidad se está utilizando en elementos no vistos.</span>
-<span id="cb35-287"><a href="#cb35-287" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-290"><a href="#cb35-290" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-291"><a href="#cb35-291" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-292"><a href="#cb35-292" aria-hidden="true" tabindex="-1"></a>prob(<span class="st">'buenos días'</span>)</span>
-<span id="cb35-293"><a href="#cb35-293" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-294"><a href="#cb35-294" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-295"><a href="#cb35-295" aria-hidden="true" tabindex="-1"></a>Complementando lo anterior, la palabra *buenox* presenta una probabilidad mayor a cero utilizando el suavizado.</span>
-<span id="cb35-296"><a href="#cb35-296" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-299"><a href="#cb35-299" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-300"><a href="#cb35-300" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-301"><a href="#cb35-301" aria-hidden="true" tabindex="-1"></a>prob(<span class="st">'buenox'</span>)</span>
-<span id="cb35-302"><a href="#cb35-302" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-303"><a href="#cb35-303" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-304"><a href="#cb35-304" aria-hidden="true" tabindex="-1"></a><span class="fu">### Probabilidad de una secuencia</span></span>
-<span id="cb35-305"><a href="#cb35-305" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-306"><a href="#cb35-306" aria-hidden="true" tabindex="-1"></a>La implementación anterior se puede adaptar para calcular la probabilidad de una frase de cualquier longitud mayor o igual a $N$.</span>
-<span id="cb35-307"><a href="#cb35-307" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-308"><a href="#cb35-308" aria-hidden="true" tabindex="-1"></a>La idea es crear una ventana movil de tamaño $N$ y multiplicar todas las probabilidades obtenidas, considerando que la multiplicación entre números menores a $1$ resulta en un número menor, es más conveniente por razones numéricas el calcular la suma del logaritmo de la probabilidad.</span>
-<span id="cb35-309"><a href="#cb35-309" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-310"><a href="#cb35-310" aria-hidden="true" tabindex="-1"></a>La siguiente función calcula la suma y el promedio del logaritmo de la probabilidad.</span>
-<span id="cb35-311"><a href="#cb35-311" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-314"><a href="#cb35-314" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-315"><a href="#cb35-315" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-316"><a href="#cb35-316" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-label: lst-log-prob-frase</span></span>
-<span id="cb35-317"><a href="#cb35-317" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: Logaritmo de la probabilidad de una frase</span></span>
-<span id="cb35-318"><a href="#cb35-318" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-319"><a href="#cb35-319" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> log_prob(ele, k<span class="op">=</span><span class="dv">1</span>, average<span class="op">=</span><span class="va">True</span>):</span>
-<span id="cb35-320"><a href="#cb35-320" aria-hidden="true" tabindex="-1"></a>  tokens <span class="op">=</span> bilmaLAT(ele[<span class="st">'text'</span>]).input_ids</span>
-<span id="cb35-321"><a href="#cb35-321" aria-hidden="true" tabindex="-1"></a>  acc <span class="op">=</span> <span class="dv">0</span></span>
-<span id="cb35-322"><a href="#cb35-322" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> code <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[tokens[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N)]): <span class="co"># &lt;1&gt; </span></span>
-<span id="cb35-323"><a href="#cb35-323" aria-hidden="true" tabindex="-1"></a>    num <span class="op">=</span> np.log(frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">+</span> k) <span class="co"># &lt;2&gt;</span></span>
-<span id="cb35-324"><a href="#cb35-324" aria-hidden="true" tabindex="-1"></a>    den <span class="op">=</span> np.log(hist[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code[:<span class="op">-</span><span class="dv">1</span>]))] <span class="op">+</span> k <span class="op">*</span> <span class="bu">len</span>(voc)) <span class="co"># &lt;2&gt;</span></span>
-<span id="cb35-325"><a href="#cb35-325" aria-hidden="true" tabindex="-1"></a>    acc <span class="op">+=</span> num <span class="op">-</span> den</span>
-<span id="cb35-326"><a href="#cb35-326" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> average: <span class="co"># &lt;3&gt;</span></span>
-<span id="cb35-327"><a href="#cb35-327" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> acc <span class="op">/</span> <span class="bu">len</span>(tokens) <span class="co"># &lt;3&gt;</span></span>
-<span id="cb35-328"><a href="#cb35-328" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> acc</span>
-<span id="cb35-329"><a href="#cb35-329" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-330"><a href="#cb35-330" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Iteración por todos los gramas de la frase</span>
-<span id="cb35-331"><a href="#cb35-331" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Numerador y denominador de la @eq-modelo-qgrams</span>
-<span id="cb35-332"><a href="#cb35-332" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Calculando el promedio</span>
-<span id="cb35-333"><a href="#cb35-333" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-334"><a href="#cb35-334" aria-hidden="true" tabindex="-1"></a>La función <span class="in">`log_prob`</span> se puede utilizar para calcular la probabilidad de todas las frases en el conjunto utilizado para estimar las frecuencias tal y como se muestra en la siguiente instrucción.</span>
-<span id="cb35-335"><a href="#cb35-335" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-338"><a href="#cb35-338" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-339"><a href="#cb35-339" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-340"><a href="#cb35-340" aria-hidden="true" tabindex="-1"></a>acc <span class="op">=</span> [log_prob(ele) <span class="cf">for</span> ele <span class="kw">in</span> dataset]</span>
-<span id="cb35-341"><a href="#cb35-341" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-342"><a href="#cb35-342" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-343"><a href="#cb35-343" aria-hidden="true" tabindex="-1"></a>La distribución del promedio del logaritmo de probabilidad se muestra en la siguiente figura.</span>
-<span id="cb35-344"><a href="#cb35-344" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-347"><a href="#cb35-347" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-348"><a href="#cb35-348" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-349"><a href="#cb35-349" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame()</span>
-<span id="cb35-350"><a href="#cb35-350" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'log-prob'</span>] <span class="op">=</span> acc</span>
-<span id="cb35-351"><a href="#cb35-351" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'dev'</span></span>
-<span id="cb35-352"><a href="#cb35-352" aria-hidden="true" tabindex="-1"></a>sns.displot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'log-prob'</span>, hue<span class="op">=</span><span class="st">'Conjunto'</span>,</span>
-<span id="cb35-353"><a href="#cb35-353" aria-hidden="true" tabindex="-1"></a>            kind<span class="op">=</span><span class="st">'kde'</span>, fill<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb35-354"><a href="#cb35-354" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-355"><a href="#cb35-355" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-356"><a href="#cb35-356" aria-hidden="true" tabindex="-1"></a>Para poder presentar otro análisis del modelo, se utiliza otro conjunto de datos, donde cada elemento del conjunto de datos tiene asociado el país de origen. Este valor se encuentra en la clave <span class="in">`country`</span> de cada diccionario.</span>
-<span id="cb35-357"><a href="#cb35-357" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-358"><a href="#cb35-358" aria-hidden="true" tabindex="-1"></a>*Nota: La siguiente celda puede tardar unos cuantos minutos en ejecutarse.*</span>
-<span id="cb35-359"><a href="#cb35-359" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-362"><a href="#cb35-362" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-363"><a href="#cb35-363" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-364"><a href="#cb35-364" aria-hidden="true" tabindex="-1"></a>paises <span class="op">=</span> load_dataset(lang<span class="op">=</span><span class="st">'es'</span>, dataset<span class="op">=</span><span class="st">'train'</span>)</span>
-<span id="cb35-365"><a href="#cb35-365" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-366"><a href="#cb35-366" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-367"><a href="#cb35-367" aria-hidden="true" tabindex="-1"></a>La siguientes instrucciones modelan los datos obtenidos de México y Argentina respectivamente.</span>
-<span id="cb35-368"><a href="#cb35-368" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-371"><a href="#cb35-371" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-372"><a href="#cb35-372" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-373"><a href="#cb35-373" aria-hidden="true" tabindex="-1"></a>mex <span class="op">=</span> [log_prob(ele) <span class="cf">for</span> ele <span class="kw">in</span> paises <span class="cf">if</span> ele[<span class="st">'country'</span>] <span class="op">==</span> <span class="st">'mx'</span>]</span>
-<span id="cb35-374"><a href="#cb35-374" aria-hidden="true" tabindex="-1"></a>arg <span class="op">=</span> [log_prob(ele) <span class="cf">for</span> ele <span class="kw">in</span> paises <span class="cf">if</span> ele[<span class="st">'country'</span>] <span class="op">==</span> <span class="st">'ar'</span>]</span>
-<span id="cb35-375"><a href="#cb35-375" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-376"><a href="#cb35-376" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-377"><a href="#cb35-377" aria-hidden="true" tabindex="-1"></a>La distribución obtenida al modelar estos dos conjuntos de datos se muestra en la siguiente figura.</span>
-<span id="cb35-378"><a href="#cb35-378" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-381"><a href="#cb35-381" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-382"><a href="#cb35-382" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-383"><a href="#cb35-383" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame()</span>
-<span id="cb35-384"><a href="#cb35-384" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'log-prob'</span>] <span class="op">=</span> mex</span>
-<span id="cb35-385"><a href="#cb35-385" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'México'</span></span>
-<span id="cb35-386"><a href="#cb35-386" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> pd.DataFrame()</span>
-<span id="cb35-387"><a href="#cb35-387" aria-hidden="true" tabindex="-1"></a>_[<span class="st">'log-prob'</span>] <span class="op">=</span> arg</span>
-<span id="cb35-388"><a href="#cb35-388" aria-hidden="true" tabindex="-1"></a>_[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'Argentina'</span></span>
-<span id="cb35-389"><a href="#cb35-389" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.concat([df, _])</span>
-<span id="cb35-390"><a href="#cb35-390" aria-hidden="true" tabindex="-1"></a>sns.displot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'log-prob'</span>, hue<span class="op">=</span><span class="st">'Conjunto'</span>,</span>
-<span id="cb35-391"><a href="#cb35-391" aria-hidden="true" tabindex="-1"></a>            kind<span class="op">=</span><span class="st">'kde'</span>, fill<span class="op">=</span><span class="va">False</span>)</span>
-<span id="cb35-392"><a href="#cb35-392" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-393"><a href="#cb35-393" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-394"><a href="#cb35-394" aria-hidden="true" tabindex="-1"></a>De la figura se puede observar que las dos distribuciones son muy similares, lo cual es de esperarse dado que los datos con los que fueron entrenados tiene el mismo número de ejemplos provenientes de México que de Argentina, pero aun así se observan unas leves diferencias.</span>
-<span id="cb35-395"><a href="#cb35-395" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-396"><a href="#cb35-396" aria-hidden="true" tabindex="-1"></a>Habiendo calculado el promedio del logaritmo de la probabilidad, uno se puede preguntar ¿cuál es la frase más probable en México? la siguiente instrucción muesta esta frase para el conjunto de datos analizado.</span>
-<span id="cb35-397"><a href="#cb35-397" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-400"><a href="#cb35-400" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-401"><a href="#cb35-401" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-402"><a href="#cb35-402" aria-hidden="true" tabindex="-1"></a>mex_ds <span class="op">=</span> [x <span class="cf">for</span> x <span class="kw">in</span> paises <span class="cf">if</span> x[<span class="st">'country'</span>] <span class="op">==</span> <span class="st">'mx'</span>]</span>
-<span id="cb35-403"><a href="#cb35-403" aria-hidden="true" tabindex="-1"></a>mex_ds[np.argmax(mex)]</span>
-<span id="cb35-404"><a href="#cb35-404" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-405"><a href="#cb35-405" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-406"><a href="#cb35-406" aria-hidden="true" tabindex="-1"></a><span class="fu">## Encapsulando el modelo de lenguaje de gramas</span></span>
-<span id="cb35-407"><a href="#cb35-407" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-408"><a href="#cb35-408" aria-hidden="true" tabindex="-1"></a>El modelo de lenguaje de gramas se organiza en la clase <span class="in">`ModeloNGram`</span>. Esta clase hereda la funcionalidad de la clase <span class="in">`Frec`</span> (ver @lst-frec-modelo-lenguaje) y lo complementa implementando el cálculo de la probabilidad de una frase utilizando k-suavizado (ver @lst-log-prob-frase).</span>
-<span id="cb35-409"><a href="#cb35-409" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-412"><a href="#cb35-412" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-413"><a href="#cb35-413" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-414"><a href="#cb35-414" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-label: lst-modelo-n-gram</span></span>
-<span id="cb35-415"><a href="#cb35-415" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: Modelo de lenguaje de gramas</span></span>
-<span id="cb35-416"><a href="#cb35-416" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-417"><a href="#cb35-417" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ModeloNGram(Frec):</span>
-<span id="cb35-418"><a href="#cb35-418" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, N: <span class="bu">int</span><span class="op">=</span><span class="dv">2</span>,</span>
-<span id="cb35-419"><a href="#cb35-419" aria-hidden="true" tabindex="-1"></a>               k_suavizado: <span class="bu">float</span><span class="op">=</span><span class="dv">1</span>,</span>
-<span id="cb35-420"><a href="#cb35-420" aria-hidden="true" tabindex="-1"></a>               promedio: <span class="bu">bool</span><span class="op">=</span><span class="va">False</span>):</span>
-<span id="cb35-421"><a href="#cb35-421" aria-hidden="true" tabindex="-1"></a>    <span class="bu">super</span>(ModeloNGram, <span class="va">self</span>).<span class="fu">__init__</span>(N)</span>
-<span id="cb35-422"><a href="#cb35-422" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.k_suavizado <span class="op">=</span> k_suavizado <span class="co"># &lt;1&gt;</span></span>
-<span id="cb35-423"><a href="#cb35-423" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.promedio <span class="op">=</span> promedio <span class="co"># &lt;2&gt;</span></span>
-<span id="cb35-424"><a href="#cb35-424" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-425"><a href="#cb35-425" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> _log_prob(<span class="va">self</span>, ele):</span>
-<span id="cb35-426"><a href="#cb35-426" aria-hidden="true" tabindex="-1"></a>    tokens <span class="op">=</span> <span class="va">self</span>.segmentador(<span class="va">self</span>.get_text(ele)).input_ids <span class="co"># &lt;3&gt;</span></span>
-<span id="cb35-427"><a href="#cb35-427" aria-hidden="true" tabindex="-1"></a>    acc <span class="op">=</span> <span class="dv">0</span> <span class="co"># &lt;3&gt;</span></span>
-<span id="cb35-428"><a href="#cb35-428" aria-hidden="true" tabindex="-1"></a>    k <span class="op">=</span> <span class="va">self</span>.k_suavizado <span class="co"># &lt;3&gt;</span></span>
-<span id="cb35-429"><a href="#cb35-429" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> code <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[tokens[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.N)]): <span class="co"># &lt;3&gt;</span></span>
-<span id="cb35-430"><a href="#cb35-430" aria-hidden="true" tabindex="-1"></a>      num <span class="op">=</span> np.log(<span class="va">self</span>.frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">+</span> k) <span class="co"># &lt;3&gt;</span></span>
-<span id="cb35-431"><a href="#cb35-431" aria-hidden="true" tabindex="-1"></a>      den <span class="op">=</span> np.log(<span class="va">self</span>.hist[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code[:<span class="op">-</span><span class="dv">1</span>]))] <span class="op">+</span> k <span class="op">*</span> <span class="va">self</span>.voc) <span class="co"># &lt;3&gt;</span></span>
-<span id="cb35-432"><a href="#cb35-432" aria-hidden="true" tabindex="-1"></a>      acc <span class="op">+=</span> num <span class="op">-</span> den <span class="co"># &lt;3&gt;</span></span>
-<span id="cb35-433"><a href="#cb35-433" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="va">self</span>.promedio: <span class="co"># &lt;3&gt;</span></span>
-<span id="cb35-434"><a href="#cb35-434" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> acc <span class="op">/</span> <span class="bu">len</span>(tokens) <span class="co"># &lt;3&gt;</span></span>
-<span id="cb35-435"><a href="#cb35-435" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> acc <span class="co"># &lt;3&gt;</span></span>
-<span id="cb35-436"><a href="#cb35-436" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-437"><a href="#cb35-437" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> log_prob(<span class="va">self</span>, X):</span>
-<span id="cb35-438"><a href="#cb35-438" aria-hidden="true" tabindex="-1"></a>    _log_prob <span class="op">=</span> <span class="va">self</span>._log_prob <span class="co"># &lt;4&gt;</span></span>
-<span id="cb35-439"><a href="#cb35-439" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.c_[[_log_prob(x) <span class="cf">for</span> x <span class="kw">in</span> X]] <span class="co"># &lt;4&gt;</span></span>
-<span id="cb35-440"><a href="#cb35-440" aria-hidden="true" tabindex="-1"></a><span class="in">```</span> </span>
-<span id="cb35-441"><a href="#cb35-441" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Valor del suavizado</span>
-<span id="cb35-442"><a href="#cb35-442" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Bandera que indica el cálculo del promedio</span>
-<span id="cb35-443"><a href="#cb35-443" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Logaritmo de la probabilidad de la frase, ver @lst-log-prob-frase</span>
-<span id="cb35-444"><a href="#cb35-444" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Calcula el logaritmo de la probabilidad para una lista de textos</span>
-<span id="cb35-445"><a href="#cb35-445" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-446"><a href="#cb35-446" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
-<span id="cb35-447"><a href="#cb35-447" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo </span></span>
-<span id="cb35-450"><a href="#cb35-450" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-451"><a href="#cb35-451" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-452"><a href="#cb35-452" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-453"><a href="#cb35-453" aria-hidden="true" tabindex="-1"></a>modeloNGram <span class="op">=</span> ModeloNGram(promedio<span class="op">=</span><span class="va">True</span>).fit(dataset)</span>
-<span id="cb35-454"><a href="#cb35-454" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-455"><a href="#cb35-455" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-456"><a href="#cb35-456" aria-hidden="true" tabindex="-1"></a>El logaritmo de la probabilidad de la primera frase de <span class="in">`dataset`</span>, calculada previamente (variable <span class="in">`acc`</span>), tiene un valor de <span class="in">`{python} f'{acc[0]:0.4f}'`</span>. Utilizando la implementación del modelo de lenguaje de gramas (ver @lst-modelo-n-gram), inicializado con <span class="in">`dataset`</span>, y contenido en la variable <span class="in">`modeloNGram`</span> se obtiene el logaritmo mostrado en la siguiente instrucción.</span>
-<span id="cb35-457"><a href="#cb35-457" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-460"><a href="#cb35-460" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
-<span id="cb35-461"><a href="#cb35-461" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
-<span id="cb35-462"><a href="#cb35-462" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-463"><a href="#cb35-463" aria-hidden="true" tabindex="-1"></a>modeloNGram.log_prob(dataset[:<span class="dv">1</span>])</span>
-<span id="cb35-464"><a href="#cb35-464" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
-<span id="cb35-465"><a href="#cb35-465" aria-hidden="true" tabindex="-1"></a>:::</span>
-<span id="cb35-466"><a href="#cb35-466" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-467"><a href="#cb35-467" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
-<span id="cb35-468"><a href="#cb35-468" aria-hidden="true" tabindex="-1"></a><span class="fu">### Actividad</span></span>
-<span id="cb35-469"><a href="#cb35-469" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb35-470"><a href="#cb35-470" aria-hidden="true" tabindex="-1"></a>:::: {#exr-modelo-ngram-mx-ar-uy}</span>
-<span id="cb35-471"><a href="#cb35-471" aria-hidden="true" tabindex="-1"></a>Entrene dos modelos de lenguaje con $N=3$, uno de ellos usando solamente textos provenientes de México y el otro con los textos de Argentina. Medir el promedio del logaritmo de probabilidad en los textos provenientes de Uruguay. ¿Cuál es el modelo que presenta la mayor probabilidad? </span>
-<span id="cb35-472"><a href="#cb35-472" aria-hidden="true" tabindex="-1"></a>::::</span>
-<span id="cb35-473"><a href="#cb35-473" aria-hidden="true" tabindex="-1"></a>::: </span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb38" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Modelado de Lenguaje</span></span>
+<span id="cb38-2"><a href="#cb38-2" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-3"><a href="#cb38-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es desarrollar un modelo de lenguaje basado en gramas. </span>
+<span id="cb38-4"><a href="#cb38-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-5"><a href="#cb38-5" aria-hidden="true" tabindex="-1"></a><span class="fu">## Paquetes usados {.unnumbered}</span></span>
+<span id="cb38-6"><a href="#cb38-6" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-9"><a href="#cb38-9" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-10"><a href="#cb38-10" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-11"><a href="#cb38-11" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> dataclasses <span class="im">import</span> dataclass</span>
+<span id="cb38-12"><a href="#cb38-12" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pprint</span>
+<span id="cb38-13"><a href="#cb38-13" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
+<span id="cb38-14"><a href="#cb38-14" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
+<span id="cb38-15"><a href="#cb38-15" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pandas <span class="im">as</span> pd</span>
+<span id="cb38-16"><a href="#cb38-16" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> seaborn <span class="im">as</span> sns</span>
+<span id="cb38-17"><a href="#cb38-17" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> transformers <span class="im">import</span> AutoTokenizer</span>
+<span id="cb38-18"><a href="#cb38-18" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> encexp.utils <span class="im">import</span> load_dataset</span>
+<span id="cb38-19"><a href="#cb38-19" aria-hidden="true" tabindex="-1"></a>pp <span class="op">=</span> pprint.PrettyPrinter(width<span class="op">=</span><span class="dv">60</span>, compact<span class="op">=</span><span class="va">True</span>).pprint</span>
+<span id="cb38-20"><a href="#cb38-20" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-21"><a href="#cb38-21" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-24"><a href="#cb38-24" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-25"><a href="#cb38-25" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: false</span></span>
+<span id="cb38-26"><a href="#cb38-26" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> IPython.display <span class="im">import</span> Markdown</span>
+<span id="cb38-27"><a href="#cb38-27" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-28"><a href="#cb38-28" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-29"><a href="#cb38-29" aria-hidden="true" tabindex="-1"></a><span class="fu">## Introducción </span></span>
+<span id="cb38-30"><a href="#cb38-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-31"><a href="#cb38-31" aria-hidden="true" tabindex="-1"></a>Un modelo de lenguaje es una función que permite estimar la probabilidad de un texto, i.e., $\mathbb P(w_1, w_2, w_n).$ Comunmente, se trata de modelar  $\mathbb P(w_n \mid w_1, w_2, \ldots,w_{n-1}),$ es decir, encontrar una función que estime la probabilidad de la siguiente palabra o segmento, i.e., $w_N$, dada la historia. </span>
+<span id="cb38-32"><a href="#cb38-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-33"><a href="#cb38-33" aria-hidden="true" tabindex="-1"></a>Realizando la suposición de Markov, es decir, que el segmento $w_n$, es independiente de los segmentos iguales y mayores a $N$, es decir, $\mathbb P(w_n \mid w_1, w_2, \ldots,w_{n-1})=\mathbb P(w_n \mid w_{n-N+1}, \ldots, w_{n-1}),$ para $N &lt; n.$ Por ejemplo, para $N=2$ el modelo con esta suposición quedaría como $\mathbb P(w_n \mid w_{n-1})$, en el caso $N=3$ sería: $\mathbb P(w_n \mid w_{n-2}, w_{n-1})$ y así sucesivamente. </span>
+<span id="cb38-34"><a href="#cb38-34" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-35"><a href="#cb38-35" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modelo de lenguaje</span></span>
+<span id="cb38-36"><a href="#cb38-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-37"><a href="#cb38-37" aria-hidden="true" tabindex="-1"></a>En este caso el modelo para el siguiente segmento quedaría como</span>
+<span id="cb38-38"><a href="#cb38-38" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-39"><a href="#cb38-39" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb38-40"><a href="#cb38-40" aria-hidden="true" tabindex="-1"></a>\begin{split}</span>
+<span id="cb38-41"><a href="#cb38-41" aria-hidden="true" tabindex="-1"></a>\mathbb P(w_n \mid w_{n-N+1}, \ldots, w_{n-1})&amp;=\frac{<span class="sc">\#</span>(w_{n-N+1}, \ldots, w_{n-1}, w_n)}{\sum_{\ell} <span class="sc">\#</span>(w_{n-N+1}, \ldots, w_{n-1}, \ell)}<span class="sc">\\</span></span>
+<span id="cb38-42"><a href="#cb38-42" aria-hidden="true" tabindex="-1"></a>&amp;=\frac{<span class="sc">\#</span>(w_{n-N+1}, \ldots, w_{n-1}, w_n)}{<span class="sc">\#</span>(w_{n-N+1}, \ldots, w_{n-1})},</span>
+<span id="cb38-43"><a href="#cb38-43" aria-hidden="true" tabindex="-1"></a>\end{split}</span>
+<span id="cb38-44"><a href="#cb38-44" aria-hidden="true" tabindex="-1"></a>$$ {#eq-modelo-qgrams}</span>
+<span id="cb38-45"><a href="#cb38-45" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-46"><a href="#cb38-46" aria-hidden="true" tabindex="-1"></a>donde $<span class="sc">\#</span>$ corresponde a la frecuencia medida en un conjunto de entrenamiento. Por ejemplo, para $N=3$ la @eq-modelo-qgrams quedaría como </span>
+<span id="cb38-47"><a href="#cb38-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-48"><a href="#cb38-48" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb38-49"><a href="#cb38-49" aria-hidden="true" tabindex="-1"></a>\mathbb P(w_n \mid w_{n-2}, w_{n-1})=\frac{<span class="sc">\#</span>(w_{n-2}, w_{n-1}, w_n)}{<span class="sc">\#</span>(w_{n-2}, w_{n-1})}.</span>
+<span id="cb38-50"><a href="#cb38-50" aria-hidden="true" tabindex="-1"></a>$$</span>
+<span id="cb38-51"><a href="#cb38-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-52"><a href="#cb38-52" aria-hidden="true" tabindex="-1"></a><span class="fu">### Cálculo de frecuencias en un corpus</span></span>
+<span id="cb38-53"><a href="#cb38-53" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-54"><a href="#cb38-54" aria-hidden="true" tabindex="-1"></a>Para el modelo de lenguaje se requiere calcular la frecuencia de la secuencia (variable <span class="in">`frase`</span>), i.e., $<span class="sc">\#</span>(w_{n-N+1}, \ldots, w_{n-1}, w_n)$ y la frecuencia de las palabras previas (variable <span class="in">`hist`</span>), i.e., $<span class="sc">\#</span>(w_{n-N+1}, \ldots, w_{n-1})$, dependiendo de $N$. Adicionalmente, se guarda el vocabulario en la variable <span class="in">`voc`</span>.  </span>
+<span id="cb38-55"><a href="#cb38-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-58"><a href="#cb38-58" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-59"><a href="#cb38-59" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-60"><a href="#cb38-60" aria-hidden="true" tabindex="-1"></a>voc <span class="op">=</span> Counter()</span>
+<span id="cb38-61"><a href="#cb38-61" aria-hidden="true" tabindex="-1"></a>frase <span class="op">=</span> Counter()</span>
+<span id="cb38-62"><a href="#cb38-62" aria-hidden="true" tabindex="-1"></a>hist <span class="op">=</span> Counter()</span>
+<span id="cb38-63"><a href="#cb38-63" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-64"><a href="#cb38-64" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-65"><a href="#cb38-65" aria-hidden="true" tabindex="-1"></a>El conjunto de datos que se utilizará para generar el modelo es el que se obtiene con la función <span class="in">`load_dataset`</span> y se guarda en la variable <span class="in">`dataset`</span>.</span>
+<span id="cb38-66"><a href="#cb38-66" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-69"><a href="#cb38-69" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-70"><a href="#cb38-70" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-71"><a href="#cb38-71" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> load_dataset(lang<span class="op">=</span><span class="st">'es'</span>, dataset<span class="op">=</span><span class="st">'dev'</span>)</span>
+<span id="cb38-72"><a href="#cb38-72" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-73"><a href="#cb38-73" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-74"><a href="#cb38-74" aria-hidden="true" tabindex="-1"></a>El siguiente paso es iterar por todos los elementos del conjunto de datos (variable <span class="in">`dataset`</span>). En el ciclo se segmenta cada texto y se actualiza el vocabulario con el método <span class="in">`voc.update`</span>. Después se genera una ventana de tamaño $N$, donde los índices que corresponden a elementos del vocabulario se concatenan con el caracter <span class="sc">\|</span>. El siguiente paso es actualizar la frecuencia de la secuencia con el método <span class="in">`frase.update`</span>. Se realiza un procedimiento equivalente pero para una ventana de tamaño $N-1$ que corresponde a las palabras previas, actualizando con el método <span class="in">`hist.update`</span>.  </span>
+<span id="cb38-75"><a href="#cb38-75" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-78"><a href="#cb38-78" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-79"><a href="#cb38-79" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-80"><a href="#cb38-80" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-label: lst-estimacion-frecuencia</span></span>
+<span id="cb38-81"><a href="#cb38-81" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: Estimación de frecuencias</span></span>
+<span id="cb38-82"><a href="#cb38-82" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-83"><a href="#cb38-83" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> <span class="dv">2</span></span>
+<span id="cb38-84"><a href="#cb38-84" aria-hidden="true" tabindex="-1"></a>bilmaLAT <span class="op">=</span> AutoTokenizer.from_pretrained(<span class="st">'guillermoruiz/bilmaLAT'</span>) <span class="co"># &lt;1&gt;</span></span>
+<span id="cb38-85"><a href="#cb38-85" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> ele <span class="kw">in</span> dataset: <span class="co"># &lt;2&gt;</span></span>
+<span id="cb38-86"><a href="#cb38-86" aria-hidden="true" tabindex="-1"></a>  tokens <span class="op">=</span> bilmaLAT(ele[<span class="st">'text'</span>]).input_ids <span class="co"># &lt;3&gt;</span></span>
+<span id="cb38-87"><a href="#cb38-87" aria-hidden="true" tabindex="-1"></a>  voc.update(tokens) <span class="co"># &lt;4&gt;</span></span>
+<span id="cb38-88"><a href="#cb38-88" aria-hidden="true" tabindex="-1"></a>  _ <span class="op">=</span> [<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, lst)) <span class="co"># &lt;5&gt;</span></span>
+<span id="cb38-89"><a href="#cb38-89" aria-hidden="true" tabindex="-1"></a>       <span class="cf">for</span> lst <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[tokens[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N)])] <span class="co"># &lt;5&gt;</span></span>
+<span id="cb38-90"><a href="#cb38-90" aria-hidden="true" tabindex="-1"></a>  frase.update(_) <span class="co"># &lt;5&gt;</span></span>
+<span id="cb38-91"><a href="#cb38-91" aria-hidden="true" tabindex="-1"></a>  _ <span class="op">=</span> [<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, lst)) <span class="co"># &lt;6&gt;</span></span>
+<span id="cb38-92"><a href="#cb38-92" aria-hidden="true" tabindex="-1"></a>       <span class="cf">for</span> lst <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[tokens[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N<span class="op">-</span><span class="dv">1</span>)])] <span class="co"># &lt;6&gt;</span></span>
+<span id="cb38-93"><a href="#cb38-93" aria-hidden="true" tabindex="-1"></a>  hist.update(_) <span class="co"># &lt;6&gt;</span></span>
+<span id="cb38-94"><a href="#cb38-94" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-95"><a href="#cb38-95" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-96"><a href="#cb38-96" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Carga el modelo bilmaLAT</span>
+<span id="cb38-97"><a href="#cb38-97" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Iteración por todos los textos</span>
+<span id="cb38-98"><a href="#cb38-98" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Segmentación de un texto</span>
+<span id="cb38-99"><a href="#cb38-99" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Actualización de vocabulario</span>
+<span id="cb38-100"><a href="#cb38-100" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Iteración para estimar y actualizar la frecuencia de frases</span>
+<span id="cb38-101"><a href="#cb38-101" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>Iteración para estimar y actualizar la frecuencia de historia</span>
+<span id="cb38-102"><a href="#cb38-102" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-103"><a href="#cb38-103" aria-hidden="true" tabindex="-1"></a>La siguiente instrucción muestra las diez secuencias más frecuentes en el conjunto de datos analizado.</span>
+<span id="cb38-104"><a href="#cb38-104" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-107"><a href="#cb38-107" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-108"><a href="#cb38-108" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-109"><a href="#cb38-109" aria-hidden="true" tabindex="-1"></a>pp([bilmaLAT.decode(<span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">int</span>, k.split(<span class="st">"|"</span>))))</span>
+<span id="cb38-110"><a href="#cb38-110" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k, v <span class="kw">in</span> frase.most_common(<span class="dv">10</span>)])</span>
+<span id="cb38-111"><a href="#cb38-111" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-112"><a href="#cb38-112" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-113"><a href="#cb38-113" aria-hidden="true" tabindex="-1"></a>Completando el ejemplo anterior, la siguiente instrucción muestra la secuencia de palabras previas que tiene la mayor frecuencia.</span>
+<span id="cb38-114"><a href="#cb38-114" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-117"><a href="#cb38-117" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-118"><a href="#cb38-118" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-119"><a href="#cb38-119" aria-hidden="true" tabindex="-1"></a>pp([bilmaLAT.decode(<span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">int</span>, k.split(<span class="st">"|"</span>))))</span>
+<span id="cb38-120"><a href="#cb38-120" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k, v <span class="kw">in</span> hist.most_common(<span class="dv">10</span>)])</span>
+<span id="cb38-121"><a href="#cb38-121" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-122"><a href="#cb38-122" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-123"><a href="#cb38-123" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb38-124"><a href="#cb38-124" aria-hidden="true" tabindex="-1"></a><span class="fu">### Actividad</span></span>
+<span id="cb38-125"><a href="#cb38-125" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-126"><a href="#cb38-126" aria-hidden="true" tabindex="-1"></a>:::: {#exr-frecuencia-trigramas}</span>
+<span id="cb38-127"><a href="#cb38-127" aria-hidden="true" tabindex="-1"></a>Seleccione de los siguientes trigamas aquel que tenga una mayor frecuencia:</span>
+<span id="cb38-128"><a href="#cb38-128" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-129"><a href="#cb38-129" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span><span class="co">[</span><span class="ot">CLS</span><span class="co">]</span> _usr _usr</span>
+<span id="cb38-130"><a href="#cb38-130" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>. Más en</span>
+<span id="cb38-131"><a href="#cb38-131" aria-hidden="true" tabindex="-1"></a><span class="ss">* </span>) _url <span class="co">[</span><span class="ot">SEP</span><span class="co">]</span></span>
+<span id="cb38-132"><a href="#cb38-132" aria-hidden="true" tabindex="-1"></a>::::</span>
+<span id="cb38-133"><a href="#cb38-133" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb38-134"><a href="#cb38-134" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-135"><a href="#cb38-135" aria-hidden="true" tabindex="-1"></a><span class="fu">### Encapsulando la estimación de frecuencias  </span></span>
+<span id="cb38-136"><a href="#cb38-136" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-137"><a href="#cb38-137" aria-hidden="true" tabindex="-1"></a>La implementación del modelo de lenguaje, en particular de la estimación de las frecuecias descrita en @lst-estimacion-frecuencia se organiza en la clase <span class="in">`Frec`</span> que se muestra en @lst-frec-modelo-lenguaje. La clase recibe el parámetro <span class="in">`N`</span> que indica el tamaño de la ventana y inicializa las variables <span class="in">`voc`</span>, <span class="in">`frase`</span>, y <span class="in">`hist`</span> donde se guardará la frecuencia del vocabulario, de los gramas y de los $N-1$ gramas. </span>
+<span id="cb38-138"><a href="#cb38-138" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-141"><a href="#cb38-141" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-142"><a href="#cb38-142" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-143"><a href="#cb38-143" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-label: lst-frec-modelo-lenguaje</span></span>
+<span id="cb38-144"><a href="#cb38-144" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: Clase que estima la frecuencia de los segmentos de un corpus </span></span>
+<span id="cb38-145"><a href="#cb38-145" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-146"><a href="#cb38-146" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> Frec:</span>
+<span id="cb38-147"><a href="#cb38-147" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, N: <span class="bu">int</span><span class="op">=</span><span class="dv">2</span>):</span>
+<span id="cb38-148"><a href="#cb38-148" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.N <span class="op">=</span> N <span class="co"># &lt;1&gt;</span></span>
+<span id="cb38-149"><a href="#cb38-149" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.voc <span class="op">=</span> Counter() <span class="co"># &lt;2&gt;</span></span>
+<span id="cb38-150"><a href="#cb38-150" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.frase <span class="op">=</span> Counter() <span class="co"># &lt;3&gt;</span></span>
+<span id="cb38-151"><a href="#cb38-151" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.hist <span class="op">=</span> Counter() <span class="co"># &lt;4&gt;</span></span>
+<span id="cb38-152"><a href="#cb38-152" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-153"><a href="#cb38-153" aria-hidden="true" tabindex="-1"></a>  <span class="at">@property</span></span>
+<span id="cb38-154"><a href="#cb38-154" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> segmentador(<span class="va">self</span>):</span>
+<span id="cb38-155"><a href="#cb38-155" aria-hidden="true" tabindex="-1"></a>    <span class="cf">try</span>: <span class="co"># &lt;5&gt;</span></span>
+<span id="cb38-156"><a href="#cb38-156" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> <span class="va">self</span>._segmentador <span class="co"># &lt;5&gt;</span></span>
+<span id="cb38-157"><a href="#cb38-157" aria-hidden="true" tabindex="-1"></a>    <span class="cf">except</span> <span class="pp">AttributeError</span>: <span class="co"># &lt;5&gt;</span></span>
+<span id="cb38-158"><a href="#cb38-158" aria-hidden="true" tabindex="-1"></a>      _ <span class="op">=</span> AutoTokenizer.from_pretrained(<span class="st">'guillermoruiz/bilmaLAT'</span>) <span class="co"># &lt;5&gt;</span></span>
+<span id="cb38-159"><a href="#cb38-159" aria-hidden="true" tabindex="-1"></a>      <span class="va">self</span>._segmentador <span class="op">=</span> _ <span class="co"># &lt;5&gt;</span></span>
+<span id="cb38-160"><a href="#cb38-160" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> _ <span class="co"># &lt;5&gt;</span></span>
+<span id="cb38-161"><a href="#cb38-161" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-162"><a href="#cb38-162" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> fit(<span class="va">self</span>, X, y<span class="op">=</span><span class="va">None</span>):</span>
+<span id="cb38-163"><a href="#cb38-163" aria-hidden="true" tabindex="-1"></a>    N <span class="op">=</span> <span class="va">self</span>.N</span>
+<span id="cb38-164"><a href="#cb38-164" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> ele <span class="kw">in</span> X: <span class="co"># &lt;6&gt;</span></span>
+<span id="cb38-165"><a href="#cb38-165" aria-hidden="true" tabindex="-1"></a>      tokens <span class="op">=</span> <span class="va">self</span>.segmentar(ele) <span class="co"># &lt;6&gt;</span></span>
+<span id="cb38-166"><a href="#cb38-166" aria-hidden="true" tabindex="-1"></a>      voc.update(tokens) <span class="co"># &lt;6&gt;</span></span>
+<span id="cb38-167"><a href="#cb38-167" aria-hidden="true" tabindex="-1"></a>      _ <span class="op">=</span> [<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, lst))</span>
+<span id="cb38-168"><a href="#cb38-168" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> lst <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[tokens[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N)])] <span class="co"># &lt;6&gt;</span></span>
+<span id="cb38-169"><a href="#cb38-169" aria-hidden="true" tabindex="-1"></a>      <span class="va">self</span>.frase.update(_) <span class="co"># &lt;6&gt;</span></span>
+<span id="cb38-170"><a href="#cb38-170" aria-hidden="true" tabindex="-1"></a>      _ <span class="op">=</span> [<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, lst)) <span class="co"># &lt;6&gt;</span></span>
+<span id="cb38-171"><a href="#cb38-171" aria-hidden="true" tabindex="-1"></a>          <span class="cf">for</span> lst <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[tokens[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N<span class="op">-</span><span class="dv">1</span>)])] <span class="co"># &lt;6&gt;</span></span>
+<span id="cb38-172"><a href="#cb38-172" aria-hidden="true" tabindex="-1"></a>      <span class="va">self</span>.hist.update(_) <span class="co"># &lt;6&gt;</span></span>
+<span id="cb38-173"><a href="#cb38-173" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.voc <span class="op">=</span> <span class="bu">len</span>(voc) <span class="co"># &lt;6&gt;</span></span>
+<span id="cb38-174"><a href="#cb38-174" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">self</span></span>
+<span id="cb38-175"><a href="#cb38-175" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-176"><a href="#cb38-176" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> segmentar(<span class="va">self</span>, texto):</span>
+<span id="cb38-177"><a href="#cb38-177" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> <span class="va">self</span>.get_text(ele) <span class="co"># &lt;7&gt;</span></span>
+<span id="cb38-178"><a href="#cb38-178" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">self</span>.segmentador(_).input_ids <span class="co"># &lt;7&gt;</span></span>
+<span id="cb38-179"><a href="#cb38-179" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-180"><a href="#cb38-180" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> get_text(<span class="va">self</span>, ele):</span>
+<span id="cb38-181"><a href="#cb38-181" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="bu">isinstance</span>(ele, <span class="bu">dict</span>): <span class="co"># &lt;8&gt;</span></span>
+<span id="cb38-182"><a href="#cb38-182" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> ele[<span class="st">'text'</span>] <span class="co"># &lt;8&gt;</span></span>
+<span id="cb38-183"><a href="#cb38-183" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> ele</span>
+<span id="cb38-184"><a href="#cb38-184" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-185"><a href="#cb38-185" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Tamaño de la ventana</span>
+<span id="cb38-186"><a href="#cb38-186" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Vocabulario</span>
+<span id="cb38-187"><a href="#cb38-187" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Frecuencia de los gramas </span>
+<span id="cb38-188"><a href="#cb38-188" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Frecuencia de los gramas previos</span>
+<span id="cb38-189"><a href="#cb38-189" aria-hidden="true" tabindex="-1"></a><span class="ss">5. </span>Segmentador mediante el modelo bilmaLAT</span>
+<span id="cb38-190"><a href="#cb38-190" aria-hidden="true" tabindex="-1"></a><span class="ss">6. </span>Estimación de frecuencias ver @lst-estimacion-frecuencia</span>
+<span id="cb38-191"><a href="#cb38-191" aria-hidden="true" tabindex="-1"></a><span class="ss">7. </span>Función que segmenta un texto dato</span>
+<span id="cb38-192"><a href="#cb38-192" aria-hidden="true" tabindex="-1"></a><span class="ss">8. </span>Función auxiliar para utilizar una lista de diccionarios</span>
+<span id="cb38-193"><a href="#cb38-193" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-194"><a href="#cb38-194" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb38-195"><a href="#cb38-195" aria-hidden="true" tabindex="-1"></a><span class="fu">#### Ejemplo </span></span>
+<span id="cb38-196"><a href="#cb38-196" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-197"><a href="#cb38-197" aria-hidden="true" tabindex="-1"></a>Calculando las diez secuencias más frecuentes en el conjunto de datos utilizando la clase Frac. Lo primero que se tiene que realizar es estimar las frecuencias como se muestra en el siguiente código. </span>
+<span id="cb38-198"><a href="#cb38-198" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-201"><a href="#cb38-201" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-202"><a href="#cb38-202" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-203"><a href="#cb38-203" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-204"><a href="#cb38-204" aria-hidden="true" tabindex="-1"></a>frec <span class="op">=</span> Frec().fit(dataset)</span>
+<span id="cb38-205"><a href="#cb38-205" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-206"><a href="#cb38-206" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-207"><a href="#cb38-207" aria-hidden="true" tabindex="-1"></a>El siguiente código utiliza las frecuencias estimadas para mostrar las diez más frecuentes. </span>
+<span id="cb38-208"><a href="#cb38-208" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-211"><a href="#cb38-211" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-212"><a href="#cb38-212" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-213"><a href="#cb38-213" aria-hidden="true" tabindex="-1"></a>pp([bilmaLAT.decode(<span class="bu">list</span>(<span class="bu">map</span>(<span class="bu">int</span>, k.split(<span class="st">"|"</span>))))</span>
+<span id="cb38-214"><a href="#cb38-214" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> k, v <span class="kw">in</span> frec.frase.most_common(<span class="dv">10</span>)])</span>
+<span id="cb38-215"><a href="#cb38-215" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-216"><a href="#cb38-216" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-217"><a href="#cb38-217" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb38-218"><a href="#cb38-218" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-219"><a href="#cb38-219" aria-hidden="true" tabindex="-1"></a><span class="fu">## Probabilidad</span></span>
+<span id="cb38-220"><a href="#cb38-220" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-221"><a href="#cb38-221" aria-hidden="true" tabindex="-1"></a>Después de calcular las frecuencia, es posible estimar la probabilidad de una frase. Considerando que $N=2$ entonces es directo calcular la probabilidad de la siguiete frase.</span>
+<span id="cb38-222"><a href="#cb38-222" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-225"><a href="#cb38-225" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-226"><a href="#cb38-226" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-227"><a href="#cb38-227" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'buenos días'</span></span>
+<span id="cb38-228"><a href="#cb38-228" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-229"><a href="#cb38-229" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-230"><a href="#cb38-230" aria-hidden="true" tabindex="-1"></a>Lo primero es verficar que la frase se codifica en 2 índices, tal y como se muestra a continuación.</span>
+<span id="cb38-231"><a href="#cb38-231" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-234"><a href="#cb38-234" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-235"><a href="#cb38-235" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-236"><a href="#cb38-236" aria-hidden="true" tabindex="-1"></a>code <span class="op">=</span> bilmaLAT(txt)[<span class="st">'input_ids'</span>][<span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb38-237"><a href="#cb38-237" aria-hidden="true" tabindex="-1"></a>code</span>
+<span id="cb38-238"><a href="#cb38-238" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-239"><a href="#cb38-239" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-240"><a href="#cb38-240" aria-hidden="true" tabindex="-1"></a>El siguiente paso es dividir la frecuencia de la cadena *buenos dias* entre l frecuencia de *buenos* tal y como se muestra en la siguiente instrucción.</span>
+<span id="cb38-241"><a href="#cb38-241" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-244"><a href="#cb38-244" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-245"><a href="#cb38-245" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-246"><a href="#cb38-246" aria-hidden="true" tabindex="-1"></a>frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">/</span> hist[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code[:<span class="op">-</span><span class="dv">1</span>]))]</span>
+<span id="cb38-247"><a href="#cb38-247" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-248"><a href="#cb38-248" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-249"><a href="#cb38-249" aria-hidden="true" tabindex="-1"></a>Otro ejemplo similar es calcular la probabilidad de *buenox*. Como se puede observar en el siguiente código, esa palabra se codifica en dos índices, entonces se puede seguir un procedimiento equivalente.</span>
+<span id="cb38-250"><a href="#cb38-250" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-253"><a href="#cb38-253" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-254"><a href="#cb38-254" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-255"><a href="#cb38-255" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'buenox'</span></span>
+<span id="cb38-256"><a href="#cb38-256" aria-hidden="true" tabindex="-1"></a>code <span class="op">=</span> bilmaLAT(txt)[<span class="st">'input_ids'</span>][<span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb38-257"><a href="#cb38-257" aria-hidden="true" tabindex="-1"></a>code</span>
+<span id="cb38-258"><a href="#cb38-258" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-259"><a href="#cb38-259" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-260"><a href="#cb38-260" aria-hidden="true" tabindex="-1"></a>Como muestra el resultado de la siguiente celda la probabilidad de *buenox* es cero, dado que esa palabra no fue vista en el conjunto de datos donde se estimó la frecuencia.</span>
+<span id="cb38-261"><a href="#cb38-261" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-264"><a href="#cb38-264" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-265"><a href="#cb38-265" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-266"><a href="#cb38-266" aria-hidden="true" tabindex="-1"></a>frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">/</span> hist[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code[:<span class="op">-</span><span class="dv">1</span>]))]</span>
+<span id="cb38-267"><a href="#cb38-267" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-268"><a href="#cb38-268" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-269"><a href="#cb38-269" aria-hidden="true" tabindex="-1"></a><span class="fu">### $k$-suavizado</span></span>
+<span id="cb38-270"><a href="#cb38-270" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-271"><a href="#cb38-271" aria-hidden="true" tabindex="-1"></a>Para poder calcular la probabilidad de una secuencia, es necesario calcular una probabilidad diferente de cero a cualquier palabra que no ha sido vista en el conjunto donde se estiman las frecuencias. Una manera para realizar esto es asignar una pequeña masa a todas las palabras que no fueron vistas, a eso se le conoce como suavizado.</span>
+<span id="cb38-272"><a href="#cb38-272" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-273"><a href="#cb38-273" aria-hidden="true" tabindex="-1"></a>La función <span class="in">`prob`</span> implementa un tipo de suavisado donde se le asigna un valor de $\frac{1}{\mid V \mid}$ a todas las palabras que no son vistas, donde $\mid V \mid$ es el tamaño del vocabulario.</span>
+<span id="cb38-274"><a href="#cb38-274" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-277"><a href="#cb38-277" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-278"><a href="#cb38-278" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-279"><a href="#cb38-279" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> prob(txt, k<span class="op">=</span><span class="fl">0.01</span>):</span>
+<span id="cb38-280"><a href="#cb38-280" aria-hidden="true" tabindex="-1"></a>  code <span class="op">=</span> bilmaLAT(txt)[<span class="st">'input_ids'</span>][<span class="dv">1</span>:<span class="op">-</span><span class="dv">1</span>]</span>
+<span id="cb38-281"><a href="#cb38-281" aria-hidden="true" tabindex="-1"></a>  num <span class="op">=</span> frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">+</span> k</span>
+<span id="cb38-282"><a href="#cb38-282" aria-hidden="true" tabindex="-1"></a>  den <span class="op">=</span> hist[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code[:<span class="op">-</span><span class="dv">1</span>]))] <span class="op">+</span> k <span class="op">*</span> <span class="bu">len</span>(voc)</span>
+<span id="cb38-283"><a href="#cb38-283" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> num <span class="op">/</span> den</span>
+<span id="cb38-284"><a href="#cb38-284" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-285"><a href="#cb38-285" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-286"><a href="#cb38-286" aria-hidden="true" tabindex="-1"></a>Se puede observar que la probabilidad de la siguiente frase es menor que cuando no se usa el suavizado, esto es porque una fracción de la masa de probabilidad se está utilizando en elementos no vistos.</span>
+<span id="cb38-287"><a href="#cb38-287" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-290"><a href="#cb38-290" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-291"><a href="#cb38-291" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-292"><a href="#cb38-292" aria-hidden="true" tabindex="-1"></a>prob(<span class="st">'buenos días'</span>)</span>
+<span id="cb38-293"><a href="#cb38-293" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-294"><a href="#cb38-294" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-295"><a href="#cb38-295" aria-hidden="true" tabindex="-1"></a>Complementando lo anterior, la palabra *buenox* presenta una probabilidad mayor a cero utilizando el suavizado.</span>
+<span id="cb38-296"><a href="#cb38-296" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-299"><a href="#cb38-299" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-300"><a href="#cb38-300" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-301"><a href="#cb38-301" aria-hidden="true" tabindex="-1"></a>prob(<span class="st">'buenox'</span>)</span>
+<span id="cb38-302"><a href="#cb38-302" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-303"><a href="#cb38-303" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-304"><a href="#cb38-304" aria-hidden="true" tabindex="-1"></a><span class="fu">### Probabilidad de una secuencia</span></span>
+<span id="cb38-305"><a href="#cb38-305" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-306"><a href="#cb38-306" aria-hidden="true" tabindex="-1"></a>La implementación anterior se puede adaptar para calcular la probabilidad de una frase de cualquier longitud mayor o igual a $N$.</span>
+<span id="cb38-307"><a href="#cb38-307" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-308"><a href="#cb38-308" aria-hidden="true" tabindex="-1"></a>La idea es crear una ventana movil de tamaño $N$ y multiplicar todas las probabilidades obtenidas, considerando que la multiplicación entre números menores a $1$ resulta en un número menor, es más conveniente por razones numéricas el calcular la suma del logaritmo de la probabilidad.</span>
+<span id="cb38-309"><a href="#cb38-309" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-310"><a href="#cb38-310" aria-hidden="true" tabindex="-1"></a>La siguiente función calcula la suma y el promedio del logaritmo de la probabilidad.</span>
+<span id="cb38-311"><a href="#cb38-311" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-314"><a href="#cb38-314" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-315"><a href="#cb38-315" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-316"><a href="#cb38-316" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-label: lst-log-prob-frase</span></span>
+<span id="cb38-317"><a href="#cb38-317" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: Logaritmo de la probabilidad de una frase</span></span>
+<span id="cb38-318"><a href="#cb38-318" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-319"><a href="#cb38-319" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> log_prob(ele, k<span class="op">=</span><span class="dv">1</span>, average<span class="op">=</span><span class="va">True</span>):</span>
+<span id="cb38-320"><a href="#cb38-320" aria-hidden="true" tabindex="-1"></a>  tokens <span class="op">=</span> bilmaLAT(ele[<span class="st">'text'</span>]).input_ids</span>
+<span id="cb38-321"><a href="#cb38-321" aria-hidden="true" tabindex="-1"></a>  acc <span class="op">=</span> <span class="dv">0</span></span>
+<span id="cb38-322"><a href="#cb38-322" aria-hidden="true" tabindex="-1"></a>  <span class="cf">for</span> code <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[tokens[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(N)]): <span class="co"># &lt;1&gt; </span></span>
+<span id="cb38-323"><a href="#cb38-323" aria-hidden="true" tabindex="-1"></a>    num <span class="op">=</span> np.log(frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">+</span> k) <span class="co"># &lt;2&gt;</span></span>
+<span id="cb38-324"><a href="#cb38-324" aria-hidden="true" tabindex="-1"></a>    den <span class="op">=</span> np.log(hist[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code[:<span class="op">-</span><span class="dv">1</span>]))] <span class="op">+</span> k <span class="op">*</span> <span class="bu">len</span>(voc)) <span class="co"># &lt;2&gt;</span></span>
+<span id="cb38-325"><a href="#cb38-325" aria-hidden="true" tabindex="-1"></a>    acc <span class="op">+=</span> num <span class="op">-</span> den</span>
+<span id="cb38-326"><a href="#cb38-326" aria-hidden="true" tabindex="-1"></a>  <span class="cf">if</span> average: <span class="co"># &lt;3&gt;</span></span>
+<span id="cb38-327"><a href="#cb38-327" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> acc <span class="op">/</span> <span class="bu">len</span>(tokens) <span class="co"># &lt;3&gt;</span></span>
+<span id="cb38-328"><a href="#cb38-328" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> acc</span>
+<span id="cb38-329"><a href="#cb38-329" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-330"><a href="#cb38-330" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Iteración por todos los gramas de la frase</span>
+<span id="cb38-331"><a href="#cb38-331" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Numerador y denominador de la @eq-modelo-qgrams</span>
+<span id="cb38-332"><a href="#cb38-332" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Calculando el promedio</span>
+<span id="cb38-333"><a href="#cb38-333" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-334"><a href="#cb38-334" aria-hidden="true" tabindex="-1"></a>La función <span class="in">`log_prob`</span> se puede utilizar para calcular la probabilidad de todas las frases en el conjunto utilizado para estimar las frecuencias tal y como se muestra en la siguiente instrucción.</span>
+<span id="cb38-335"><a href="#cb38-335" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-338"><a href="#cb38-338" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-339"><a href="#cb38-339" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-340"><a href="#cb38-340" aria-hidden="true" tabindex="-1"></a>acc <span class="op">=</span> [log_prob(ele) <span class="cf">for</span> ele <span class="kw">in</span> dataset]</span>
+<span id="cb38-341"><a href="#cb38-341" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-342"><a href="#cb38-342" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-343"><a href="#cb38-343" aria-hidden="true" tabindex="-1"></a>La distribución del promedio del logaritmo de probabilidad se muestra en la siguiente figura.</span>
+<span id="cb38-344"><a href="#cb38-344" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-347"><a href="#cb38-347" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-348"><a href="#cb38-348" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-349"><a href="#cb38-349" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb38-350"><a href="#cb38-350" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'log-prob'</span>] <span class="op">=</span> acc</span>
+<span id="cb38-351"><a href="#cb38-351" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'dev'</span></span>
+<span id="cb38-352"><a href="#cb38-352" aria-hidden="true" tabindex="-1"></a>sns.displot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'log-prob'</span>, hue<span class="op">=</span><span class="st">'Conjunto'</span>,</span>
+<span id="cb38-353"><a href="#cb38-353" aria-hidden="true" tabindex="-1"></a>            kind<span class="op">=</span><span class="st">'kde'</span>, fill<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb38-354"><a href="#cb38-354" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-355"><a href="#cb38-355" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-356"><a href="#cb38-356" aria-hidden="true" tabindex="-1"></a>Para poder presentar otro análisis del modelo, se utiliza otro conjunto de datos, donde cada elemento del conjunto de datos tiene asociado el país de origen. Este valor se encuentra en la clave <span class="in">`country`</span> de cada diccionario.</span>
+<span id="cb38-357"><a href="#cb38-357" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-358"><a href="#cb38-358" aria-hidden="true" tabindex="-1"></a>*Nota: La siguiente celda puede tardar unos cuantos minutos en ejecutarse.*</span>
+<span id="cb38-359"><a href="#cb38-359" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-362"><a href="#cb38-362" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-363"><a href="#cb38-363" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-364"><a href="#cb38-364" aria-hidden="true" tabindex="-1"></a>paises <span class="op">=</span> load_dataset(lang<span class="op">=</span><span class="st">'es'</span>, dataset<span class="op">=</span><span class="st">'train'</span>)</span>
+<span id="cb38-365"><a href="#cb38-365" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-366"><a href="#cb38-366" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-367"><a href="#cb38-367" aria-hidden="true" tabindex="-1"></a>La siguientes instrucciones modelan los datos obtenidos de México y Argentina respectivamente.</span>
+<span id="cb38-368"><a href="#cb38-368" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-371"><a href="#cb38-371" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-372"><a href="#cb38-372" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-373"><a href="#cb38-373" aria-hidden="true" tabindex="-1"></a>mex <span class="op">=</span> [log_prob(ele) <span class="cf">for</span> ele <span class="kw">in</span> paises <span class="cf">if</span> ele[<span class="st">'country'</span>] <span class="op">==</span> <span class="st">'mx'</span>]</span>
+<span id="cb38-374"><a href="#cb38-374" aria-hidden="true" tabindex="-1"></a>arg <span class="op">=</span> [log_prob(ele) <span class="cf">for</span> ele <span class="kw">in</span> paises <span class="cf">if</span> ele[<span class="st">'country'</span>] <span class="op">==</span> <span class="st">'ar'</span>]</span>
+<span id="cb38-375"><a href="#cb38-375" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-376"><a href="#cb38-376" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-377"><a href="#cb38-377" aria-hidden="true" tabindex="-1"></a>La distribución obtenida al modelar estos dos conjuntos de datos se muestra en la siguiente figura.</span>
+<span id="cb38-378"><a href="#cb38-378" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-381"><a href="#cb38-381" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-382"><a href="#cb38-382" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-383"><a href="#cb38-383" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb38-384"><a href="#cb38-384" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'log-prob'</span>] <span class="op">=</span> mex</span>
+<span id="cb38-385"><a href="#cb38-385" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'México'</span></span>
+<span id="cb38-386"><a href="#cb38-386" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> pd.DataFrame()</span>
+<span id="cb38-387"><a href="#cb38-387" aria-hidden="true" tabindex="-1"></a>_[<span class="st">'log-prob'</span>] <span class="op">=</span> arg</span>
+<span id="cb38-388"><a href="#cb38-388" aria-hidden="true" tabindex="-1"></a>_[<span class="st">'Conjunto'</span>] <span class="op">=</span> <span class="st">'Argentina'</span></span>
+<span id="cb38-389"><a href="#cb38-389" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.concat([df, _])</span>
+<span id="cb38-390"><a href="#cb38-390" aria-hidden="true" tabindex="-1"></a>sns.displot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'log-prob'</span>, hue<span class="op">=</span><span class="st">'Conjunto'</span>,</span>
+<span id="cb38-391"><a href="#cb38-391" aria-hidden="true" tabindex="-1"></a>            kind<span class="op">=</span><span class="st">'kde'</span>, fill<span class="op">=</span><span class="va">False</span>)</span>
+<span id="cb38-392"><a href="#cb38-392" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-393"><a href="#cb38-393" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-394"><a href="#cb38-394" aria-hidden="true" tabindex="-1"></a>De la figura se puede observar que las dos distribuciones son muy similares, lo cual es de esperarse dado que los datos con los que fueron entrenados tiene el mismo número de ejemplos provenientes de México que de Argentina, pero aun así se observan unas leves diferencias.</span>
+<span id="cb38-395"><a href="#cb38-395" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-396"><a href="#cb38-396" aria-hidden="true" tabindex="-1"></a>Habiendo calculado el promedio del logaritmo de la probabilidad, uno se puede preguntar ¿cuál es la frase más probable en México? la siguiente instrucción muesta esta frase para el conjunto de datos analizado.</span>
+<span id="cb38-397"><a href="#cb38-397" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-400"><a href="#cb38-400" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-401"><a href="#cb38-401" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-402"><a href="#cb38-402" aria-hidden="true" tabindex="-1"></a>mex_ds <span class="op">=</span> [x <span class="cf">for</span> x <span class="kw">in</span> paises <span class="cf">if</span> x[<span class="st">'country'</span>] <span class="op">==</span> <span class="st">'mx'</span>]</span>
+<span id="cb38-403"><a href="#cb38-403" aria-hidden="true" tabindex="-1"></a>mex_ds[np.argmax(mex)]</span>
+<span id="cb38-404"><a href="#cb38-404" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-405"><a href="#cb38-405" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-406"><a href="#cb38-406" aria-hidden="true" tabindex="-1"></a><span class="fu">## Encapsulando el modelo de lenguaje de gramas</span></span>
+<span id="cb38-407"><a href="#cb38-407" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-408"><a href="#cb38-408" aria-hidden="true" tabindex="-1"></a>El modelo de lenguaje de gramas se organiza en la clase <span class="in">`ModeloNGram`</span>. Esta clase hereda la funcionalidad de la clase <span class="in">`Frec`</span> (ver @lst-frec-modelo-lenguaje) y lo complementa implementando el cálculo de la probabilidad de una frase utilizando k-suavizado (ver @lst-log-prob-frase).</span>
+<span id="cb38-409"><a href="#cb38-409" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-412"><a href="#cb38-412" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-413"><a href="#cb38-413" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-414"><a href="#cb38-414" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-label: lst-modelo-n-gram</span></span>
+<span id="cb38-415"><a href="#cb38-415" aria-hidden="true" tabindex="-1"></a><span class="co">#| lst-cap: Modelo de lenguaje de gramas</span></span>
+<span id="cb38-416"><a href="#cb38-416" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-417"><a href="#cb38-417" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ModeloNGram(Frec):</span>
+<span id="cb38-418"><a href="#cb38-418" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, N: <span class="bu">int</span><span class="op">=</span><span class="dv">2</span>,</span>
+<span id="cb38-419"><a href="#cb38-419" aria-hidden="true" tabindex="-1"></a>               k_suavizado: <span class="bu">float</span><span class="op">=</span><span class="dv">1</span>,</span>
+<span id="cb38-420"><a href="#cb38-420" aria-hidden="true" tabindex="-1"></a>               promedio: <span class="bu">bool</span><span class="op">=</span><span class="va">False</span>):</span>
+<span id="cb38-421"><a href="#cb38-421" aria-hidden="true" tabindex="-1"></a>    <span class="bu">super</span>(ModeloNGram, <span class="va">self</span>).<span class="fu">__init__</span>(N)</span>
+<span id="cb38-422"><a href="#cb38-422" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.k_suavizado <span class="op">=</span> k_suavizado <span class="co"># &lt;1&gt;</span></span>
+<span id="cb38-423"><a href="#cb38-423" aria-hidden="true" tabindex="-1"></a>    <span class="va">self</span>.promedio <span class="op">=</span> promedio <span class="co"># &lt;2&gt;</span></span>
+<span id="cb38-424"><a href="#cb38-424" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-425"><a href="#cb38-425" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> _log_prob(<span class="va">self</span>, ele):</span>
+<span id="cb38-426"><a href="#cb38-426" aria-hidden="true" tabindex="-1"></a>    tokens <span class="op">=</span> <span class="va">self</span>.segmentador(<span class="va">self</span>.get_text(ele)).input_ids <span class="co"># &lt;3&gt;</span></span>
+<span id="cb38-427"><a href="#cb38-427" aria-hidden="true" tabindex="-1"></a>    acc <span class="op">=</span> <span class="dv">0</span> <span class="co"># &lt;3&gt;</span></span>
+<span id="cb38-428"><a href="#cb38-428" aria-hidden="true" tabindex="-1"></a>    k <span class="op">=</span> <span class="va">self</span>.k_suavizado <span class="co"># &lt;3&gt;</span></span>
+<span id="cb38-429"><a href="#cb38-429" aria-hidden="true" tabindex="-1"></a>    <span class="cf">for</span> code <span class="kw">in</span> <span class="bu">zip</span>(<span class="op">*</span>[tokens[i:] <span class="cf">for</span> i <span class="kw">in</span> <span class="bu">range</span>(<span class="va">self</span>.N)]): <span class="co"># &lt;3&gt;</span></span>
+<span id="cb38-430"><a href="#cb38-430" aria-hidden="true" tabindex="-1"></a>      num <span class="op">=</span> np.log(<span class="va">self</span>.frase[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code))] <span class="op">+</span> k) <span class="co"># &lt;3&gt;</span></span>
+<span id="cb38-431"><a href="#cb38-431" aria-hidden="true" tabindex="-1"></a>      den <span class="op">=</span> np.log(<span class="va">self</span>.hist[<span class="st">"|"</span>.join(<span class="bu">map</span>(<span class="bu">str</span>, code[:<span class="op">-</span><span class="dv">1</span>]))] <span class="op">+</span> k <span class="op">*</span> <span class="va">self</span>.voc) <span class="co"># &lt;3&gt;</span></span>
+<span id="cb38-432"><a href="#cb38-432" aria-hidden="true" tabindex="-1"></a>      acc <span class="op">+=</span> num <span class="op">-</span> den <span class="co"># &lt;3&gt;</span></span>
+<span id="cb38-433"><a href="#cb38-433" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> <span class="va">self</span>.promedio: <span class="co"># &lt;3&gt;</span></span>
+<span id="cb38-434"><a href="#cb38-434" aria-hidden="true" tabindex="-1"></a>      <span class="cf">return</span> acc <span class="op">/</span> <span class="bu">len</span>(tokens) <span class="co"># &lt;3&gt;</span></span>
+<span id="cb38-435"><a href="#cb38-435" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> acc <span class="co"># &lt;3&gt;</span></span>
+<span id="cb38-436"><a href="#cb38-436" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-437"><a href="#cb38-437" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> log_prob(<span class="va">self</span>, X):</span>
+<span id="cb38-438"><a href="#cb38-438" aria-hidden="true" tabindex="-1"></a>    _log_prob <span class="op">=</span> <span class="va">self</span>._log_prob <span class="co"># &lt;4&gt;</span></span>
+<span id="cb38-439"><a href="#cb38-439" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.c_[[_log_prob(x) <span class="cf">for</span> x <span class="kw">in</span> X]] <span class="co"># &lt;4&gt;</span></span>
+<span id="cb38-440"><a href="#cb38-440" aria-hidden="true" tabindex="-1"></a><span class="in">```</span> </span>
+<span id="cb38-441"><a href="#cb38-441" aria-hidden="true" tabindex="-1"></a><span class="ss">1. </span>Valor del suavizado</span>
+<span id="cb38-442"><a href="#cb38-442" aria-hidden="true" tabindex="-1"></a><span class="ss">2. </span>Bandera que indica el cálculo del promedio</span>
+<span id="cb38-443"><a href="#cb38-443" aria-hidden="true" tabindex="-1"></a><span class="ss">3. </span>Logaritmo de la probabilidad de la frase, ver @lst-log-prob-frase</span>
+<span id="cb38-444"><a href="#cb38-444" aria-hidden="true" tabindex="-1"></a><span class="ss">4. </span>Calcula el logaritmo de la probabilidad para una lista de textos</span>
+<span id="cb38-445"><a href="#cb38-445" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-446"><a href="#cb38-446" aria-hidden="true" tabindex="-1"></a>::: {.callout-note}</span>
+<span id="cb38-447"><a href="#cb38-447" aria-hidden="true" tabindex="-1"></a><span class="fu">### Ejemplo </span></span>
+<span id="cb38-450"><a href="#cb38-450" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-451"><a href="#cb38-451" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-452"><a href="#cb38-452" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-453"><a href="#cb38-453" aria-hidden="true" tabindex="-1"></a>modeloNGram <span class="op">=</span> ModeloNGram(promedio<span class="op">=</span><span class="va">True</span>).fit(dataset)</span>
+<span id="cb38-454"><a href="#cb38-454" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-455"><a href="#cb38-455" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-456"><a href="#cb38-456" aria-hidden="true" tabindex="-1"></a>El logaritmo de la probabilidad de la primera frase de <span class="in">`dataset`</span>, calculada previamente (variable <span class="in">`acc`</span>), tiene un valor de <span class="in">`{python} f'{acc[0]:0.4f}'`</span>. Utilizando la implementación del modelo de lenguaje de gramas (ver @lst-modelo-n-gram), inicializado con <span class="in">`dataset`</span>, y contenido en la variable <span class="in">`modeloNGram`</span> se obtiene el logaritmo mostrado en la siguiente instrucción.</span>
+<span id="cb38-457"><a href="#cb38-457" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-460"><a href="#cb38-460" aria-hidden="true" tabindex="-1"></a><span class="in">```{python}</span></span>
+<span id="cb38-461"><a href="#cb38-461" aria-hidden="true" tabindex="-1"></a><span class="co">#| echo: true</span></span>
+<span id="cb38-462"><a href="#cb38-462" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-463"><a href="#cb38-463" aria-hidden="true" tabindex="-1"></a>modeloNGram.log_prob(dataset[:<span class="dv">1</span>])</span>
+<span id="cb38-464"><a href="#cb38-464" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
+<span id="cb38-465"><a href="#cb38-465" aria-hidden="true" tabindex="-1"></a>:::</span>
+<span id="cb38-466"><a href="#cb38-466" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-467"><a href="#cb38-467" aria-hidden="true" tabindex="-1"></a>::: {.callout-tip}</span>
+<span id="cb38-468"><a href="#cb38-468" aria-hidden="true" tabindex="-1"></a><span class="fu">### Actividad</span></span>
+<span id="cb38-469"><a href="#cb38-469" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb38-470"><a href="#cb38-470" aria-hidden="true" tabindex="-1"></a>:::: {#exr-modelo-ngram-mx-ar-uy}</span>
+<span id="cb38-471"><a href="#cb38-471" aria-hidden="true" tabindex="-1"></a>Entrene dos modelos de lenguaje con $N=3$, uno de ellos usando solamente textos provenientes de México y el otro con los textos de Argentina. Medir el promedio del logaritmo de probabilidad en los textos provenientes de Uruguay. ¿Cuál es el modelo que presenta la mayor probabilidad? </span>
+<span id="cb38-472"><a href="#cb38-472" aria-hidden="true" tabindex="-1"></a>::::</span>
+<span id="cb38-473"><a href="#cb38-473" aria-hidden="true" tabindex="-1"></a>::: </span>
 </code></pre></div><button title="Copiar al portapapeles" class="code-copy-button" data-in-quarto-modal=""><i class="bi"></i></button></div>
 </div></div></div></div></div>
 </div> <!-- /content -->

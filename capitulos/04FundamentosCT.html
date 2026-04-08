@@ -2,13 +2,16 @@
 <html xmlns="http://www.w3.org/1999/xhtml" lang="es" xml:lang="es"><head>
 
 <meta charset="utf-8">
-<meta name="generator" content="quarto-1.8.27">
+<meta name="generator" content="quarto-1.9.36">
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
 
 
 <title>4&nbsp; Fundamentos de Clasificación de Texto – Procesamiento de Lenguaje Natural</title>
 <style>
+/* Default styles provided by pandoc.
+** See https://pandoc.org/MANUAL.html#variables-for-html for config info.
+*/
 code{white-space: pre-wrap;}
 span.smallcaps{font-variant: small-caps;}
 div.columns{display: flex; gap: min(4vw, 1.5em);}
@@ -59,7 +62,6 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 div.csl-bib-body { }
 div.csl-entry {
   clear: both;
-  margin-bottom: 0em;
 }
 .hanging-indent div.csl-entry {
   margin-left:2em;
@@ -89,15 +91,14 @@ div.csl-indent {
 <link href="../capitulos/03ModeladoLenguaje.html" rel="prev">
 <script src="../site_libs/quarto-html/quarto.js" type="module"></script>
 <script src="../site_libs/quarto-html/tabsets/tabsets.js" type="module"></script>
-<script src="../site_libs/quarto-html/axe/axe-check.js" type="module"></script>
 <script src="../site_libs/quarto-html/popper.min.js"></script>
 <script src="../site_libs/quarto-html/tippy.umd.min.js"></script>
 <script src="../site_libs/quarto-html/anchor.min.js"></script>
 <link href="../site_libs/quarto-html/tippy.css" rel="stylesheet">
-<link href="../site_libs/quarto-html/quarto-syntax-highlighting-ed96de9b727972fe78a7b5d16c58bf87.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<link href="../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-8e7df6ee4b376b2593d74d7323768150.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-190b55869f1674f3654eb60e4236bfc9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -127,7 +128,7 @@ div.csl-indent {
 }</script>
 
   <script src="https://cdnjs.cloudflare.com/polyfill/v3/polyfill.min.js?features=es6"></script>
-  <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
+  <script defer="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml-full.js" type="text/javascript"></script>
 
 <script type="text/javascript">
 const typesetMath = (el) => {
@@ -312,7 +313,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="add660b7" class="cell" data-execution_count="1">
+<div id="a5a99439" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> microtc.utils <span class="im">import</span> tweet_iterator, load_model, save_model</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> b4msa.textmodel <span class="im">import</span> TextModel</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> EvoMSA.tests.test_base <span class="im">import</span> TWEETS</span>
@@ -349,7 +350,7 @@ window.Quarto = {
 <h2 data-number="4.3" class="anchored" data-anchor-id="sec-categorical-distribution"><span class="header-section-number">4.3</span> Modelado Probabilístico (Distribución Categórica)</h2>
 <p>Se inicia la descripción de clasificación de texto presentando un ejemplo sintético que ejemplifica los supuestos que se realizan en el modelo. La distribución categórica modela el evento de seleccionar <span class="math inline">\(K\)</span> eventos, los cuales pueden estar codificados como caracteres. Si esta selección se realiza <span class="math inline">\(\ell\)</span> veces se cuenta con una secuencia de eventos representados por caracteres. Por ejemplo, los <span class="math inline">\(K\)</span> eventos pueden ser representados por los caracteres <em>w</em>, <em>x</em>, <em>y</em> y <em>z</em>. Utilizando este proceso se puede utilizar para ejemplificar el proceso de asociar una secuencia a una clase, e.g., positiva o negativa.</p>
 <p>El primer paso es seleccionar los parámetros de dos distribuciones tal y como se muestra en las siguientes primeras dos líneas. Cada distribución se asume que es la generadora de una clase. El segundo paso es tomar una muestra de cada distribución, en particular se toman <span class="math inline">\(1000\)</span> muestras con el siguiente procedimiento. En cada iteración se toma una muestra de una distribución Gausiana (<span class="math inline">\(\mathcal N(15, 3)\)</span>), la variable aleatoria se guarda en la variable <code>length</code>. Esta variable aleatoria representa la longitud de la secuencia. El tercer paso es sacar la muestra de las distribuciones categóricas definidas previamente. Las muestras son guardadas en la lista <code>D</code> junto con la clase a la que pertenece <span class="math inline">\(0\)</span> y <span class="math inline">\(1.\)</span></p>
-<div id="204a5075" class="cell" data-execution_count="3">
+<div id="05b4bb9a" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>pos <span class="op">=</span> multinomial(<span class="dv">1</span>, [<span class="fl">0.20</span>, <span class="fl">0.20</span>, <span class="fl">0.35</span>, <span class="fl">0.25</span>])</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>neg <span class="op">=</span> multinomial(<span class="dv">1</span>, [<span class="fl">0.35</span>, <span class="fl">0.20</span>, <span class="fl">0.25</span>, <span class="fl">0.20</span>])</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>length <span class="op">=</span> norm(loc<span class="op">=</span><span class="dv">15</span>, scale<span class="op">=</span><span class="dv">3</span>)</span>
@@ -369,7 +370,7 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 </figcaption>
 <div aria-describedby="tbl-clasificacion-texto-generado-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
 <div class="cell-output cell-output-display cell-output-markdown" data-execution_count="4">
-<table class="do-not-create-environment cell caption-top table table-sm table-striped small">
+<table class="cell caption-top table table-sm table-striped small">
 <thead>
 <tr class="header">
 <th>Texto</th>
@@ -378,19 +379,19 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 </thead>
 <tbody>
 <tr class="odd">
-<td>x y y x x z y w x y z z y</td>
+<td>w z w z z z z x x y x z w w z y y z</td>
 <td>Positivo</td>
 </tr>
 <tr class="even">
-<td>z y y y z x z w z y y w x</td>
+<td>w y x x z y w w x y x x z y z y z y</td>
 <td>Negativo</td>
 </tr>
 <tr class="odd">
-<td>z x z w y z w w z y x w w x x w</td>
+<td>x w x w w z w z x y x z z z y</td>
 <td>Positivo</td>
 </tr>
 <tr class="even">
-<td>y z z y x z w x z x z z z x w y</td>
+<td>z z z z w y y y x x y y y x x</td>
 <td>Negativo</td>
 </tr>
 </tbody>
@@ -401,7 +402,7 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 </div>
 </div>
 <p>El primer paso es encontrar la verosimilitud dado el conjunto de datos <code>D</code>. El siguiente código calcula la verosimilitud de la clase positiva.</p>
-<div id="edb44a51" class="cell" data-execution_count="5">
+<div id="1cc68641" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>D_pos <span class="op">=</span> []</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>[D_pos.extend(data.split()) <span class="cf">for</span> data, k <span class="kw">in</span> D <span class="cf">if</span> k <span class="op">==</span> <span class="dv">1</span>]</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>words, l_pos <span class="op">=</span> np.unique(D_pos, return_counts<span class="op">=</span><span class="va">True</span>)</span>
@@ -409,29 +410,29 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>l_pos <span class="op">=</span> l_pos <span class="op">/</span> l_pos.<span class="bu">sum</span>()</span>
 <span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>l_pos</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
-<pre><code>array([0.25184202, 0.34171922, 0.19807501, 0.20836376])</code></pre>
+<pre><code>array([0.24467105, 0.35026316, 0.20776316, 0.19730263])</code></pre>
 </div>
 </div>
 <p>Un procedimiento equivalente se puede realizar para obtener la verosimilitud de la clase negativa.</p>
-<div id="1346ac40" class="cell" data-execution_count="6">
+<div id="f660da9e" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>D_neg <span class="op">=</span> []</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>[D_neg.extend(data.split()) <span class="cf">for</span> data, k <span class="kw">in</span> D <span class="cf">if</span> k <span class="op">==</span> <span class="dv">0</span>]</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>_, l_neg <span class="op">=</span> np.unique(D_neg, return_counts<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>l_neg <span class="op">=</span> l_neg <span class="op">/</span> l_neg.<span class="bu">sum</span>()</span>
 <span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>l_neg</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
-<pre><code>array([0.20258878, 0.24274809, 0.2028543 , 0.35180883])</code></pre>
+<pre><code>array([0.19519737, 0.24631579, 0.20414474, 0.35434211])</code></pre>
 </div>
 </div>
 <p>La probabilidad a priori se puede calcular con la siguientes instrucciones.</p>
-<div id="6efb3f13" class="cell" data-execution_count="7">
+<div id="804b0053" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>_, priors <span class="op">=</span> np.unique([k <span class="cf">for</span> _, k <span class="kw">in</span> D], return_counts<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>N <span class="op">=</span> priors.<span class="bu">sum</span>()</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>prior_pos <span class="op">=</span> priors[<span class="dv">1</span>] <span class="op">/</span> N</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>prior_neg <span class="op">=</span> priors[<span class="dv">0</span>] <span class="op">/</span> N</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Una ves que se han identificador los parámetros, estos pueden ser utilizados para predecir la clase dada una secuencia. El primer paso es calcular la verosimilitud, e.g., <span class="math inline">\(\mathbb P(\)</span>w w x z<span class="math inline">\(\mid \mathcal Y)\)</span>. Se observa que la secuencia tiene se tiene que transformar en términos, esto se puede realizar con el método <code>split</code>. Después, los términos se convierten al identificador que corresponde al parámetro del token con el mapa <code>w2id</code>. Una vez que se identifica el índice se conoce el valor del parámetro, se calcula el producto (como o la suma si se hace todo en términos del logaritmo) y se regresa el valor de la verosimilitud.</p>
-<div id="22b96602" class="cell" data-execution_count="8">
+<div id="71dcdaa3" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> likelihood(params, txt):</span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>    params <span class="op">=</span> np.log(params)</span>
 <span id="cb8-3"><a href="#cb8-3" aria-hidden="true" tabindex="-1"></a>    _ <span class="op">=</span> [params[w2id[x]] <span class="cf">for</span> x <span class="kw">in</span> txt.split()]</span>
@@ -439,7 +440,7 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 <span id="cb8-5"><a href="#cb8-5" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> np.exp(tot)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La verosimilitud se combina con la probabilidad a priori, con esta información se calcula la evidencia y para obtener la probabilidad a posteriori tanto para la clase positiva (<code>post_pos</code>) como para la negativa (<code>post_neg</code>). La clase corresponde a la etiqueta que presenta la máxima probabilidad, última línea (<code>hy</code>).</p>
-<div id="af815c54" class="cell" data-execution_count="9">
+<div id="9bd74450" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>post_pos <span class="op">=</span> [likelihood(l_pos, x) <span class="op">*</span> prior_pos <span class="cf">for</span> x, _ <span class="kw">in</span> D]</span>
 <span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>post_neg <span class="op">=</span> [likelihood(l_neg, x) <span class="op">*</span> prior_neg <span class="cf">for</span> x, _ <span class="kw">in</span> D]</span>
 <span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>evidence <span class="op">=</span> np.vstack([post_pos, post_neg]).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)</span>
@@ -468,31 +469,31 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 </div>
 </div>
 <p>El conjunto de datos se obtiene con la siguiente instrucción.</p>
-<div id="b87ae3a3" class="cell" data-execution_count="10">
+<div id="dcecf72f" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> [(x[<span class="st">'text'</span>], x[<span class="st">'klass'</span>])</span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>     <span class="cf">for</span> x <span class="kw">in</span> tweet_iterator(TWEETS)]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Como se puede observar, <span class="math inline">\(\mathcal D\)</span> es equivalente al usado en el ejemplo de la <a href="#sec-categorical-distribution" class="quarto-xref"><span>Sección 4.3</span></a>. La diferencia es que la secuencia de letras está cambiada con un enunciado. Aún así, es una metodología factible es obtener los tokens using el método <code>split</code>. Otro método es obtener los tokens usando el segmentador descrito en la <a href="02ManejandoTexto.html#sec-TextModel" class="quarto-xref"><span>Sección 2.5</span></a>.</p>
 <p>El siguiente código usa la clase <code>TextModel</code> para segmentar el texto considerando solamente las palabras. El texto segmentado se guarda en la variable <code>D.</code></p>
-<div id="389cd411" class="cell" data-execution_count="11">
+<div id="534907f3" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(token_list<span class="op">=</span>[<span class="op">-</span><span class="dv">1</span>])</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>tok <span class="op">=</span> tm.tokenize</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>D <span class="op">=</span> [(tok(x), y) <span class="cf">for</span> x, y <span class="kw">in</span> D]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Antes de estimar la verosimilitud, es necesario codificar los tokens usando un índice. Esto se realiza para guardar los parámetros en un arreglo y poder hacer operaciones utilizando la librería <code>numpy</code>. El siguiente código asocia un índice a cada token y el esta asociación se guarda en el diccionario <code>w2id.</code></p>
-<div id="8fe6e315" class="cell" data-execution_count="12">
+<div id="31f2d78c" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>words <span class="op">=</span> <span class="bu">set</span>()</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>[words.update(x) <span class="cf">for</span> x, y <span class="kw">in</span> D]</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>w2id <span class="op">=</span> {v: k <span class="cf">for</span> k, v <span class="kw">in</span> <span class="bu">enumerate</span>(words)}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Anteriormente, las cases se habían representado de manera numérica; donde la clase positiva se había asociado al número <span class="math inline">\(1\)</span>, mientras que la clase negativa se había asociado al número <span class="math inline">\(0\)</span>. En esta ocasión las clases son cadenas de caracteres, para seguir con un procedimiento similar al presentado previamente, se decide codificar las clases con un número natural, este procedimiento se hace al mismo tiempo que se calcula la distribución a priori. El siguiente código muestra este procedimiento, con la característica de que el logaritmo de la distribución a prior se guarda en la variable <code>priors.</code></p>
-<div id="b122e76d" class="cell" data-execution_count="13">
+<div id="8081280f" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>uniq_labels, priors <span class="op">=</span> np.unique([k <span class="cf">for</span> _, k <span class="kw">in</span> D], return_counts<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>priors <span class="op">=</span> np.log(priors <span class="op">/</span> priors.<span class="bu">sum</span>())</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>uniq_labels <span class="op">=</span> {<span class="bu">str</span>(v): k <span class="cf">for</span> k, v <span class="kw">in</span> <span class="bu">enumerate</span>(uniq_labels)}</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>En este momento se está en la posibilidad de estimar los parámetros de la verosimilitud para cada clase. Se asume que los datos provienen de una distribución Categórica y que cada token es independiente. Los parámetros de la verosimilitud se pueden guardar en una matriz (variable <code>l_tokens</code> <span class="math inline">\(\in \mathbb R^{K,d}\)</span>) con <span class="math inline">\(K\)</span> renglones, que corresponden a los parámetros de cada clase y <span class="math inline">\(d\)</span> columnas que son el vocabulario, es decir, los diferentes tokens que tiene la representación. El primer paso es calcular la frecuencia de cada token por clase, lo cual se puede realizar con el siguiente código.</p>
-<div id="003bfebe" class="cell" data-execution_count="14">
+<div id="9f5ff75f" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>l_tokens <span class="op">=</span> np.zeros((<span class="bu">len</span>(uniq_labels), <span class="bu">len</span>(w2id)))</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x, y <span class="kw">in</span> D:</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>    w <span class="op">=</span> l_tokens[uniq_labels[y]]</span>
@@ -501,7 +502,7 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 <span id="cb14-6"><a href="#cb14-6" aria-hidden="true" tabindex="-1"></a>        w[w2id[i]] <span class="op">+=</span> v</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El siguiente paso es normalizar la frecuencia, el algoritmo que se utiliza para normalizar es el suavizado de Laplace, por lo cual se le añade un valor pequeño, en este caso, <span class="math inline">\(0.1\)</span> a cada frecuencia, esto se observa en la primera línea del siguiente código. La segunda linea normaliza las frecuencia y finalmente se guarda el logaritmo de la frecuencia normalizada.</p>
-<div id="88401bd6" class="cell" data-execution_count="15">
+<div id="46856149" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>l_tokens <span class="op">+=</span> <span class="fl">0.1</span></span>
 <span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a>l_tokens <span class="op">=</span> l_tokens <span class="op">/</span> np.atleast_2d(l_tokens.<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">1</span>)).T</span>
 <span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>l_tokens <span class="op">=</span> np.log(l_tokens)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -509,7 +510,7 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 <section id="predicción" class="level4" data-number="4.3.1.1">
 <h4 data-number="4.3.1.1" class="anchored" data-anchor-id="predicción"><span class="header-section-number">4.3.1.1</span> Predicción</h4>
 <p>Una vez que todos los parámetros han sido estimados, es tiempo de usar el modelo para clasificar cualquier texto dato. La siguiente función calcula la distribución posterior. El primer paso es segmentar el texto (segunda línea) y calcular la frecuencia de cada término en el texto. La frecuencia se guarda en el diccionario <code>cnt</code>, el cual se convierte en el vector <code>x</code> usando la función de <code>w2id</code>. El siguiente paso es calcular la verosimilitud y la probabilidad a priori. El producto se calcula en el espacio de los logaritmos, por lo tanto se observa que la verosimilitud y la probabilidad a priori se suman. El último paso es calcular la evidencia y normalizar el resultado; la evidencia se calcula utilizando la función <code>logsumexp.</code></p>
-<div id="96fe1a09" class="cell" data-execution_count="16">
+<div id="628869c3" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> posterior(txt):</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>    x <span class="op">=</span> np.zeros(<span class="bu">len</span>(w2id))</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>    cnt <span class="op">=</span> Counter(tm.tokenize(txt))</span>
@@ -523,19 +524,19 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 <span id="cb16-11"><a href="#cb16-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> l</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La función <code>posterior</code> predice todos los textos en <span class="math inline">\(\mathcal D\)</span>; las predicciones se utilizan para estimar la exactitud. Para poder estimar la exactitud, las clases en <span class="math inline">\(\mathcal D\)</span> se tienen que codificar con la nomenclatura utilizada previamente, la cual es encuentra en el diccionario <code>uniq_labels</code> tal y como se muestra en la segunda linea del siguiente código.</p>
-<div id="e97c2818" class="cell" data-execution_count="17">
+<div id="0e56f708" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb17"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.array([posterior(x).argmax() <span class="cf">for</span> x, _ <span class="kw">in</span> D])</span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> np.array([uniq_labels[y] <span class="cf">for</span> _, y <span class="kw">in</span> D])</span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>(y <span class="op">==</span> hy).mean()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="17">
-<pre><code>np.float64(0.981)</code></pre>
+<pre><code>0.981</code></pre>
 </div>
 </div>
 </section>
 <section id="entrenamiento" class="level4" data-number="4.3.1.2">
 <h4 data-number="4.3.1.2" class="anchored" data-anchor-id="entrenamiento"><span class="header-section-number">4.3.1.2</span> Entrenamiento</h4>
 <p>El procedimiento utilizado en aprendizaje supervisado está dividido en dos etapas; la primera etapa es el entrenamiento y la otra es la etapa de predicción. La función <code>posterior</code> atiende la segunda etapa. La función <code>training</code>, que se muestra a continuación, presenta el procedimiento de entrenamiento. La función requiere el conjunto de datos (<code>D</code>) y una instancia de <code>TextModel</code> (<code>tm</code>) para realizar la segmentación.</p>
-<div id="f3373d1e" class="cell" data-execution_count="18">
+<div id="05f96c59" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> training(D, tm):</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>    tok <span class="op">=</span> tm.tokenize</span>
 <span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>    D <span class="op">=</span>[(tok(x), y) <span class="cf">for</span> x, y <span class="kw">in</span> D]</span>
@@ -560,7 +561,7 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 
 <!-- -->
 
-<div id="refs" class="references csl-bib-body hanging-indent" data-entry-spacing="0" role="list" style="display: none">
+<div id="refs" class="references csl-bib-body hanging-indent" role="list" style="display: none">
 <div id="ref-EvoMSA" class="csl-entry" role="listitem">
 Graff, Mario, Sabino Miranda-Jiménez, Eric S. Tellez, y Daniela Moctezuma. 2020. <span>«EvoMSA: <span>A</span> Multilingual Evolutionary Approach for Sentiment Analysis»</span>. <em>Computational Intelligence Magazine</em> 15: 76-88. <a href="https://ieeexplore.ieee.org/document/8956106">https://ieeexplore.ieee.org/document/8956106</a>.
 </div>
