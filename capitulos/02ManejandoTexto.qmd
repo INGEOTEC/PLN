@@ -559,13 +559,15 @@ special_tokens = [
 ]
 ```
 
-Habiendo definido las palabras especiales, es momento de inicializar la clase que se usa para segmentar, esta clase es `Tokenizer`, la cual requiere el método que encuentra en los segmentos, en esta ocasión se utiliza el método `WordPiece` que requiere solamente conocer cual es el identificador de los segmentos desconocidos (ver primera linea). En la segunda linea se añaden los identificadores especiales al segmentador. 
+Habiendo definido las palabras especiales, es momento de inicializar la clase que se usa para segmentar, esta clase es `Tokenizer`, la cual requiere el método que encuentra en los segmentos, en esta ocasión se utiliza el método `WordPiece` (@song-etal-2021-fast) que requiere solamente conocer cual es el identificador de los segmentos desconocidos (ver primera linea). En la segunda linea se añaden los identificadores especiales al segmentador. 
 
 ```{python}
 #| echo: true
 #| output: false
 
-tokenizer = Tokenizer(WordPiece(unk_token=special_tokens[0].content))
+tokenizer = Tokenizer(
+    WordPiece(unk_token=special_tokens[0].content)
+)
 tokenizer.add_special_tokens(special_tokens)
 ```
 
@@ -597,13 +599,15 @@ El siguiente paso es definir el procedimiento para identificar los segmentos, en
 tokenizer.pre_tokenizer = pre_tokenizers.Whitespace()
 ```
 
+El último paso corresponde a incluir un procedimiento que agregue indicadores adicionales al texto segmentado, en este ejemplo se agrega una plantilla para cuando se segmenta un texto, en la cual se añade el identificador `[CLS]` al inicio y `[SEP]` al final. En el caso de segmentar dos textos, este par es separado con la etiqueta `[SEP]`. 
+
 ```{python}
 #| echo: true
 
 post_tok = TemplateProcessing(
-    single="[CLS] $A [SEP]",
-    pair="[CLS] $A [SEP] $B:1 [SEP]:1",
-    special_tokens=[
+    single="[CLS] $A [SEP]", # <1>
+    pair="[CLS] $A [SEP] $B:1 [SEP]:1", # <2>
+    special_tokens=[ # <3>
         ("[CLS]", tokenizer.token_to_id("[CLS]")),
         ("[SEP]", tokenizer.token_to_id("[SEP]")),
         ("[PAD]", tokenizer.token_to_id("[PAD]")),
@@ -612,23 +616,39 @@ post_tok = TemplateProcessing(
 tokenizer.post_processor = post_tok
 ```
 
+1. Plantilla para un texto
+2. Plantilla para dos textos
+3. Palabras especiales
+
+Después de definir el procedimiento de segmentación, se inicia el proceso de entrenamiento. Este proceso se realiza con la clase `WordPieceTrainer`, la cual recibe como parámetros el tamaño del vocabulario y los segmentos especiales. 
+
 ```{python}
 #| echo: true
 
-vocab_size = 2**15
-trainer = WordPieceTrainer(vocab_size=vocab_size,
+vocab_size = 2**15 # <1>
+trainer = WordPieceTrainer(vocab_size=vocab_size, # <2>
                            special_tokens=special_tokens)
 ```
+
+1. Tamaño del vocabulario
+2. Clase para entrenar el segmentador. 
+
+El último paso es entrenar el segmentador con el método `train_from_iterator` el cual recibe los textos donde se estima el vocabulario y la clase que encuentra este vocabulario, i.e., variable `trainer`. 
 
 ```{python}
 #| echo: true
 #| output: false
 
-tokenizer.train_from_iterator(map(lambda x: x['text'],
+tokenizer.train_from_iterator(map(lambda x: x['text'], # <1>
                                   dataset),
-                              trainer=trainer,
+                              trainer=trainer, # <2>
                               length=len(dataset))
 ```
+
+1. Conjunto de entrenamiento
+2. Clase utilizada para entrenar el segmentador
+
+El siguiente fragmento utiliza el segmentador (i.e., `tokenizer`) para codificar el texto que se encuentra en la variable `txt` mediante el método `encode`. 
 
 ```{python}
 #| echo: true
@@ -648,12 +668,14 @@ Indique ¿cuál es el identificador de la palabra *amor* en el segmentador que s
 ::::
 :::
 
+Se observar que el método para codificar el texto es diferente entre `tokenizer` y bilmaLAT, esto es porque `tokenizer` es un segmentador general y `bilmaLAT` corresponde a un segmentador que es utilizado en el contexto de la librería [transformers](https://huggingface.co/docs/transformers/index). Para poder utilizar `tokenizer` dentro de la librería [transformers](https://huggingface.co/docs/transformers/index) es necesario crear una instancia de `PreTrainedTokenizerFast` lo cual se puede realizar con la siguiente instrucción. 
+
 ```{python}
 #| echo: true
 
 tokenizer_backend = PreTrainedTokenizerFast(
-      tokenizer_object=tokenizer,
-      model_max_length=512,
+      tokenizer_object=tokenizer, # <1>
+      model_max_length=512, # <2>
       unk_token=special_tokens[0],
       cls_token=special_tokens[1],
       eos_token=special_tokens[2],
@@ -661,3 +683,28 @@ tokenizer_backend = PreTrainedTokenizerFast(
       mask_token=special_tokens[4]
 )
 ```
+
+1. Segmentador
+2. Tamaño máximo del texto segmentado
+
+El siguiente fragmento codifica y decodifica el texto que se encuentra en la variable `txt`, se observa como la palabra *Procesamiento* es codificada en tres segmentos.
+
+```{python}
+#| echo: true
+
+code = tokenizer_backend(txt)
+pp(tokenizer_backend.decode(code))
+```
+
+::: {.callout-tip}
+### Actividad
+
+:::: {#exr-comp-bilmaLAT-tokenizer-backend}
+Indicar ¿cuál es la(s) palabra(s) codificadas de forma diferente entre `bilmaLAT` y `tokenizer_backend` al segmentar el texto en la variable `txt`?
+
+* bienvenidos, Procesamiento y Lenguaje
+* bienvenidos
+* Procesamiento
+* Lenguaje
+:::: 
+:::
