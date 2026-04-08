@@ -1,4 +1,4 @@
-# Modelado de Lenguaje
+# Modelo de gramas
 
 El **objetivo** de la unidad es desarrollar un modelo de lenguaje basado en gramas. 
 
@@ -24,7 +24,7 @@ from IPython.display import Markdown
 
 ## Introducción 
 
-Un modelo de lenguaje es una función que permite estimar la probabilidad de un texto, i.e., $\mathbb P(w_1, w_2, w_n).$ Comunmente, se trata de modelar  $\mathbb P(w_n \mid w_1, w_2, \ldots,w_{n-1}),$ es decir, encontrar una función que estime la probabilidad de la siguiente palabra o segmento, i.e., $w_N$, dada la historia. 
+Un modelo de lenguaje es una función que permite estimar la probabilidad de un texto, i.e., $\mathbb P(w_1, w_2, \ldots, w_n).$ Comunmente, se trata de modelar  $\mathbb P(w_n \mid w_1, w_2, \ldots,w_{n-1}),$ es decir, encontrar una función que estime la probabilidad de la siguiente palabra o segmento, i.e., $w_n$, dada la historia. 
 
 Realizando la suposición de Markov, es decir, que el segmento $w_n$, es independiente de los segmentos iguales y mayores a $N$, es decir, $\mathbb P(w_n \mid w_1, w_2, \ldots,w_{n-1})=\mathbb P(w_n \mid w_{n-N+1}, \ldots, w_{n-1}),$ para $N < n.$ Por ejemplo, para $N=2$ el modelo con esta suposición quedaría como $\mathbb P(w_n \mid w_{n-1})$, en el caso $N=3$ sería: $\mathbb P(w_n \mid w_{n-2}, w_{n-1})$ y así sucesivamente. 
 
@@ -51,10 +51,14 @@ Para el modelo de lenguaje se requiere calcular la frecuencia de la secuencia (v
 
 ```{python}
 #| echo: true
-voc = Counter()
-frase = Counter()
-hist = Counter()
+voc = Counter() # <1>
+frase = Counter() # <2>
+hist = Counter() # <3>
 ```
+
+1. Vocabulario
+2. Frecuencia de segmentos de tamaño $N$
+3. Frecuencia de segmentos de tamaño $N-1$
 
 El conjunto de datos que se utilizará para generar el modelo es el que se obtiene con la función `load_dataset` y se guarda en la variable `dataset`.
 
@@ -67,6 +71,7 @@ El siguiente paso es iterar por todos los elementos del conjunto de datos (varia
 
 ```{python}
 #| echo: true
+#| output: false
 #| lst-label: lst-estimacion-frecuencia
 #| lst-cap: Estimación de frecuencias
 
@@ -145,6 +150,7 @@ class Frec:
 
   def fit(self, X, y=None):
     N = self.N
+    voc = self.voc
     for ele in X: # <6>
       tokens = self.segmentar(ele) # <6>
       voc.update(tokens) # <6>
@@ -158,7 +164,7 @@ class Frec:
     return self
 
   def segmentar(self, texto):
-    _ = self.get_text(ele) # <7>
+    _ = self.get_text(texto) # <7>
     return self.segmentador(_).input_ids # <7>
 
   def get_text(self, ele):
@@ -166,10 +172,11 @@ class Frec:
       return ele['text'] # <8>
     return ele
 ```
+
 1. Tamaño de la ventana
-2. Vocabulario
-3. Frecuencia de los gramas 
-4. Frecuencia de los gramas previos
+2. Tamaño del vocabulario
+3. Frecuencia de gramas de tamaño $N$
+4. Frecuencia de gramas de tamaño $N-1$
 5. Segmentador mediante el modelo bilmaLAT
 6. Estimación de frecuencias ver @lst-estimacion-frecuencia
 7. Función que segmenta un texto dato
@@ -190,15 +197,36 @@ El siguiente código utiliza las frecuencias estimadas para mostrar las diez má
 
 ```{python}
 #| echo: true
-pp([bilmaLAT.decode(list(map(int, k.split("|"))))
+pp([frec.segmentador.decode(list(map(int, k.split("|"))))
     for k, v in frec.frase.most_common(10)])
 ```
 
 :::
 
+
+::: {.callout-tip}
+### Actividad
+
+:::: {#exr-voc-size}
+Utilice el siguiente conjunto de datos.
+```{python}
+#| echo: true
+
+conj_en = load_dataset(lang='en', dataset='dev')
+```
+
+Con el conjunto de datos de la variable `conj_en` indique el tamaño del vocabulario que se genera al utilizar la clase `Frec`. 
+
+* 21859
+* 22329
+* 15166
+::::
+:::
+
+
 ## Probabilidad
 
-Después de calcular las frecuencia, es posible estimar la probabilidad de una frase. Considerando que $N=2$ entonces es directo calcular la probabilidad de la siguiete frase.
+Después de calcular las frecuencia, es posible estimar la probabilidad de $\mathbb P(w_n \mid w_1, w_2, \ldots,w_{n-1}).$ Considerando que $N=2$ entonces es directo calcular la probabilidad de la palabra *días* dado *buenos*.
 
 ```{python}
 #| echo: true
@@ -213,7 +241,7 @@ code = bilmaLAT(txt)['input_ids'][1:-1]
 code
 ```
 
-El siguiente paso es dividir la frecuencia de la cadena *buenos dias* entre l frecuencia de *buenos* tal y como se muestra en la siguiente instrucción.
+El siguiente paso es dividir la frecuencia de la cadena *buenos dias* entre la frecuencia de *buenos* tal y como se muestra en la siguiente instrucción.
 
 ```{python}
 #| echo: true
@@ -235,6 +263,18 @@ Como muestra el resultado de la siguiente celda la probabilidad de *buenox* es c
 #| echo: true
 frase["|".join(map(str, code))] / hist["|".join(map(str, code[:-1]))]
 ```
+
+::: {.callout-tip}
+### Actividad
+
+:::: {#exr-frecuencia-trigramas}
+Seleccione la probabilida del segmento *!* dado la frase *buenos días*. Note que las historia son 2 segmentos, entonces cree el modelo con los parámetros adecuados y estime las frecuencias utilizando el conjunto de datos que se encuentra en la variable `dataset`. 
+
+* 0.03
+* 0.1
+* 0.04
+::::
+:::
 
 ### $k$-suavizado
 
