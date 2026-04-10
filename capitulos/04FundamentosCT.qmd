@@ -9,18 +9,11 @@ El **objetivo** de la unidad es analizar los fundamentos de un modelo de clasifi
 
 import pprint
 from collections import Counter
-from os.path import join
 import numpy as np
-from scipy.stats import norm, multinomial, multivariate_normal
-from scipy.special import logsumexp
-from sklearn.model_selection import StratifiedKFold
-from sklearn.naive_bayes import MultinomialNB
-from microtc.utils import tweet_iterator, load_model, save_model
+from scipy.stats import norm, multinomial
 from CompStats.metrics import macro_recall
-from b4msa.textmodel import TextModel
-from EvoMSA.tests.test_base import TWEETS
-from EvoMSA.utils import bootstrap_confidence_interval
-from matplotlib import pylab as plt
+from encexp.utils import load_dataset
+from transformers import AutoTokenizer
 pp = pprint.PrettyPrinter(width=60, compact=True).pprint
 ```
 
@@ -168,8 +161,8 @@ for l in length.rvs(size=1000): # <6>
                   clase=0)) # <8>
 ```
 
-1. Distribución de la clase positiva
-2. Distribución de la clase negativa
+1. Distribución de la clase positiva (i.e., $\mathbb P(\mathcal X \mid \mathcal Y=1)$)
+2. Distribución de la clase negativa (i.e., $\mathbb P(\mathcal X \mid \mathcal Y=1)$)
 3. Distribución del tamaño de la secuencia
 4. Función para representar un número en un caracter
 5. Función para crear una secuencia de caracteres
@@ -205,15 +198,16 @@ class ModeloPalabra(ModeloNGram):
     return self.get_text(texto).split()
 ```
 
+Habiendo definido la clase `ModeloPalabra` los parametros de $\mathbb P(\mathcal X \mid \mathcal Y)$ se pueden calcular con las siguiente instrucciones; en la variable `pos_l` se tienen los parámetros para $\mathbb P(\mathcal X \mid \mathcal Y=1)$ y en `neg_l` para $\mathbb P(\mathcal X \mid \mathcal Y=0).$
 
 ```{python}
 #| echo: true
 
-l_pos = ModeloPalabra(k_suavizado=0).fit( # <1>
+pos_l = ModeloPalabra(k_suavizado=0).fit(
   [x for x in D if x['clase'] == 1] # <1>
 ) # <1>
 
-l_neg = ModeloPalabra(k_suavizado=0).fit( # <2>
+neg_l = ModeloPalabra(k_suavizado=0).fit( # <2>
   [x for x in D if x['clase'] == 0] # <2>
 ) # <2>
 
@@ -222,83 +216,80 @@ l_neg = ModeloPalabra(k_suavizado=0).fit( # <2>
 1. Estimación de los parametros de $\mathbb P(\mathcal X \mid \mathcal Y=1)$
 2. Estimación de los parametros de $\mathbb P(\mathcal X \mid \mathcal Y=0)$
 
+Recordando que se conocen los valores de los paramétros de $\mathbb P(\mathcal X \mid \mathcal Y)$ dado que se trata de un problema sinténtico (ver @lst-problema-sintetitco), es oportuno comparar los parametros exactos con respecto a los parámetros estimados mediante el conjunto `D`. 
 
 ```{python}
 #| echo: true
 
 m = {k: chr(122 - k) for k in range(4)} # <1>
-pp([(m[k], l_pos.frase[m[k]] / l_pos.hist) for k in range(4)]) # <2>
+pp([(m[k], pos_l.frase[m[k]] / pos_l.hist) for k in range(4)]) # <2>
 ```
 
 1. Relación entre el índice y el caracter
 2. Parametros de la verosimilitud de la clase positiva (ver @lst-problema-sintetitco)
 
+Se puede observar que `{python} Markdown(f'$\mathbb P(\mathcal X=w \mid \mathcal X=1)={pos.p[3]:0.2f}$')` y la estimación tiene un valor de `{python} Markdown(f'${pos_l.frase[m[3]] / pos_l.hist :0.4f}$')`
+
+Para ejemplificar el uso de `pos_l` y `neg_l`, el siguiente ejemplo los utiliza para calcular la verosimilitud de los primeros dos ejemplo del conjunto `D`.
 
 ```{python}
 #| echo: true
 
-pos_vero = l_pos.log_prob(D[:2]) # <1>
-neg_vero = l_neg.log_prob(D[:2]) # <2>
-np.where(pos_vero > neg_vero, 1, 0), [x['clase'] for x in D[:2]] # <3>
+pos_vero = pos_l.log_prob(D[:2])
+neg_vero = neg_l.log_prob(D[:2])
 ```
 
-1. Verosimilitud de la clase positiva
-2. Verosimilitud de la clase negativa
-3. Predicción y clase del conjunto `D`
-
-La probabilidad a priori se puede calcular con la siguientes instrucciones. 
+El logaritmo de la  probabilidad a priori se puede calcular con la siguientes instrucciones. 
 
 ```{python}
 #| echo: true
 _, priors = np.unique([x['clase'] for x in D],
                       return_counts=True)
-N = priors.sum()
-prior_pos = priors[1] / N
-prior_neg = priors[0] / N
+priors = np.log(priors)
+N = np.log(priors.sum())
+pos_prior = priors[1]  -  N
+neg_prior = priors[0] - N
 ```
 
-Una ves que se han identificador los parámetros, estos pueden ser utilizados para predecir la clase dada una secuencia. El primer paso es calcular la verosimilitud, e.g., $\mathbb P($w w x z$\mid \mathcal Y)$. Se observa que la secuencia se tiene que transformar en términos, esto se puede realizar con el método `split`. Después, los términos se convierten al identificador que corresponde al parámetro del segmento con el mapa `w2id`. Una vez que se identifica el índice se conoce el valor del parámetro, se calcula el producto (o la suma si se hace todo en términos del logaritmo) y se regresa el valor de la verosimilitud. 
+Una ves que se han identificador los parámetros, estos pueden ser utilizados para predecir la clase dada unas secuencias. El primer paso es calcular la verosimilitud (i.e., $\mathbb P(\mathcal X \mid \mathcal Y)$) para cada clase y multiplicar este valor por la probabilidad a priori (i.e., $\mathbb P(\mathcal Y)$) para obtener $\mathbb P(\mathcal X \mid \mathcal Y) * \mathbb P(\mathcal Y)$ tal y como se muestra en el siguiente código.
 
 ```{python}
 #| echo: true
 
-def likelihood(params, txt):
-    params = np.log(params) # <1>
-    _ = [params[w2id[x]] for x in txt.split()] # <2>
-    tot = sum(_) # <3>
-    return np.exp(tot)
+pos_cond = np.exp(
+  pos_l.log_prob(D) + pos_prior # <1>
+) # <1>
+neg_cond = np.exp(neg_l.log_prob(D) + neg_prior) # <2>
 ```
 
-1. Logaritnmo de la probabilidad de cada término
-2. Lista con el logaritmo de la probabilidad para cada segmento del texto
-3. Suma de los logaritmos de la probabilidad
+1. $\mathbb P(\mathcal X \mid \mathcal Y=1) * \mathbb P(\mathcal Y=1)$
+2. $\mathbb P(\mathcal X \mid \mathcal Y=0) * \mathbb P(\mathcal Y=0)$
 
-La verosimilitud se combina con la probabilidad a priori, con esta información se calcula la evidencia y para obtener la probabilidad a posteriori tanto para la clase positiva (`post_pos`) como para la negativa (`post_neg`). La clase corresponde a la etiqueta que presenta la máxima probabilidad, última línea (`hy`).
+El siguiente paso para calcular la probabilidad a posteriori es calcular la evidencia la cual corresponde a la suma de $\mathbb P(\mathcal X \mid \mathcal Y) * \mathbb P(\mathcal Y)$ tal y como se muestra en la siguiente instrucción. 
 
 ```{python}
 #| echo: true
 
-post_pos = [likelihood(l_pos, x) * prior_pos for x, _ in D] # <1>
-post_neg = [likelihood(l_neg, x) * prior_neg for x, _ in D] # <2>
-evidence = np.vstack([post_pos, post_neg]).sum(axis=0) # <3>
-post_pos /= evidence # <4>
-post_neg /= evidence # <5>
-hy = np.where(post_pos >= post_neg, 1, 0) # <6>
+evidencia = np.vstack([pos_cond, neg_cond]).sum(axis=0)
 ```
 
-1. Probabilidad a posteriori de la clase positiva para los datos en `D`
-2. Probabilidad a posteriori de la clase negativa para los datos en `D`
-3. Evidencia 
-4. Probabilidad de la clase positiva
-5. Probabilidad de la clase negativa
-6. Predicción de las clases
-
-La variable `hy` tiene las predicciones en el conjunto de entrenamiento, el rendimiento en términos del macro-recall se puede calcular con el siguiente código, donde la variable `y` tiene las clases medidas. 
+Finalmente la probabilidad a posteriori (@eq-teorema-bayes) para la clase positiva y negativa se calcula con las siguientes instrucciones. 
 
 ```{python}
 #| echo: true
 
-y = [k for _, k in D]
+pos_post = pos_cond / evidencia # <1>
+neg_post = neg_cond / evidencia # <2>
+```
+
+1. Probabilidad de la clase positiva
+2. Probabilidad de la clase negativa
+
+Finalmente la case corresponde al evento más probable, es decir, la secuencia corresponde a la clase positiva si $\mathbb P(\mathcal Y=1 \mid \mathcal X) > \mathbb P(\mathcal Y=0 \mid \mathcal X)$. Esto se puede calcular usando la función `np.where`. Teniendo las predicciones se puede mendir el rendimiento del modelo en el conjunto de entrenamiento. En el siguiente fragmento, el rendimiento corresponde al promedio de la cobertura por clase, i.e., macro-recall. 
+
+```{python}
+hy = np.where(pos_post > neg_post, 1, 0)
+y = [x['clase'] for x in D]
 pp(macro_recall(y, hy, name='Entrenamiento').statistic)
 ```
 
@@ -315,134 +306,160 @@ Genere un conjunto de prueba donde la longitud media de las secuencia sea 25. Mi
 
 ## Clasificador de Texto {#sec-tc-categorical}
 
-En la sección anterior se trabajo desde la creación de un conjunto de datos sintético que fue generado mediante dos distribuciones Categóricas, donde a cada distribución se le asignó una clase, e.g., positiva o negativa. Esto permitió observar todas las partes de modelado, en la realidad se desconoce el procedimiento que genera los textos y el proceso de aprendizaje empieza con un conjunto de datos, en este ejemplo se utilizará un conjunto de datos de polaridad que tiene cuatro clases, negativo (N), neutral (N), ausencia de polaridad (NEU), y positivo (P). 
+En la sección anterior se trabajo desde la creación de un conjunto de datos sintético, que fue generado mediante dos Distribuciones Categóricas, donde a cada distribución se le asignó una clase, e.g., positiva o negativa. Esto permitió observar todas las partes de modelado, aunque es relevante mencionar que se desconoce el procedimiento que genera los textos y el proceso de aprendizaje empieza con un conjunto de datos. 
 
-::: {.callout-caution collapse="true"}
-### Conjunto de Datos 
-
-Es pertinente mencionar que el conjunto de datos fue etiquetado usando un clasificador de texto y ninguna valoración humana fue realizada para verificar que las etiquetas sean correctas. 
-
-Este conjunto se usa dentro de [EvoMSA](https://evomsa.readthedocs.io) (@EvoMSA) como conjunto de prueba para realizar pruebas unitarias. 
-:::
-
-El conjunto de datos se obtiene con la siguiente instrucción.
+En esta sección utilizaremos el siguiente conjunto de datos
 
 ```{python}
 #| echo: true
 
-D = [(x['text'], x['klass'])
-     for x in tweet_iterator(TWEETS)]
+
+dataset = load_dataset(lang='es', dataset='train')
 ```
 
-Como se puede observar, $\mathcal D$ es equivalente al usado en el ejemplo de la @sec-categorical-distribution. La diferencia es que la secuencia de letras está cambiada con un enunciado. Aún así, es una metodología factible es obtener los tokens using el método `split`. Otro método es obtener los tokens usando el segmentador descrito en la @sec-TextModel. 
-
-El siguiente código usa la clase `TextModel` para segmentar el texto considerando solamente las palabras. El texto segmentado se guarda en la variable `D.`
+el cual tiene asociado a cada texto el pais de procedencia. De este conjunto se seleccionan solo los textos que provienen de México y Argentina como se muestra en la siguiente instrucción
 
 ```{python}
 #| echo: true
 
-tm = TextModel(token_list=[-1])
-tok = tm.tokenize
-D = [(tok(x), y) for x, y in D]
+ar_mx = [x for x in dataset if x['country'] in ['ar', 'mx']]
 ```
 
-Antes de estimar la verosimilitud, es necesario codificar los tokens usando un índice. Esto se realiza para guardar los parámetros en un arreglo y poder hacer operaciones utilizando la librería `numpy`. El siguiente código asocia un índice a cada token y el esta asociación se guarda en el diccionario `w2id.` 
+El 20% de los datos se utilizarán para hacer el conjunto de prueba y el 80% serán el conjunto de entrenamiento, esto con el objetivo de medir el rendimiento del clasificador de texto que se desarrollará. 
 
 ```{python}
 #| echo: true
 
-words = set()
-[words.update(x) for x, y in D]
-w2id = {v: k for k, v in enumerate(words)}
+s = int(len(ar_mx) * 0.8)
+entrenamiento = ar_mx[:s]
+prueba = ar_mx[s:]
 ```
 
-Anteriormente, las cases se habían representado de manera numérica; donde la clase positiva se había asociado al número $1$, mientras que la clase negativa se había asociado al número $0$. En esta ocasión las clases son cadenas de caracteres, para seguir con un procedimiento similar al presentado previamente, se decide codificar las clases con un número natural, este procedimiento se hace al mismo tiempo que se calcula la distribución a priori. El siguiente código muestra este procedimiento, con la característica de que el logaritmo de la distribución a prior se guarda en la variable `priors.` 
+Como se puede observar, los conjuntos en las variables `entrenamiento` y `prueba` son similares al conjunto `D` -- creado en @lst-problema-sintetitco. La diferencia es que la secuencia de letras está cambiada por un texto y que la clase corresponde al pais donde se originó el texto. 
+
+En la @sec-categorical-distribution se extendió la clase `ModeloNGram` (@lst-modelo-n-gram) para considerar que las palabras solo eran cuatro caracteres y que el procedimiento de segmentar correspondía al espacio; esto dío lugar a la clase `ModeloPalabra` que se utilizó para calcular los parámetros $\mathbb P(\mathcal X \mid \mathcal Y)$. Por otror lado, el conjunto en las variables `entrenamiento` y `prueba` ha sido previamente analiza con la clase `ModeloNGram`. Es relevante recordar que `ModeloNGram` utiliza para segmentar el método implementado en `bilmaLAT` (ver @sec-modelo-mexicano-tok), entonces se puede concluir que esta clase sirve para calcular los parámetros $\mathbb P(\mathcal X \mid \mathcal Y)$ en el conjunto de prueba. En el siguiente código se utiliza `ModeloNGram` para estimar los parámetros correpondientes a $\mathbb P(\mathcal X \mid \mathcal Y=$mx$)$ y $\mathbb P(\mathcal X \mid \mathcal Y=$ar$).$
+
+```{python}
+#| echo: true
+#| output: false
+
+mx_l = ModeloNGram(N=1, k_suavizado=0.01).fit(
+  [x for x in entrenamiento if x['country'] == 'mx']
+)
+
+ar_l = ModeloNGram(N=1, k_suavizado=0.01).fit(
+  [x for x in entrenamiento if x['country'] == 'ar']
+)
+```
+
+El logaritmo de la  probabilidad a priori se puede calcular con la siguientes instrucciones. 
 
 ```{python}
 #| echo: true
 
-uniq_labels, priors = np.unique([k for _, k in D], return_counts=True)
-priors = np.log(priors / priors.sum())
-uniq_labels = {str(v): k for k, v in enumerate(uniq_labels)}
+uniq_labels, priors = np.unique(
+  [x['country'] for x in entrenamiento],
+  return_counts=True
+)
+priors = np.log(priors)
+N = np.log(priors.sum())
+ar_prior = priors[0]  -  N
+mx_prior = priors[1] - N
 ```
 
-En este momento se está en la posibilidad de estimar los parámetros de la verosimilitud para cada clase. Se asume que los datos provienen de una distribución Categórica y que cada token es independiente. Los parámetros de la verosimilitud se pueden guardar en una matriz (variable `l_tokens` $\in \mathbb R^{K,d}$) con $K$ renglones, que corresponden a los parámetros de cada clase y $d$ columnas que son el vocabulario, es decir, los diferentes tokens que tiene la representación. El primer paso es calcular la frecuencia de cada token por clase, lo cual se puede realizar con el siguiente código.  
+Verifique que el primer valor de `uniq_labels` corresponde a `{python} Markdown(f'{uniq_labels[0]}')`
+
+Hasta el momento se tienen todos los elementos para calcular el logaritmo de $\mathbb P(\mathcal X \mid \mathcal Y) * \mathbb P(\mathcal Y)$; en esta ocasión se crea una función para utilizarla en cualquier conjunto $\mathcal X$ tal y como se muestra en el siguiente código. 
 
 ```{python}
 #| echo: true
 
-l_tokens = np.zeros((len(uniq_labels), len(w2id)))
-for x, y in D:
-    w = l_tokens[uniq_labels[y]]
-    cnt = Counter(x)
-    for i, v in cnt.items():
-        w[w2id[i]] += v
+def log_prob_conditional(X):
+  ar_cond = ar_l.log_prob(X) + ar_prior
+  mx_cond = mx_l.log_prob(X) + mx_prior
+  return np.c_[ar_cond, mx_cond]
 ```
 
-El siguiente paso es normalizar la frecuencia, el algoritmo que se utiliza para normalizar es el suavizado de Laplace, por lo cual se le añade un valor pequeño, en este caso, $0.1$ a cada frecuencia, esto se observa en la primera línea del siguiente código. La segunda linea normaliza las frecuencia y finalmente se guarda el logaritmo de la frecuencia normalizada.
+En el siguiente código se utiliza la función `log_pro_conditional` en el conjunto que se encuentra en la variable `prueba` y que no fue utilizado para estimar los parámetros. 
 
 ```{python}
 #| echo: true
 
-l_tokens += 0.1
-l_tokens = l_tokens / np.atleast_2d(l_tokens.sum(axis=1)).T
-l_tokens = np.log(l_tokens)
+ll = log_prob_conditional(prueba)
 ```
 
-#### Predicción
-
-Una vez que todos los parámetros han sido estimados, es tiempo de usar el modelo para clasificar cualquier texto dato. La siguiente función calcula la distribución posterior. El primer paso es segmentar el texto (segunda línea) y calcular la frecuencia de cada término en el texto. La frecuencia se guarda en el diccionario `cnt`, el cual se convierte en el vector `x` usando la función de `w2id`. El siguiente paso es calcular la verosimilitud y la probabilidad a priori. El producto se calcula en el espacio de los logaritmos, por lo tanto se observa que la verosimilitud y la probabilidad a priori se suman. El último paso es calcular la evidencia y normalizar el resultado; la evidencia se calcula utilizando la función `logsumexp.` 
+El logaritmo de $\mathbb P(\mathcal X \mid \mathcal Y) * \mathbb P(\mathcal Y)$ contiene la información necesaria para estimar la clase de cada texto. La clase corresponde al valor máximo, que corresponde a la probabilidad máxima cuando se normaliza con la evidencia. El siguiente código calcula la clase para cada texto que está en la variable `prueba` y calcula el rendimiento; medido con el promedio de la cobertura (i.e., macro-recall). 
 
 ```{python}
 #| echo: true
 
-def posterior(txt):
-    x = np.zeros(len(w2id))
-    cnt = Counter(tm.tokenize(txt))
-    for i, v in cnt.items():
-        try:
-            x[w2id[i]] += v
-        except KeyError:
-            continue
-    _ = (x * l_tokens).sum(axis=1) + priors
-    l = np.exp(_ - logsumexp(_))
-    return l
+hy = uniq_labels[ll.argmax(axis=1)]
+y = [x['country'] for x in prueba]
+score = macro_recall(y, hy, name='N=1')
+pp(score.statistic)
 ```
 
-La función `posterior` predice todos los textos en $\mathcal D$; las predicciones se utilizan para estimar la exactitud. Para poder estimar la exactitud, las clases en $\mathcal D$ se tienen que codificar con la nomenclatura utilizada previamente, la cual es encuentra en el diccionario `uniq_labels` tal y como se muestra en la segunda linea del siguiente código. 
+## Encapsulando el clasificador 
 
 ```{python}
 #| echo: true
 
-hy = np.array([posterior(x).argmax() for x, _ in D])
-y = np.array([uniq_labels[y] for _, y in D])
-(y == hy).mean()
+class ClasificadorMNGram:
+  def __init__(self, N=1, k_suavizado=0.01):
+    self.N = N
+    self.k_suavizado = k_suavizado
+    self.modelos = None
+
+  def fit(self, X, y):
+    if self.modelos is not None:
+      return self
+    self.uniq_labels, priors = np.unique(y, return_counts=True)
+    self.priors = np.log(priors) - np.log(priors.sum())
+    modelos = []
+    for clase in self.uniq_labels:
+      _ = ModeloNGram(N=self.N,
+                      k_suavizado=self.k_suavizado).fit(
+        [x for x, _y in zip(X, y) if _y == clase]
+      )
+      modelos.append(_)
+    self.modelos = modelos
+    return self
+
+  def predict_log_proba(self, X):
+    X = np.column_stack(
+      [m.log_prob(X) for m in cl.modelos]
+    )
+    return X + self.priors
+
+  def predict(self, X):
+    X = self.predict_log_proba(X)
+    return self.uniq_labels[X.argmax(axis=1)]
 ```
-
-#### Entrenamiento
-
-El procedimiento utilizado en aprendizaje supervisado está dividido en dos etapas; la primera etapa es el entrenamiento y la otra es la etapa de predicción. La función `posterior` atiende la segunda etapa. La función `training`, que se muestra a continuación, presenta el procedimiento de entrenamiento. La función requiere el conjunto de datos (`D`) y una instancia de `TextModel` (`tm`) para realizar la segmentación. 
 
 ```{python}
 #| echo: true
 
-def training(D, tm):
-    tok = tm.tokenize
-    D =[(tok(x), y) for x, y in D]
-    words = set()
-    [words.update(x) for x, y in D]
-    w2id = {v: k for k, v in enumerate(words)}
-    uniq_labels, priors = np.unique([k for _, k in D], return_counts=True)
-    priors = np.log(priors / priors.sum())
-    uniq_labels = {str(v): k for k, v in enumerate(uniq_labels)}
-    l_tokens = np.zeros((len(uniq_labels), len(w2id)))
-    for x, y in D:
-        w = l_tokens[uniq_labels[y]]
-        cnt = Counter(x)
-        for i, v in cnt.items():
-            w[w2id[i]] += v
-    l_tokens += 0.1
-    l_tokens = l_tokens / np.atleast_2d(l_tokens.sum(axis=1)).T
-    l_tokens = np.log(l_tokens)
-    return w2id, uniq_labels, l_tokens, priors
+cl = ClasificadorMNGram().fit(
+  entrenamiento,
+  [x['country'] for x in entrenamiento]
+)
 ```
+
+```{python}
+#| echo: true
+
+hy = cl.predict(prueba)
+score(hy, name='ClasificadorMNGram').statistic
+```
+
+::: {.callout-tip}
+### Actividad
+
+:::: {#exr-ClasificadorMNGram}
+Indique ¿cuál es el rendimiento (macro-recall) (en los datos de la variable `prueba`) del modelo `ClasificadorMNGram` (entrenado con los datos de la variable `entrenamiento`) con el parámetro $N=2$ y `k_suavizado=0.1`?
+
+* 0.7883
+* 0.7866
+* 0.8048
+::::
+::: 

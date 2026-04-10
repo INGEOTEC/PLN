@@ -375,7 +375,7 @@ El texto es procesado es organizado en una instancia de la clase `Doc` la cual e
 pp([(w.text, w.pos_) for w in doc])
 ```
 
-## Modelo Mexicano {#sec-modelo-mexicano-tok}
+## Modelo Latinoamericano {#sec-modelo-mexicano-tok}
 
 Los procedimientos anteriores segmentan un texto utilizando un conjunto de reglas y pueden generar un número infinito de palabras. En el otro extremo de los segmentadores se encuentran aquellos que utilizan un vocabulario fijo y que se basan en representar cualquier texto utilizando ese vocabulario. Por supuesto el vocabulario está compuesto por palabras, caracteres, sufijos, infijos y prefijos. Uno de estos algoritmos es el Byte Pair Encoding (@sennrich-etal-2016-neural).
 
