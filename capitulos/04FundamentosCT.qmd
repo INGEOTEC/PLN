@@ -27,6 +27,94 @@ pp = pprint.PrettyPrinter(width=60, compact=True).pprint
 ```{python}
 #| echo: false
 from IPython.display import Markdown
+
+class Frec:
+  def __init__(self, N: int=2):
+    self.N = N # <1>
+    self.voc = Counter()
+    self.frase = Counter()
+    self.hist = Counter()
+
+  @property
+  def segmentador(self):
+    try:
+      return self._segmentador
+    except AttributeError:
+      _ = AutoTokenizer.from_pretrained('guillermoruiz/bilmaLAT') # <5>
+      self._segmentador = _
+      return _
+
+  def fit(self, X, y=None):
+    N = self.N
+    voc = self.voc
+    for ele in X:
+      tokens = self.segmentar(ele)
+      voc.update(tokens)
+      _ = ["|".join(map(str, lst))
+          for lst in zip(*[tokens[i:] for i in range(N)])]
+      self.frase.update(_)
+      _ = ["|".join(map(str, lst))
+          for lst in zip(*[tokens[i:] for i in range(N-1)])]
+      self.hist.update(_)
+    self.voc = len(voc)
+    if N == 1:
+      self.hist = sum(self.frase.values())
+    return self
+
+  def segmentar(self, texto):
+    _ = self.get_text(texto)
+    return self.segmentador(_).input_ids
+
+  def get_text(self, ele):
+    if isinstance(ele, dict):
+      return ele['text']
+    return ele
+
+  def frecuencias(self, code, log=False):
+    num = self.frase["|".join(map(str, code))]
+    if self.N == 1:
+      den = self.hist
+    else:
+      den = self.hist["|".join(map(str, code[:-1]))]
+    if log: # <14>
+      return np.log(num), np.log(den)
+    return num, den
+
+
+class Freck(Frec):
+  def __init__(self, N: int=2, k_suavizado: float=1):
+    super(Freck, self).__init__(N)
+    self.k_suavizado = k_suavizado
+
+  def frecuencias(self, code, log=False):
+    num, den = super(Freck, self).frecuencias(code)
+    num = num + self.k_suavizado
+    den = den + self.k_suavizado * self.voc
+    if log:
+      return np.log(num), np.log(den)
+    return num, den
+
+
+class ModeloNGram(Freck):
+  def __init__(self, N: int=2,
+               k_suavizado: float=1,
+               promedio: bool=False):
+    super(ModeloNGram, self).__init__(N, k_suavizado)
+    self.promedio = promedio
+
+  def _log_prob(self, ele):
+    tokens = self.segmentar(ele)
+    acc = 0
+    for code in zip(*[tokens[i:] for i in range(self.N)]):
+      num, den = self.frecuencias(code, log=True)
+      acc += num - den
+    if self.promedio:
+      return acc / len(tokens)
+    return acc
+
+  def log_prob(self, X):
+    _log_prob = self._log_prob
+    return np.c_[[_log_prob(x) for x in X]]
 ```
 
 
@@ -64,6 +152,8 @@ El primer paso es seleccionar los parámetros de dos distribuciones tal y como s
 
 ```{python}
 #| echo: true
+#| lst-label: lst-problema-sintetitco
+#| lst-cap: Problema sintético usando una Distribución Categórica
 
 D = []
 pos = multinomial(1, [0.20, 0.20, 0.35, 0.25]) # <1>
@@ -72,8 +162,10 @@ length = norm(loc=15, scale=3) # <3>
 m = {k: chr(122 - k) for k in range(4)} # <4>
 id2w = lambda x: " ".join([m[_] for _ in x.argmax(axis=1)]) # <5>
 for l in length.rvs(size=1000): # <6>
-    D.append((id2w(pos.rvs(round(l))), 1)) # <7>
-    D.append((id2w(neg.rvs(round(l))), 0)) # <8>
+    D.append(dict(text=id2w(pos.rvs(round(l))), # <7>
+                  clase=1)) # <7>
+    D.append(dict(text=id2w(neg.rvs(round(l))), # <8>
+                  clase=0)) # <8>
 ```
 
 1. Distribución de la clase positiva
@@ -96,50 +188,70 @@ txt =  '|Texto         |Clase    |\n'
 txt += '|--------------|---------|\n'
 m = {0: 'Negativo', 1: 'Positivo'}
 for data in D[:4]:
-    txt += f'|{data[0]}|{m[data[1]]}|\n'
+    txt += f'|{data['text']}|{m[data['clase']]}|\n'
 Markdown(txt)
 ```
 
-El primer paso es encontrar la verosimilitud dado el conjunto de datos `D`. El siguiente código calcula la verosimilitud de la clase positiva asumiendo que todas las palabras, (i.e., *w*, *x*, *y* y *z*) son independientes. 
+El primer paso es encontrar los parámetros para poder calcular $\mathbb P(\mathcal X \mid \mathcal Y=1)$ y $\mathbb P(\mathcal X \mid \mathcal Y=0)$. Para realizar esto, se puede adaptar la clase `ModeloNGram` (@lst-modelo-n-gram) para el caso donde $N=1$ y adicionalmente se requiere una modificación para que el método `ModeloNGram` considere los caracteres *w*, *x*, *y* y *z* como palabras o segmentos, el siguiente código hace estas adecuaciones.
 
 ```{python}
 #| echo: true
-D_pos = []
-for data, k in D: # <1>
-    if k != 1: # <2>
-        continue 
-    segmentos = data.split() # <3>
-    D_pos.extend(segmentos)
-words, l_pos = np.unique(D_pos, return_counts=True) # <4>
-w2id = {v: k for k, v in enumerate(words)} # <5>
-l_pos = l_pos / l_pos.sum() # <6>
-pp(l_pos)
+
+class ModeloPalabra(ModeloNGram):
+  def __init__(self, k_suavizado: float=1):
+    super(ModeloPalabra, self).__init__(1, k_suavizado, False)
+
+  def segmentar(self, texto):
+    return self.get_text(texto).split()
 ```
 
-1. Ciclo por los elementos del conjunto de entrenamiento
-2. Analizar solos los elementos asociados a la clase positiva
-3. Segmentar el texto 
-4. Calcular la frecuencia de cada segmento
-5. Función para identificar el índice de cada palabra
-6. Probabilidad de cada segmento en la clase positiva
-
-
-Un procedimiento equivalente se puede realizar para obtener la verosimilitud de la clase negativa. 
 
 ```{python}
 #| echo: true
-D_neg = []
-[D_neg.extend(data.split()) for data, k in D if k == 0]
-_, l_neg = np.unique(D_neg, return_counts=True)
-l_neg = l_neg / l_neg.sum()
-pp(l_neg)
+
+l_pos = ModeloPalabra(k_suavizado=0).fit( # <1>
+  [x for x in D if x['clase'] == 1] # <1>
+) # <1>
+
+l_neg = ModeloPalabra(k_suavizado=0).fit( # <2>
+  [x for x in D if x['clase'] == 0] # <2>
+) # <2>
+
 ```
+
+1. Estimación de los parametros de $\mathbb P(\mathcal X \mid \mathcal Y=1)$
+2. Estimación de los parametros de $\mathbb P(\mathcal X \mid \mathcal Y=0)$
+
+
+```{python}
+#| echo: true
+
+m = {k: chr(122 - k) for k in range(4)} # <1>
+pp([(m[k], l_pos.frase[m[k]] / l_pos.hist) for k in range(4)]) # <2>
+```
+
+1. Relación entre el índice y el caracter
+2. Parametros de la verosimilitud de la clase positiva (ver @lst-problema-sintetitco)
+
+
+```{python}
+#| echo: true
+
+pos_vero = l_pos.log_prob(D[:2]).flatten() # <1>
+neg_vero = l_neg.log_prob(D[:2]).flatten() # <2>
+np.where(pos_vero > neg_vero, 1, 0), [x['clase'] for x in D[:2]] # <3>
+```
+
+1. Verosimilitud de la clase positiva
+2. Verosimilitud de la clase negativa
+3. Predicción y clase del conjunto `D`
 
 La probabilidad a priori se puede calcular con la siguientes instrucciones. 
 
 ```{python}
 #| echo: true
-_, priors = np.unique([k for _, k in D], return_counts=True)
+_, priors = np.unique([x['clase'] for x in D],
+                      return_counts=True)
 N = priors.sum()
 prior_pos = priors[1] / N
 prior_neg = priors[0] / N

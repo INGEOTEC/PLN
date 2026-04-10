@@ -341,7 +341,7 @@ class Freck(Frec):
     den = den + self.k_suavizado * self.voc # <4>
     if log:
       return np.log(num), np.log(den)
-    return num, den    
+    return num, den
 ```
 
 1. Valor del suavizado
