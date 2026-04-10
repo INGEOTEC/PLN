@@ -497,7 +497,7 @@ class ModeloNGram(Freck):
 
   def log_prob(self, X):
     _log_prob = self._log_prob # <3>
-    return np.c_[[_log_prob(x) for x in X]] # <3>
+    return np.r_[[_log_prob(x) for x in X]] # <3>
 ``` 
 
 1. Bandera que indica el cálculo del promedio

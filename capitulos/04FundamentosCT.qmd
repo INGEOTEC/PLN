@@ -114,7 +114,7 @@ class ModeloNGram(Freck):
 
   def log_prob(self, X):
     _log_prob = self._log_prob
-    return np.c_[[_log_prob(x) for x in X]]
+    return np.r_[[_log_prob(x) for x in X]]
 ```
 
 
@@ -237,8 +237,8 @@ pp([(m[k], l_pos.frase[m[k]] / l_pos.hist) for k in range(4)]) # <2>
 ```{python}
 #| echo: true
 
-pos_vero = l_pos.log_prob(D[:2]).flatten() # <1>
-neg_vero = l_neg.log_prob(D[:2]).flatten() # <2>
+pos_vero = l_pos.log_prob(D[:2]) # <1>
+neg_vero = l_neg.log_prob(D[:2]) # <2>
 np.where(pos_vero > neg_vero, 1, 0), [x['clase'] for x in D[:2]] # <3>
 ```
 
