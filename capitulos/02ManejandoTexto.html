@@ -98,7 +98,7 @@ div.csl-indent {
 <link href="../site_libs/quarto-html/quarto-syntax-highlighting-845c23b38eaddc0f92fda52bfe77a8c8.css" rel="stylesheet" id="quarto-text-highlighting-styles">
 <script src="../site_libs/bootstrap/bootstrap.min.js"></script>
 <link href="../site_libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
-<link href="../site_libs/bootstrap/bootstrap-190b55869f1674f3654eb60e4236bfc9.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
+<link href="../site_libs/bootstrap/bootstrap-49816a5fe6aeb4d36a298c91e800cd7d.min.css" rel="stylesheet" append-hash="true" id="quarto-bootstrap" data-mode="light">
 <script id="quarto-search-options" type="application/json">{
   "location": "sidebar",
   "copy-button": false,
@@ -301,7 +301,7 @@ window.Quarto = {
   <li><a href="#segmentación" id="toc-segmentación" class="nav-link" data-scroll-target="#segmentación"><span class="header-section-number">2.5.2</span> Segmentación</a></li>
   </ul></li>
   <li><a href="#spacy" id="toc-spacy" class="nav-link" data-scroll-target="#spacy"><span class="header-section-number">2.6</span> spaCy</a></li>
-  <li><a href="#sec-modelo-mexicano-tok" id="toc-sec-modelo-mexicano-tok" class="nav-link" data-scroll-target="#sec-modelo-mexicano-tok"><span class="header-section-number">2.7</span> Modelo Mexicano</a></li>
+  <li><a href="#sec-modelo-mexicano-tok" id="toc-sec-modelo-mexicano-tok" class="nav-link" data-scroll-target="#sec-modelo-mexicano-tok"><span class="header-section-number">2.7</span> Modelo Latinoamericano</a></li>
   <li><a href="#robertuito" id="toc-robertuito" class="nav-link" data-scroll-target="#robertuito"><span class="header-section-number">2.8</span> RoBERTuito</a></li>
   <li><a href="#crecimiento-del-vocabulario" id="toc-crecimiento-del-vocabulario" class="nav-link" data-scroll-target="#crecimiento-del-vocabulario"><span class="header-section-number">2.9</span> Crecimiento del vocabulario</a></li>
   <li><a href="#entrenando-un-segmentador" id="toc-entrenando-un-segmentador" class="nav-link" data-scroll-target="#entrenando-un-segmentador"><span class="header-section-number">2.10</span> Entrenando un segmentador</a></li>
@@ -333,7 +333,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es analizar la implementación de diferentes componentes de un sistema de procesamiento de lenguaje natural (PLN), incluyendo la normalización del texto y su segmentación para comprender las etapas comunes a los sistemas de PLN.</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="743647d8" class="cell" data-execution_count="1">
+<div id="81b0db82" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pprint</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> unicodedata</span>
@@ -445,7 +445,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <h4 data-number="2.2.1.1" class="anchored" data-anchor-id="usuarios"><span class="header-section-number">2.2.1.1</span> Usuarios</h4>
 <p>En esta sección se trabajará con los nombres de usuarios que siguen el formato usado por Twitter. En un tuit, los nombres de usuarios son aquellas palabras que inician con el caracter @ y terminan con un espacio o caracter terminal. Las acciones que se realizarán con los nombres de usuario encontrados serán su borrado o reemplazo por una etiqueta en particular.</p>
 <p>El procedimiento para encontrar los nombres de usuarios es mediante expresiones regulares, en particular se usa la expresión <code>@\S+</code>, tal y como se muestra en el siguiente ejemplo.</p>
-<div id="14aaa80b" class="cell" data-execution_count="3">
+<div id="b5a82ddd" class="cell" data-execution_count="3">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'Hola @xx, @mm te está buscando'</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>re.sub(<span class="vs">r"@</span><span class="dv">\S</span><span class="op">+</span><span class="vs">"</span>, <span class="st">""</span>, text)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="3">
@@ -453,7 +453,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 </div>
 </div>
 <p>La segunda acción es reemplazar cada nombre de usuario por una etiqueta particular, en el siguiente ejemplo se reemplaza por la etiqueta <code>_usr</code>.</p>
-<div id="b38f2d44" class="cell" data-execution_count="4">
+<div id="460a3944" class="cell" data-execution_count="4">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'Hola @xx, @mm te está buscando'</span></span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>re.sub(<span class="vs">r"@</span><span class="dv">\S</span><span class="op">+</span><span class="vs">"</span>, <span class="st">"_usr"</span>, text)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="4">
@@ -464,7 +464,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <section id="url" class="level4" data-number="2.2.1.2">
 <h4 data-number="2.2.1.2" class="anchored" data-anchor-id="url"><span class="header-section-number">2.2.1.2</span> URL</h4>
 <p>Los ejemplos anteriores se pueden adaptar para manejar URL; solamente es necesario adecuar la expresión regular que identifica una URL. En el siguiente ejemplo se muestra como se pueden borrar las URLs que aparecen en un texto.</p>
-<div id="8dc90f81" class="cell" data-execution_count="5">
+<div id="f5e88a1d" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"puedes verificar que http://google.com esté funcionando"</span></span>
 <span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>re.sub(<span class="vs">r"https</span><span class="op">?</span><span class="vs">://</span><span class="dv">\S</span><span class="op">+</span><span class="vs">"</span>, <span class="st">""</span>, text)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="5">
@@ -475,7 +475,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <section id="números" class="level4" data-number="2.2.1.3">
 <h4 data-number="2.2.1.3" class="anchored" data-anchor-id="números"><span class="header-section-number">2.2.1.3</span> Números</h4>
 <p>The previous code can be modified to deal with numbers and replace the number found with a shared label such as <code>_num</code>.</p>
-<div id="b3451a43" class="cell" data-execution_count="6">
+<div id="82ef6904" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb8"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"acabamos de ganar 10 M"</span></span>
 <span id="cb8-2"><a href="#cb8-2" aria-hidden="true" tabindex="-1"></a>re.sub(<span class="vs">r"</span><span class="dv">\d\d</span><span class="op">*</span><span class="ch">\.</span><span class="op">?</span><span class="dv">\d</span><span class="op">*</span><span class="cf">|</span><span class="dv">\d</span><span class="op">*</span><span class="ch">\.</span><span class="dv">\d\d</span><span class="op">*</span><span class="vs">"</span>, <span class="st">"_num"</span>, text)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="6">
@@ -490,7 +490,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <section id="mayúsculas-y-minúsculas" class="level4" data-number="2.2.2.1">
 <h4 data-number="2.2.2.1" class="anchored" data-anchor-id="mayúsculas-y-minúsculas"><span class="header-section-number">2.2.2.1</span> Mayúsculas y Minúsculas</h4>
 <p>La primera de estas transformaciones es convertir todas los caracteres a minúsculas. Como se puede observar esta transformación hace que el vocabulario se reduzca, por ejemplo, las palabras <em>México</em> o <em>MÉXICO</em> son representados por la palabra <em>méxico</em>. Esta operación se puede realizar con la función <code>lower</code> tal y cómo se muestra a continuación.</p>
-<div id="6ce3be70" class="cell" data-execution_count="7">
+<div id="260de17f" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"México"</span></span>
 <span id="cb10-2"><a href="#cb10-2" aria-hidden="true" tabindex="-1"></a>text.lower()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="7">
@@ -501,7 +501,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <section id="signos-de-puntuación" class="level4" data-number="2.2.2.2">
 <h4 data-number="2.2.2.2" class="anchored" data-anchor-id="signos-de-puntuación"><span class="header-section-number">2.2.2.2</span> Signos de Puntuación</h4>
 <p>Los signos de puntuación son necesarios para tareas como la generación de textos, pero existen otras aplicaciones donde los signos de puntuación tienen un efecto positivo en el rendimiento del algorithm, este es el caso de tareas de categorización de texto. El efecto que tiene el quitar los signos de puntuación es que el vocabulario se reduce. Los símbolos de puntuación se pueden remover teniendo una lista de los mismos, esta lista de signos de puntuación se encuentra en la variable <code>SKIP_SYMBOLS</code> y el siguiente código muestra un procedimiento para quitarlos.</p>
-<div id="9f10fdc9" class="cell" data-execution_count="8">
+<div id="da7cdc59" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">"¡Hola! buenos días:"</span></span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> <span class="st">""</span></span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x <span class="kw">in</span> text:</span>
@@ -518,7 +518,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <h4 data-number="2.2.2.3" class="anchored" data-anchor-id="símbolos-diacríticos"><span class="header-section-number">2.2.2.3</span> Símbolos Diacríticos</h4>
 <p>Continuando con la misma idea de reducir el vocabulario, es común eliminar los símbolos diacríticos en las palabras. Esta transformación también tiene el objetivo de normalizar aquellos textos informales donde los símbolos diacríticos son usado con una menor frecuencia, en particular los acentos en el caso del español. Por ejemplo, es común encontrar la palabra <em>México</em> escrita como <em>Mexico</em>.</p>
 <p>El siguiente código muestra un procedimiento para eliminar los símbolos diacríticos.</p>
-<div id="95a39133" class="cell" data-execution_count="9">
+<div id="edb1ab20" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'México'</span></span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>output <span class="op">=</span> <span class="st">""</span></span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> x <span class="kw">in</span> unicodedata.normalize(<span class="st">'NFD'</span>, text):</span>
@@ -542,7 +542,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <p>Las palabras comunes (<em>stop words</em>) son palabras utilizadas frecuentemente en el lenguaje, las cuales son necesarias para comunicación, pero no aportan información para discriminar un texto de acuerdo a su significado.</p>
 <p>The stop words are the most frequent words used in the language. These words are essential to communicate but are not so much on tasks where the aim is to discriminate texts according to their meaning.</p>
 <p>Las palabras vacías se pueden guardar en un diccionario y el proceso de identificación consiste en buscar la existencia de la palabra en el diccionario. Una vez que la palabra analizada se encuentra en el diccionario, se procede a quitarla o cambiarla por un token particular. El proceso de borrado se muestra en el siguiente código.</p>
-<div id="bd3cbbe8" class="cell" data-execution_count="10">
+<div id="6a5aff87" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>lang <span class="op">=</span> LangDependency(<span class="st">'spanish'</span>)</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'¡Buenos días! El día de hoy tendremos un día cálido.'</span></span>
@@ -561,7 +561,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <h3 data-number="2.3.2" class="anchored" data-anchor-id="lematización-y-reducción-a-la-raíz"><span class="header-section-number">2.3.2</span> Lematización y Reducción a la Raíz</h3>
 <p>La idea de lematización y reducción a la raíz (<em>stemming</em>) es transformar una palabra a su raíz mediante un proceso heurístico o morfológico. Por ejemplo, las palabras <em>jugando</em> o <em>jugaron</em> se transforman a la palabra <em>jugar</em>.</p>
 <p>El siguiente código muestra el proceso de reducción a la raíz utilizando la clase <code>SnowballStemmer</code>.</p>
-<div id="c32727af" class="cell" data-execution_count="11">
+<div id="b7619e8e" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>stemmer <span class="op">=</span> SnowballStemmer(<span class="st">'spanish'</span>)</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'Estoy jugando futbol con mis amigos'</span></span>
@@ -582,7 +582,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <section id="gramas-de-palabras-n-grams" class="level3" data-number="2.4.1">
 <h3 data-number="2.4.1" class="anchored" data-anchor-id="gramas-de-palabras-n-grams"><span class="header-section-number">2.4.1</span> Gramas de Palabras (n-grams)</h3>
 <p>El primer método de segmentación revisado es la creación de los gramas de palabras. El primer paso es encontrar las palabras las cuales se pueden encontrar mediante la función <code>split</code>; una vez que las palabras están definidas estás se pueden unir para generar los gramas de palabras del tamaño deseado, tal y como se muestra en el siguiente código.</p>
-<div id="041a06c5" class="cell" data-execution_count="12">
+<div id="5c848216" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb20"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb20-1"><a href="#cb20-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'Estoy jugando futbol con mis amigos'</span></span>
 <span id="cb20-2"><a href="#cb20-2" aria-hidden="true" tabindex="-1"></a>words <span class="op">=</span> text.split()</span>
 <span id="cb20-3"><a href="#cb20-3" aria-hidden="true" tabindex="-1"></a>n <span class="op">=</span> <span class="dv">3</span></span>
@@ -600,7 +600,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <h3 data-number="2.4.2" class="anchored" data-anchor-id="gramas-de-caracteres-q-grams"><span class="header-section-number">2.4.2</span> Gramas de Caracteres (q-grams)</h3>
 <p>La segmentación de gramas de caracteres complementa los gramas de palabras. Los gramas de caracteres están definidos como la subcadena de longitud <span class="math inline">\(q\)</span>. Este tipo de segmentación tiene la característica de que es agnóstica al lenguaje, es decir, se puede aplicar en cualquier idioma; contrastando, los gramas de palabras se pueden aplicar solo a los lenguajes que tienen definido el concepto de palabra, por ejemplo en el idioma chino las palabras no se pueden identificar como se pueden identificar en el español o inglés. La segunda característica importante es que ayuda en el problema de errores ortográficos, siguiendo una perspectiva de similitud aproximada.</p>
 <p>El código para realizar los gramas de caracteres es similar a la presentada anteriormente, siendo la diferencia que el ciclo está por los caracteres en lugar de la palabras como se había realizado. El siguiente código muestra una implementación para realizar gramas de caracteres.</p>
-<div id="27af26d2" class="cell" data-execution_count="13">
+<div id="684d260e" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb22"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" aria-hidden="true" tabindex="-1"></a>text <span class="op">=</span> <span class="st">'Estoy jugando'</span></span>
 <span id="cb22-2"><a href="#cb22-2" aria-hidden="true" tabindex="-1"></a>q <span class="op">=</span> <span class="dv">4</span></span>
 <span id="cb22-3"><a href="#cb22-3" aria-hidden="true" tabindex="-1"></a>q_grams <span class="op">=</span> []</span>
@@ -632,7 +632,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <li>ent_option</li>
 </ul>
 <p>Por ejemplo, el siguiente código muestra como se borra el usuario y se reemplaza un hashtag; se puede observar que en la respuesta se cambian todos los espacios por el caracter <code>~</code> y se incluye ese mismo al inicio y final del texto.</p>
-<div id="c3c5b3e7" class="cell" data-execution_count="14">
+<div id="015b6c52" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb24"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb24-1"><a href="#cb24-1" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(hashtag_option<span class="op">=</span>OPTION_GROUP,</span>
 <span id="cb24-2"><a href="#cb24-2" aria-hidden="true" tabindex="-1"></a>               usr_option<span class="op">=</span>OPTION_DELETE)</span>
 <span id="cb24-3"><a href="#cb24-3" aria-hidden="true" tabindex="-1"></a>texto <span class="op">=</span> <span class="st">'mira @xyz estoy triste. #UnDiaLluvioso'</span></span>
@@ -648,7 +648,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <li>del_diac</li>
 </ul>
 <p>En el siguiente ejemplo se transforman el texto a minúscula y se remueven los signos de puntuación.</p>
-<div id="a2accc01" class="cell" data-execution_count="15">
+<div id="a609d59e" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb26"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb26-1"><a href="#cb26-1" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(lc<span class="op">=</span><span class="va">True</span>,</span>
 <span id="cb26-2"><a href="#cb26-2" aria-hidden="true" tabindex="-1"></a>               del_punc<span class="op">=</span><span class="va">True</span>,</span>
 <span id="cb26-3"><a href="#cb26-3" aria-hidden="true" tabindex="-1"></a>               del_diac<span class="op">=</span><span class="va">False</span>)</span>
@@ -664,7 +664,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <li>stemming</li>
 </ul>
 <p>Por ejemplo, las siguientes instrucciones quitan las palabras comunes y realizan una reducción a la raíz.</p>
-<div id="e349bab2" class="cell" data-execution_count="16">
+<div id="0641ff4f" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb28"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb28-1"><a href="#cb28-1" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(lang<span class="op">=</span><span class="st">'es'</span>,</span>
 <span id="cb28-2"><a href="#cb28-2" aria-hidden="true" tabindex="-1"></a>               stopwords<span class="op">=</span>OPTION_DELETE,</span>
 <span id="cb28-3"><a href="#cb28-3" aria-hidden="true" tabindex="-1"></a>               stemming<span class="op">=</span><span class="va">True</span>)</span>
@@ -679,7 +679,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <h3 data-number="2.5.2" class="anchored" data-anchor-id="segmentación"><span class="header-section-number">2.5.2</span> Segmentación</h3>
 <p>El paso final es describir el uso de la segmentación. La librería utiliza el parámetro <code>token_list</code> para indicar el tipo de segmentación que se desea realizar. El formato es una lista de número, donde el valor indica el tipo de segmentación. El número <span class="math inline">\(1\)</span> indica que se realizará una segmentación por palabras, los número positivo corresponden a los gramas de caracteres y los números negativos a los gramas de palabras.</p>
 <p>Por ejemplo, utilizando las normalizaciones que se tienen por defecto, el siguiente código segmenta utilizando gramas de caracteres de tamañan <span class="math inline">\(4.\)</span></p>
-<div id="a042bd0b" class="cell" data-execution_count="17">
+<div id="a252b42d" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb30"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb30-1"><a href="#cb30-1" aria-hidden="true" tabindex="-1"></a>txt <span class="op">=</span> <span class="st">'buenos días, bienvenidos al curso de Procesamiento de Lenguaje Natural.'</span></span>
 <span id="cb30-2"><a href="#cb30-2" aria-hidden="true" tabindex="-1"></a>microTC_qgrams <span class="op">=</span> TextModel(token_list<span class="op">=</span>[<span class="dv">4</span>])</span>
 <span id="cb30-3"><a href="#cb30-3" aria-hidden="true" tabindex="-1"></a>pp(microTC_qgrams.tokenize(txt))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -700,7 +700,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 </div>
 <p>para poder identificar cuando se trata de un segmento que corresponde a una palabra o un grama de caracteres, a los últimos se les agrega el prefijo <code>q:</code>. Cabe mencionar que por defecto se remueven los símbolos diacríticos.</p>
 <p>El ejemplo anterior, se utiliza para generar un grama de palabras de tamaño <span class="math inline">\(2.\)</span> Como se ha mencionado los gramas de palabras se especifican con números negativos siendo el valor absoluto el tamaño del grama.</p>
-<div id="40c49f57" class="cell" data-execution_count="18">
+<div id="8128ac8e" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb32"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb32-1"><a href="#cb32-1" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(token_list<span class="op">=</span>[<span class="op">-</span><span class="dv">2</span>])</span>
 <span id="cb32-2"><a href="#cb32-2" aria-hidden="true" tabindex="-1"></a>pp(tm.tokenize(txt))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -710,7 +710,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 </div>
 </div>
 <p>Para completar la explicación, se combinan la segmentación de gramas de caracteres y palabras además de incluir las palabras en la segmentación.</p>
-<div id="16fd4857" class="cell" data-execution_count="19">
+<div id="db9924c4" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb34"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb34-1"><a href="#cb34-1" aria-hidden="true" tabindex="-1"></a>tm <span class="op">=</span> TextModel(token_list<span class="op">=</span>[<span class="dv">4</span>, <span class="op">-</span><span class="dv">2</span>, <span class="op">-</span><span class="dv">1</span>])</span>
 <span id="cb34-2"><a href="#cb34-2" aria-hidden="true" tabindex="-1"></a>pp(tm.tokenize(txt))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -759,15 +759,15 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <h2 data-number="2.6" class="anchored" data-anchor-id="spacy"><span class="header-section-number">2.6</span> spaCy</h2>
 <p>spaCy es una librería general para el procesamiento de lenguaje natural PLN. El primer paso en cualquier tarea de PLN corresponde a la segmentación, en este apartado se da un ejemplo de como se realiza la segmentación con esta librería.</p>
 <p>El proceso de segmentación se inicia cargando el modelo de español en la librería lo cual se hace con la siguiente instrucción.</p>
-<div id="4a090b26" class="cell" data-execution_count="20">
+<div id="6a5be944" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb36"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb36-1"><a href="#cb36-1" aria-hidden="true" tabindex="-1"></a>pln <span class="op">=</span> spacy.load(<span class="st">"es_core_news_lg"</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La variable <code>pln</code> es la instancia que permite manipular los textos en español. Tiene el comportamiento de una función y para usarla solamente es necesario ejecutarla con el texto que se quiere procesar tal y como se indica en la siguiente instrucción.</p>
-<div id="e87e1970" class="cell" data-execution_count="21">
+<div id="d0b7eef6" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb37"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb37-1"><a href="#cb37-1" aria-hidden="true" tabindex="-1"></a>doc <span class="op">=</span> pln(txt)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El texto es procesado es organizado en una instancia de la clase <code>Doc</code> la cual es iterable. Los elementos corresponden a las palabras de la oración, así como a otros componentes, como los signos de puntuación. Además la librería proporciona información sintáctica y semántica de cada palabra, en el siguiente ejemplo se muestra las partes de la oración.</p>
-<div id="bfba7b0b" class="cell" data-execution_count="22">
+<div id="8f3e2a2c" class="cell" data-execution_count="22">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb38"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb38-1"><a href="#cb38-1" aria-hidden="true" tabindex="-1"></a>pp([(w.text, w.pos_) <span class="cf">for</span> w <span class="kw">in</span> doc])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
 <pre><code>[('buenos', 'ADJ'), ('días', 'NOUN'), (',', 'PUNCT'),
@@ -779,15 +779,15 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 </div>
 </section>
 <section id="sec-modelo-mexicano-tok" class="level2" data-number="2.7">
-<h2 data-number="2.7" class="anchored" data-anchor-id="sec-modelo-mexicano-tok"><span class="header-section-number">2.7</span> Modelo Mexicano</h2>
+<h2 data-number="2.7" class="anchored" data-anchor-id="sec-modelo-mexicano-tok"><span class="header-section-number">2.7</span> Modelo Latinoamericano</h2>
 <p>Los procedimientos anteriores segmentan un texto utilizando un conjunto de reglas y pueden generar un número infinito de palabras. En el otro extremo de los segmentadores se encuentran aquellos que utilizan un vocabulario fijo y que se basan en representar cualquier texto utilizando ese vocabulario. Por supuesto el vocabulario está compuesto por palabras, caracteres, sufijos, infijos y prefijos. Uno de estos algoritmos es el Byte Pair Encoding (<span class="citation" data-cites="sennrich-etal-2016-neural">Sennrich et&nbsp;al. (<a href="11Referencias.html#ref-sennrich-etal-2016-neural" role="doc-biblioref">2016</a>)</span>).</p>
 <p>En la siguiente instrucción utilizamos el segmentador implementado en el modelo <strong>bilmaLAT</strong>.</p>
-<div id="b46bae58" class="cell" data-execution_count="23">
+<div id="f3bc154e" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb40"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb40-1"><a href="#cb40-1" aria-hidden="true" tabindex="-1"></a>bilmaLAT <span class="op">=</span> AutoTokenizer.from_pretrained(<span class="st">'guillermoruiz/bilmaLAT'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La variable <code>bilmaLAT</code> funciona como una función que recibe el texto y regresa el texto segmentado y una máscara de atención que se verá en una unidad posterior.</p>
 <p>El resultado de la siguiente instrucción indica en el campo <code>input_ids</code> el texto segmentado aunque se encuentra codificado, es decir, el valor 12658 corresponde a la palabra <em>buenos</em>. Es importante notar que cada valor en el arreglo corresponde a una secuencia de caracteres, esta secuencia en algunas ocasiones representan una palabra y en otras solamente una parte de la palabra. Por ejemplo los valores 26563 y 5892 corresponden a la palabra <em>bienvenidos</em>.</p>
-<div id="c9cccf24" class="cell" data-execution_count="24">
+<div id="5bcfd47a" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb41"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb41-1"><a href="#cb41-1" aria-hidden="true" tabindex="-1"></a>code <span class="op">=</span> bilmaLAT(txt)</span>
 <span id="cb41-2"><a href="#cb41-2" aria-hidden="true" tabindex="-1"></a>pp(code)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -799,7 +799,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 </div>
 </div>
 <p>El método <code>bilmaLAT.decode</code> decodifica el texto y como se muestra en el resultado de la siguiente instrucción, se le añadió <strong>[CLS]</strong> al inicio de la frase y <strong>[SEP]</strong> al final. Este comportamiento es normal en este tipo de modelado y quedará claro en las siguiente unidades.</p>
-<div id="621e8824" class="cell" data-execution_count="25">
+<div id="cc978de7" class="cell" data-execution_count="25">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb43"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb43-1"><a href="#cb43-1" aria-hidden="true" tabindex="-1"></a>bilmaLAT.decode(code[<span class="st">'input_ids'</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="25">
 <pre><code>'[CLS] buenos días, bienvenidos al curso de Procesamiento de Lenguaje Natural. [SEP]'</code></pre>
@@ -830,12 +830,12 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <section id="robertuito" class="level2" data-number="2.8">
 <h2 data-number="2.8" class="anchored" data-anchor-id="robertuito"><span class="header-section-number">2.8</span> RoBERTuito</h2>
 <p>Un modelo similar a <code>bilmaLAT</code> que fue entrenado con otro conjunto de datos y con algunas características particulares es RoBERTuito descrito en <span class="citation" data-cites="perez-etal-2022-robertuito">Pérez et&nbsp;al. (<a href="11Referencias.html#ref-perez-etal-2022-robertuito" role="doc-biblioref">2022</a>)</span>. Este modelo se puede obtener con la siguiente instrucción.</p>
-<div id="ad7fa2eb" class="cell" data-execution_count="26">
+<div id="11980f65" class="cell" data-execution_count="26">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb45"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb45-1"><a href="#cb45-1" aria-hidden="true" tabindex="-1"></a>robertuito <span class="op">=</span> AutoTokenizer.from_pretrained(<span class="st">'pysentimiento/robertuito-base-cased'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Los autores de RoBERTuito mencionan que antes de pasar el texto al segmentador se deben de realizar un pre-procesamiento con la función <code>preprocess_tweet</code> tal y como se muetra en la siguiente instrucción.</p>
 <p>El texto segmentado se representa en la misma estructura de datos que la utilizada por <code>bilmaLAT</code>.</p>
-<div id="da541aeb" class="cell" data-execution_count="27">
+<div id="a056f1e0" class="cell" data-execution_count="27">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb46"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb46-1"><a href="#cb46-1" aria-hidden="true" tabindex="-1"></a>code <span class="op">=</span> robertuito(preprocess_tweet(txt))</span>
 <span id="cb46-2"><a href="#cb46-2" aria-hidden="true" tabindex="-1"></a>pp(code)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -847,7 +847,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 </div>
 </div>
 <p>La secuencia se decodifica utilizando el método <code>robertuito.decode</code> como se observa en la siguiente instrucción. En el salida de la celda se observa como al inicio de la frase se coloca la etiqueta <strong>&lt;s&gt;</strong> y al final la etiqueta <strong>&lt;/s&gt;</strong>.</p>
-<div id="3eb00ecb" class="cell" data-execution_count="28">
+<div id="7a5ec6ef" class="cell" data-execution_count="28">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb48"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb48-1"><a href="#cb48-1" aria-hidden="true" tabindex="-1"></a>robertuito.decode(code[<span class="st">'input_ids'</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="28">
 <pre><code>'&lt;s&gt; buenos días, bienvenidos al curso de Procesamiento de Lenguaje Natural.&lt;/s&gt;'</code></pre>
@@ -858,11 +858,11 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <h2 data-number="2.9" class="anchored" data-anchor-id="crecimiento-del-vocabulario"><span class="header-section-number">2.9</span> Crecimiento del vocabulario</h2>
 <p>En este apartado se utilizan diferentes segmentadores de texto para medir el crecimiento del vocabulario con respecto al número de palabras leidas.</p>
 <p>Se utiliza un conjunto de datos que se obtiene con la función <code>load_dataset</code> utilizando los parámetros que se muestran en la siguiente instrucción.</p>
-<div id="cbed11ff" class="cell" data-execution_count="29">
+<div id="7c80633f" class="cell" data-execution_count="29">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb50"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb50-1"><a href="#cb50-1" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> load_dataset(lang<span class="op">=</span><span class="st">'es'</span>, dataset<span class="op">=</span><span class="st">'dev'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El crecimiento del vocabulario se mide utilizando la función <code>dinamica_vocabulario</code> la cual recibe una función (argumento <code>tokenizer</code>) que segmenta el texto y esta función la aplica a cada elemento del conjunto de datos (variable <code>dataset</code>). En cada paso del ciclo se actualiza el vocabulario (variable <code>voc</code>) y se guarda la cantidad de palabras leidas y el tamaño del vocabulario en la lista <code>data</code>.</p>
-<div id="9a74555e" class="cell" data-execution_count="30">
+<div id="d3e4d0aa" class="cell" data-execution_count="30">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-29"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-29-1"><a href="#annotated-cell-29-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> dinamica_vocabulario(tokenizer):</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-29" data-target-annotation="1">1</button><span id="annotated-cell-29-2" class="code-annotation-target"><a href="#annotated-cell-29-2" aria-hidden="true" tabindex="-1"></a>  voc <span class="op">=</span> <span class="bu">set</span>()</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-29" data-target-annotation="2">2</button><span id="annotated-cell-29-3" class="code-annotation-target"><a href="#annotated-cell-29-3" aria-hidden="true" tabindex="-1"></a>  data <span class="op">=</span> []</span>
@@ -903,25 +903,25 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 </div>
 </div>
 <p>El primer sistema de segmentación analizado es <code>microTC</code>, tal y como se muestra en la primer línea de las siguientes instrucciones. La segunda y tercera línea tienen el objetivo de guardar la información en un marco de datos.</p>
-<div id="ab6c2413" class="cell" data-execution_count="31">
+<div id="45e591f0" class="cell" data-execution_count="31">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb51"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb51-1"><a href="#cb51-1" aria-hidden="true" tabindex="-1"></a>microTC <span class="op">=</span> TextModel(token_list<span class="op">=</span>[<span class="op">-</span><span class="dv">1</span>])</span>
 <span id="cb51-2"><a href="#cb51-2" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> dinamica_vocabulario(microTC.tokenize)</span>
 <span id="cb51-3"><a href="#cb51-3" aria-hidden="true" tabindex="-1"></a>df <span class="op">=</span> pd.DataFrame(data, columns<span class="op">=</span>[<span class="st">'Segmentos'</span>, <span class="st">'Vocabulario'</span>])</span>
 <span id="cb51-4"><a href="#cb51-4" aria-hidden="true" tabindex="-1"></a>df[<span class="st">'Tipo'</span>] <span class="op">=</span> <span class="st">'microTC'</span></span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>La dinámica del crecimiento de vocabulario con respecto a la cantidad de palabras procesadas se puede observar en la salida de la celda siguiente.</p>
-<div id="9ef18d39" class="cell" data-execution_count="32">
+<div id="5f0dbb43" class="cell" data-execution_count="32">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb52"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb52-1"><a href="#cb52-1" aria-hidden="true" tabindex="-1"></a>sns.lineplot(data<span class="op">=</span>df, x<span class="op">=</span><span class="st">'Segmentos'</span>, y<span class="op">=</span><span class="st">'Vocabulario'</span>, hue<span class="op">=</span><span class="st">'Tipo'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="02ManejandoTexto_files/figure-html/cell-33-output-1.png" width="619" height="429" class="figure-img"></p>
+<p><img src="02ManejandoTexto_files/figure-html/cell-33-output-1.png" width="618" height="429" class="figure-img"></p>
 </figure>
 </div>
 </div>
 </div>
 <p>El segundo sistema analizado es <code>microTC_qgrams</code> que corresponde al segmentador que procesa gramas de caracteres de tamañano 4.</p>
-<div id="73e591f6" class="cell" data-execution_count="33">
+<div id="aeb3ecee" class="cell" data-execution_count="33">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb53"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb53-1"><a href="#cb53-1" aria-hidden="true" tabindex="-1"></a>data <span class="op">=</span> dinamica_vocabulario(microTC_qgrams.tokenize)</span>
 <span id="cb53-2"><a href="#cb53-2" aria-hidden="true" tabindex="-1"></a>_ <span class="op">=</span> pd.DataFrame(data, columns<span class="op">=</span>[<span class="st">'Segmentos'</span>, <span class="st">'Vocabulario'</span>])</span>
 <span id="cb53-3"><a href="#cb53-3" aria-hidden="true" tabindex="-1"></a>_[<span class="st">'Tipo'</span>] <span class="op">=</span> <span class="st">'microTC_qgrams'</span></span>
@@ -930,7 +930,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="02ManejandoTexto_files/figure-html/cell-34-output-1.png" width="619" height="429" class="figure-img"></p>
+<p><img src="02ManejandoTexto_files/figure-html/cell-34-output-1.png" width="618" height="429" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -938,7 +938,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <p>La figura anterior muestra el comportamiento del vocabulario con respecto a palabras y gramas de caracteres. Los gramas de caracteres generan un vocabulario mayor en el conjunto analizado, pero también se puede observar que el vocabulario es finito y va a estabilizarse en algún momento. Esto se puede observar fácilmente en el caso límite, es decir, cuando el tamaño del grama es 1, en este caso el vocabulario corresponde a la codificación utilizada para representar cada caracter.</p>
 <p>El siguiente segmentador a analizar es <code>bilmaLAT</code>. En este caso se requiere una función auxiliar <code>bilmaLAT_tok</code> que solamente extrae el campo texto del diccionario utilizado para guardar cada elemento del conjunto de datos utilizado.</p>
 <p>El crecimiento del vocabulario de estos tres modelos se muestra en la salida de la siguiente celda. Se puede observar como el vocabulario de <code>bilmaLAT</code> se estabiliza, esto es porque este modelo tiene un vocabulario fijo y lo único que se observa es la cantidad de texto que se require procesar para cubrir ese vocabulario.</p>
-<div id="5f732402" class="cell" data-execution_count="34">
+<div id="5e70a003" class="cell" data-execution_count="34">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb54"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb54-1"><a href="#cb54-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> bilmaLAT_tok(data):</span>
 <span id="cb54-2"><a href="#cb54-2" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> bilmaLAT(data[<span class="st">'text'</span>])[<span class="st">'input_ids'</span>]</span>
 <span id="cb54-3"><a href="#cb54-3" aria-hidden="true" tabindex="-1"></a></span>
@@ -950,7 +950,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <div class="cell-output cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="02ManejandoTexto_files/figure-html/cell-35-output-1.png" width="619" height="429" class="figure-img"></p>
+<p><img src="02ManejandoTexto_files/figure-html/cell-35-output-1.png" width="618" height="429" class="figure-img"></p>
 </figure>
 </div>
 </div>
@@ -989,7 +989,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <section id="entrenando-un-segmentador" class="level2" data-number="2.10">
 <h2 data-number="2.10" class="anchored" data-anchor-id="entrenando-un-segmentador"><span class="header-section-number">2.10</span> Entrenando un segmentador</h2>
 <p>Habiendo utilizado el segmentador del modelo <code>bilmaLAT</code> (<a href="#sec-modelo-mexicano-tok" class="quarto-xref"><span>Sección 2.7</span></a>) es momento de describir los pasos para entrenar un segmentador de este tipo. Una de las primeras decisiones es definir las palabras especiales, que son utilizadas para identificar algunas partes del texto. Por ejemplo, es comun utilizar una marca para identificar el inicio de la oración y su final, así como palabras para que todos los textos tengan la misma cantidad de segmentos. En el siguiente código se define estas palabras en la variable <code>special_tokens</code>, el primer marcador <code>[UNK]</code> se utiliza para identificar los segmentos desconocidos, <code>[CLS]</code> es utilizado en el inicio de la oración, <code>[SEP]</code> se utiliza para identificar el final de la oración y para separar dos oraciones relacionadas, <code>[PAD]</code> se utiliza para completar un texto y que este tenga la cantidad de segmentos requeridos, <code>[MASK]</code> es la palabra que se utilizar para ocultar en segmento en la oración, finalemente <code>URL</code> y <code>USR</code> son etiquetas que se usan para sustituir las URLs y los nombres de usuario respectivamente.</p>
-<div id="7721a9e0" class="cell" data-execution_count="35">
+<div id="a060ca68" class="cell" data-execution_count="35">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb55"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb55-1"><a href="#cb55-1" aria-hidden="true" tabindex="-1"></a>special_tokens <span class="op">=</span> [</span>
 <span id="cb55-2"><a href="#cb55-2" aria-hidden="true" tabindex="-1"></a>    AddedToken(token, single_word<span class="op">=</span><span class="va">True</span>,</span>
 <span id="cb55-3"><a href="#cb55-3" aria-hidden="true" tabindex="-1"></a>               normalized<span class="op">=</span><span class="va">False</span>, special<span class="op">=</span><span class="va">True</span>)</span>
@@ -998,14 +998,14 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 <span id="cb55-6"><a href="#cb55-6" aria-hidden="true" tabindex="-1"></a>]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Habiendo definido las palabras especiales, es momento de inicializar la clase que se usa para segmentar, esta clase es <code>Tokenizer</code>, la cual requiere el método que encuentra en los segmentos, en esta ocasión se utiliza el método <code>WordPiece</code> (<span class="citation" data-cites="song-etal-2021-fast">Song et&nbsp;al. (<a href="11Referencias.html#ref-song-etal-2021-fast" role="doc-biblioref">2021</a>)</span>) que requiere solamente conocer cual es el identificador de los segmentos desconocidos (ver primera linea). En la segunda linea se añaden los identificadores especiales al segmentador.</p>
-<div id="248e2c69" class="cell" data-execution_count="36">
+<div id="c73dcdb0" class="cell" data-execution_count="36">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb56"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb56-1"><a href="#cb56-1" aria-hidden="true" tabindex="-1"></a>tokenizer <span class="op">=</span> Tokenizer(</span>
 <span id="cb56-2"><a href="#cb56-2" aria-hidden="true" tabindex="-1"></a>    WordPiece(unk_token<span class="op">=</span>special_tokens[<span class="dv">0</span>].content)</span>
 <span id="cb56-3"><a href="#cb56-3" aria-hidden="true" tabindex="-1"></a>)</span>
 <span id="cb56-4"><a href="#cb56-4" aria-hidden="true" tabindex="-1"></a>tokenizer.add_special_tokens(special_tokens)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El proceso de segmentar sigue el procedimiento descrito en <a href="#fig-pre-procesamiento" class="quarto-xref">Figura&nbsp;<span>2.1</span></a>, donde el primer paso es normalizar el texto. En el siguiente código se definen el proceso de normalización que se utilizara. El primer proceso corresponde a la normalización de unicode implementada en la clase <code>NFD</code>. La segunda y tercera normalización corresponde a la sustitución de URL por el identificador <code>URL</code> y el cambio de cualquier usuario por la etiqueta <code>USR</code>. La última linea añade estas normalizaciones a la instancia <code>tokenizer</code>.</p>
-<div id="dfb51adf" class="cell" data-execution_count="37">
+<div id="9d229f51" class="cell" data-execution_count="37">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-36"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-36-1"><a href="#annotated-cell-36-1" aria-hidden="true" tabindex="-1"></a>norm <span class="op">=</span> []</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-36" data-target-annotation="1">1</button><span id="annotated-cell-36-2" class="code-annotation-target"><a href="#annotated-cell-36-2" aria-hidden="true" tabindex="-1"></a>norm.append(NFD())</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-36" data-target-annotation="2">2</button><span id="annotated-cell-36-3" class="code-annotation-target"><a href="#annotated-cell-36-3" aria-hidden="true" tabindex="-1"></a>rep <span class="op">=</span> normalizers.Replace(Regex(<span class="vs">r'https</span><span class="op">?</span><span class="vs">://</span><span class="dv">\S</span><span class="op">+</span><span class="cf">|</span><span class="dv">\b</span><span class="vs">_url</span><span class="dv">\b</span><span class="vs">'</span>),</span>
@@ -1036,11 +1036,11 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 </div>
 </div>
 <p>El siguiente paso es definir el procedimiento para identificar los segmentos, en este caso se utiliza el espacio, de tal manera que cada segmento corresponde al concepto de palabra, esto se observa en la siguiente instrucción.</p>
-<div id="2919c1c9" class="cell" data-execution_count="38">
+<div id="12412327" class="cell" data-execution_count="38">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb57"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb57-1"><a href="#cb57-1" aria-hidden="true" tabindex="-1"></a>tokenizer.pre_tokenizer <span class="op">=</span> pre_tokenizers.Whitespace()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El último paso corresponde a incluir un procedimiento que agregue indicadores adicionales al texto segmentado, en este ejemplo se agrega una plantilla para cuando se segmenta un texto, en la cual se añade el identificador <code>[CLS]</code> al inicio y <code>[SEP]</code> al final. En el caso de segmentar dos textos, este par es separado con la etiqueta <code>[SEP]</code>.</p>
-<div id="0b35bac2" class="cell" data-execution_count="39">
+<div id="79649b09" class="cell" data-execution_count="39">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-38"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-38-1"><a href="#annotated-cell-38-1" aria-hidden="true" tabindex="-1"></a>post_tok <span class="op">=</span> TemplateProcessing(</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-38" data-target-annotation="1">1</button><span id="annotated-cell-38-2" class="code-annotation-target"><a href="#annotated-cell-38-2" aria-hidden="true" tabindex="-1"></a>    single<span class="op">=</span><span class="st">"[CLS] $A [SEP]"</span>,</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-38" data-target-annotation="2">2</button><span id="annotated-cell-38-3" class="code-annotation-target"><a href="#annotated-cell-38-3" aria-hidden="true" tabindex="-1"></a>    pair<span class="op">=</span><span class="st">"[CLS] $A [SEP] $B:1 [SEP]:1"</span>,</span>
@@ -1069,7 +1069,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 </div>
 </div>
 <p>Después de definir el procedimiento de segmentación, se inicia el proceso de entrenamiento. Este proceso se realiza con la clase <code>WordPieceTrainer</code>, la cual recibe como parámetros el tamaño del vocabulario y los segmentos especiales.</p>
-<div id="d9097b43" class="cell" data-execution_count="40">
+<div id="5dc88cb3" class="cell" data-execution_count="40">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-39"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><button class="code-annotation-anchor" data-target-cell="annotated-cell-39" data-target-annotation="1">1</button><span id="annotated-cell-39-1" class="code-annotation-target"><a href="#annotated-cell-39-1" aria-hidden="true" tabindex="-1"></a>vocab_size <span class="op">=</span> <span class="dv">2</span><span class="op">**</span><span class="dv">15</span></span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-39" data-target-annotation="2">2</button><span id="annotated-cell-39-2" class="code-annotation-target"><a href="#annotated-cell-39-2" aria-hidden="true" tabindex="-1"></a>trainer <span class="op">=</span> WordPieceTrainer(vocab_size<span class="op">=</span>vocab_size,</span>
 <span id="annotated-cell-39-3"><a href="#annotated-cell-39-3" aria-hidden="true" tabindex="-1"></a>                           special_tokens<span class="op">=</span>special_tokens)</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
@@ -1087,7 +1087,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 </div>
 </div>
 <p>El último paso es entrenar el segmentador con el método <code>train_from_iterator</code> el cual recibe los textos donde se estima el vocabulario y la clase que encuentra este vocabulario, i.e., variable <code>trainer</code>.</p>
-<div id="7cd4b416" class="cell" data-execution_count="41">
+<div id="47f99469" class="cell" data-execution_count="41">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-40"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><button class="code-annotation-anchor" data-target-cell="annotated-cell-40" data-target-annotation="1">1</button><span id="annotated-cell-40-1" class="code-annotation-target"><a href="#annotated-cell-40-1" aria-hidden="true" tabindex="-1"></a>tokenizer.train_from_iterator(<span class="bu">map</span>(<span class="kw">lambda</span> x: x[<span class="st">'text'</span>],</span>
 <span id="annotated-cell-40-2"><a href="#annotated-cell-40-2" aria-hidden="true" tabindex="-1"></a>                                  dataset),</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-40" data-target-annotation="2">2</button><span id="annotated-cell-40-3" class="code-annotation-target"><a href="#annotated-cell-40-3" aria-hidden="true" tabindex="-1"></a>                              trainer<span class="op">=</span>trainer,</span>
@@ -1106,11 +1106,11 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 </div>
 </div>
 <p>El siguiente fragmento utiliza el segmentador (i.e., <code>tokenizer</code>) para codificar el texto que se encuentra en la variable <code>txt</code> mediante el método <code>encode</code>.</p>
-<div id="3b3120c8" class="cell" data-execution_count="42">
+<div id="239cada4" class="cell" data-execution_count="42">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb58"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb58-1"><a href="#cb58-1" aria-hidden="true" tabindex="-1"></a>pp(tokenizer.encode(txt).ids)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[1, 5478, 4185, 18, 29700, 3716, 9712, 3661, 4567, 9821,
- 4430, 3661, 11614, 14404, 28997, 20, 2]</code></pre>
+<pre><code>[1, 5478, 4185, 18, 29704, 3716, 9712, 3661, 4567, 9821,
+ 4430, 3661, 11614, 14404, 29002, 20, 2]</code></pre>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -1134,7 +1134,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 </div>
 </div>
 <p>Se observar que el método para codificar el texto es diferente entre <code>tokenizer</code> y bilmaLAT, esto es porque <code>tokenizer</code> es un segmentador general y <code>bilmaLAT</code> corresponde a un segmentador que es utilizado en el contexto de la librería <a href="https://huggingface.co/docs/transformers/index">transformers</a>. Para poder utilizar <code>tokenizer</code> dentro de la librería <a href="https://huggingface.co/docs/transformers/index">transformers</a> es necesario crear una instancia de <code>PreTrainedTokenizerFast</code> lo cual se puede realizar con la siguiente instrucción.</p>
-<div id="4b058f7f" class="cell" data-execution_count="43">
+<div id="4887e489" class="cell" data-execution_count="43">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-42"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-42-1"><a href="#annotated-cell-42-1" aria-hidden="true" tabindex="-1"></a>tokenizer_backend <span class="op">=</span> PreTrainedTokenizerFast(</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-42" data-target-annotation="1">1</button><span id="annotated-cell-42-2" class="code-annotation-target"><a href="#annotated-cell-42-2" aria-hidden="true" tabindex="-1"></a>      tokenizer_object<span class="op">=</span>tokenizer,</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-42" data-target-annotation="2">2</button><span id="annotated-cell-42-3" class="code-annotation-target"><a href="#annotated-cell-42-3" aria-hidden="true" tabindex="-1"></a>      model_max_length<span class="op">=</span><span class="dv">512</span>,</span>
@@ -1158,7 +1158,7 @@ Figura&nbsp;2.1: Diagrama de Pre-procesamiento
 </div>
 </div>
 <p>El siguiente fragmento codifica y decodifica el texto que se encuentra en la variable <code>txt</code>, se observa como la palabra <em>Procesamiento</em> es codificada en tres segmentos.</p>
-<div id="c82943b9" class="cell" data-execution_count="44">
+<div id="91adcc19" class="cell" data-execution_count="44">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb60"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb60-1"><a href="#cb60-1" aria-hidden="true" tabindex="-1"></a>code <span class="op">=</span> tokenizer_backend(txt)</span>
 <span id="cb60-2"><a href="#cb60-2" aria-hidden="true" tabindex="-1"></a>pp(tokenizer_backend.decode(code))</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
@@ -2098,7 +2098,7 @@ Tellez, Eric S., Daniela Moctezuma, Sabino Miranda-Jiménez, y Mario Graff. 2018
 <span id="cb62-421"><a href="#cb62-421" aria-hidden="true" tabindex="-1"></a>pp([(w.text, w.pos_) <span class="cf">for</span> w <span class="kw">in</span> doc])</span>
 <span id="cb62-422"><a href="#cb62-422" aria-hidden="true" tabindex="-1"></a><span class="in">```</span></span>
 <span id="cb62-423"><a href="#cb62-423" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb62-424"><a href="#cb62-424" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modelo Mexicano {#sec-modelo-mexicano-tok}</span></span>
+<span id="cb62-424"><a href="#cb62-424" aria-hidden="true" tabindex="-1"></a><span class="fu">## Modelo Latinoamericano {#sec-modelo-mexicano-tok}</span></span>
 <span id="cb62-425"><a href="#cb62-425" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb62-426"><a href="#cb62-426" aria-hidden="true" tabindex="-1"></a>Los procedimientos anteriores segmentan un texto utilizando un conjunto de reglas y pueden generar un número infinito de palabras. En el otro extremo de los segmentadores se encuentran aquellos que utilizan un vocabulario fijo y que se basan en representar cualquier texto utilizando ese vocabulario. Por supuesto el vocabulario está compuesto por palabras, caracteres, sufijos, infijos y prefijos. Uno de estos algoritmos es el Byte Pair Encoding (@sennrich-etal-2016-neural).</span>
 <span id="cb62-427"><a href="#cb62-427" aria-hidden="true" tabindex="-1"></a></span>
