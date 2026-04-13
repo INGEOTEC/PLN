@@ -403,6 +403,8 @@ pp(score.statistic)
 
 El clasificador implementado en la sección anterior se puede encapsular en la clase `ClasificadorMNGram` para facilitar su uso. Lo parámetros de esta calse son `N` que corresponde al tamaño del modelo y `k_suavizado` que corresponde al parámetro utilizado para estimar la probabilidad de palabras que no se encuentran en el vocabulario (ver @sec-k-suavizado). 
 
+Después de haber inicializado la clase, es necesario estimar los parámetros, esto se hace llamando al método `ClasificadorMNGram.fit`, el cual regresa la instancia de la clase. El método `ClasificadorMNGram.predict` se utiliza para predecir la clase de los textos dados. 
+
 ```{python}
 #| echo: true
 #| lst-label: lst-clasificador-model-n-gram
@@ -438,9 +440,9 @@ class ClasificadorMNGram:
     ) # <11>
     return X + self.priors # <12>
 
-  def predict(self, X):
-    X = self.predict_log_proba(X)
-    return self.uniq_labels[X.argmax(axis=1)]
+  def predict(self, X): # <13>
+    X = self.predict_log_proba(X) # <14>
+    return self.uniq_labels[X.argmax(axis=1)] # <15>
 ```
 
 1. Tamaño de la ventanda
@@ -455,6 +457,11 @@ class ClasificadorMNGram:
 10. Calcula $\log \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$
 11. Calcula $\log \mathbb P(\mathcal X \mid \mathcal Y)$ para cada clase
 12. Regresa la suma de los logaritmos
+13. Predice la clase de cada texto en `X`
+14. $\log \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$
+15. Selecciona la clase que tiene la mayor probabilidad
+
+En las siguientes lineas de código se ejemplica como se hace una instancia de `ClasificadorMNGram` con el conjunto de datos usado en la @sec-tc-categorical. 
 
 ```{python}
 #| echo: true
@@ -464,6 +471,8 @@ cl = ClasificadorMNGram().fit(
   [x['country'] for x in entrenamiento]
 )
 ```
+
+En la siguiente linea se predicen las clases del conjunto `prueba` y se mide el rendimiento; en la salida se puede observar que el rendimiento de `ClasificadorMNGram` es igual al encontrado por `N=1` que fue el realizado en la @sec-tc-categorical.
 
 ```{python}
 #| echo: true
@@ -476,10 +485,17 @@ score(hy, name='ClasificadorMNGram').statistic
 ### Actividad
 
 :::: {#exr-ClasificadorMNGram}
-Indique ¿cuál es el rendimiento (macro-recall) (en los datos de la variable `prueba`) del modelo `ClasificadorMNGram` (entrenado con los datos de la variable `entrenamiento`) con el parámetro $N=2$ y `k_suavizado=0.1`?
+Indique ¿cuál es el rendimiento (macro-recall) (en los datos de la variable `prueba`) del modelo `ClasificadorMNGram` (entrenado con los datos de la variable `entrenamiento`) con el parámetro `N=2` y `k_suavizado=0.1`?
 
 * 0.7883
 * 0.7866
 * 0.8048
+::::
+
+:::: {#exr-ClasificadorMNGram-mejor}
+Indique si el rendimiento obtenido utilizando macro-recall en el conjunto `prueba` de `ClasificadorMNGram` y el de `ClasificadorMNGram(N=1, k_suavizado=0.1)` es significativamente diferente. 
+
+* Verdadero
+* Falso
 ::::
 ::: 
