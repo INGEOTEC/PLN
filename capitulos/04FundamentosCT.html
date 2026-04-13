@@ -273,7 +273,7 @@ window.Quarto = {
 
 <header id="title-block-header" class="quarto-title-block default">
 <div class="quarto-title">
-<div class="quarto-title-block"><div><h1 class="title"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Fundamentos de Clasificación de Texto</span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Código</button></div></div>
+<div class="quarto-title-block"><div><h1 class="title"><span id="sec-fund-cl-texto" class="quarto-section-identifier"><span class="chapter-number">4</span>&nbsp; <span class="chapter-title">Fundamentos de Clasificación de Texto</span></span></h1><button type="button" class="btn code-tools-button" id="quarto-code-tools-source"><i class="bi"></i> Código</button></div></div>
 </div>
 
 
@@ -293,7 +293,7 @@ window.Quarto = {
 <p>El <strong>objetivo</strong> de la unidad es analizar los fundamentos de un modelo de clasificación de texto.</p>
 <section id="paquetes-usados" class="level2 unnumbered">
 <h2 class="unnumbered anchored" data-anchor-id="paquetes-usados">Paquetes usados</h2>
-<div id="a3cf2b63" class="cell" data-execution_count="1">
+<div id="50acd878" class="cell" data-execution_count="1">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> pprint</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> collections <span class="im">import</span> Counter</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
@@ -326,7 +326,7 @@ window.Quarto = {
 <h2 data-number="4.3" class="anchored" data-anchor-id="sec-categorical-distribution"><span class="header-section-number">4.3</span> Modelado Probabilístico (Distribución Categórica)</h2>
 <p>Se inicia la descripción de clasificación de texto presentando un ejemplo sintético que ejemplifica los supuestos que se realizan en el modelo. La distribución categórica modela el evento de seleccionar <span class="math inline">\(K\)</span> eventos, los cuales pueden estar codificados como caracteres. Si esta selección se realiza <span class="math inline">\(\ell\)</span> veces se cuenta con una secuencia de eventos representados por caracteres. Por ejemplo, los <span class="math inline">\(K\)</span> eventos pueden ser representados por los caracteres <em>w</em>, <em>x</em>, <em>y</em> y <em>z</em>. Utilizando este proceso se puede utilizar para ejemplificar el proceso de asociar una secuencia a una clase, e.g., positiva o negativa.</p>
 <p>El primer paso es seleccionar los parámetros de dos distribuciones tal y como se muestra en las siguientes primeras dos líneas. Cada distribución se asume que es la generadora de una clase. El segundo paso es tomar una muestra de cada distribución, en particular se toman <span class="math inline">\(1000\)</span> muestras con el siguiente procedimiento. En cada iteración se toma una muestra de una distribución Gausiana (<span class="math inline">\(\mathcal N(15, 3)\)</span>), la variable aleatoria se guarda en la variable <code>length</code>. Esta variable aleatoria representa la longitud de la secuencia. El tercer paso es sacar la muestra de las distribuciones categóricas definidas previamente. Las muestras son guardadas en la lista <code>D</code> junto con la clase a la que pertenece <span class="math inline">\(0\)</span> y <span class="math inline">\(1.\)</span></p>
-<div id="2dbb0d18" class="cell" data-execution_count="3">
+<div id="32ccd0db" class="cell" data-execution_count="3">
 <div id="lst-problema-sintetitco" class="python cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-problema-sintetitco-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -402,19 +402,19 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 </thead>
 <tbody>
 <tr class="odd">
-<td>x x x w w x z x x y x x</td>
+<td>w x y w z z w w x x z x x x x w w x x y z</td>
 <td>Positivo</td>
 </tr>
 <tr class="even">
-<td>x x z w w w y w x z z w</td>
+<td>z y z y z x x x z z y w y x x w z x x w y</td>
 <td>Negativo</td>
 </tr>
 <tr class="odd">
-<td>x w x x z z w z x y z z</td>
+<td>z x x z x z x x w w w z x x y z y</td>
 <td>Positivo</td>
 </tr>
 <tr class="even">
-<td>x x w w w x y z y z z y</td>
+<td>y x x z z x x x z y y z y w z x z</td>
 <td>Negativo</td>
 </tr>
 </tbody>
@@ -425,7 +425,7 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 </div>
 </div>
 <p>El primer paso es encontrar los parámetros para poder calcular <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y=1)\)</span> y <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y=0)\)</span>. Para realizar esto, se puede adaptar la clase <code>ModeloNGram</code> (<a href="03ModeladoLenguaje.html#lst-modelo-n-gram" class="quarto-xref">Listado&nbsp;<span>3.5</span></a>) para el caso donde <span class="math inline">\(N=1\)</span> y adicionalmente se requiere una modificación para que el método <code>ModeloNGram</code> considere los caracteres <em>w</em>, <em>x</em>, <em>y</em> y <em>z</em> como palabras o segmentos, el siguiente código hace estas adecuaciones.</p>
-<div id="15aa41c5" class="cell" data-execution_count="5">
+<div id="c3966bd8" class="cell" data-execution_count="5">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="kw">class</span> ModeloPalabra(ModeloNGram):</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="kw">def</span> <span class="fu">__init__</span>(<span class="va">self</span>, k_suavizado: <span class="bu">float</span><span class="op">=</span><span class="dv">1</span>):</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>    <span class="bu">super</span>(ModeloPalabra, <span class="va">self</span>).<span class="fu">__init__</span>(<span class="dv">1</span>, k_suavizado, <span class="va">False</span>)</span>
@@ -434,7 +434,7 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 <span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>    <span class="cf">return</span> <span class="va">self</span>.get_text(texto).split()</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Habiendo definido la clase <code>ModeloPalabra</code> los parametros de <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y)\)</span> se pueden calcular con las siguiente instrucciones; en la variable <code>pos_l</code> se tienen los parámetros para <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y=1)\)</span> y en <code>neg_l</code> para <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y=0).\)</span></p>
-<div id="57db7710" class="cell" data-execution_count="6">
+<div id="bff4dc56" class="cell" data-execution_count="6">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-4"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-4-1"><a href="#annotated-cell-4-1" aria-hidden="true" tabindex="-1"></a>pos_l <span class="op">=</span> ModeloPalabra(k_suavizado<span class="op">=</span><span class="dv">0</span>).fit(</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-4" data-target-annotation="1">1</button><span id="annotated-cell-4-2" class="code-annotation-target"><a href="#annotated-cell-4-2" aria-hidden="true" tabindex="-1"></a>  [x <span class="cf">for</span> x <span class="kw">in</span> D <span class="cf">if</span> x[<span class="st">'clase'</span>] <span class="op">==</span> <span class="dv">1</span>]</span>
 <span id="annotated-cell-4-3"><a href="#annotated-cell-4-3" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -456,7 +456,7 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 </div>
 </div>
 <p>Recordando que se conocen los valores de los paramétros de <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y)\)</span> dado que se trata de un problema sinténtico (ver <a href="#lst-problema-sintetitco" class="quarto-xref">Listado&nbsp;<span>4.1</span></a>), es oportuno comparar los parametros exactos con respecto a los parámetros estimados mediante el conjunto <code>D</code>.</p>
-<div id="a2f00aef" class="cell" data-execution_count="7">
+<div id="299c38fc" class="cell" data-execution_count="7">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-5"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><button class="code-annotation-anchor" data-target-cell="annotated-cell-5" data-target-annotation="1">1</button><span id="annotated-cell-5-1" class="code-annotation-target"><a href="#annotated-cell-5-1" aria-hidden="true" tabindex="-1"></a>m <span class="op">=</span> {k: <span class="bu">chr</span>(<span class="dv">122</span> <span class="op">-</span> k) <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>)}</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-5" data-target-annotation="2">2</button><span id="annotated-cell-5-2" class="code-annotation-target"><a href="#annotated-cell-5-2" aria-hidden="true" tabindex="-1"></a>pp([(m[k], pos_l.frase[m[k]] <span class="op">/</span> pos_l.hist) <span class="cf">for</span> k <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">4</span>)])</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-annotation">
@@ -472,18 +472,18 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 </dl>
 </div>
 <div class="cell-output cell-output-stdout">
-<pre><code>[('z', 0.2001726198380029), ('y', 0.19957508962953127),
- ('x', 0.35141415482671623), ('w', 0.24883813570574956)]</code></pre>
+<pre><code>[('z', 0.20155610704943322), ('y', 0.20242806358575358),
+ ('x', 0.34542893554228987), ('w', 0.2505868938225233)]</code></pre>
 </div>
 </div>
-<p>Se puede observar que <span class="math inline">\(\mathbb P(\mathcal X=w \mid \mathcal X=1)=0.25\)</span> y la estimación tiene un valor de <span class="math inline">\(0.2488\)</span></p>
+<p>Se puede observar que <span class="math inline">\(\mathbb P(\mathcal X=w \mid \mathcal X=1)=0.25\)</span> y la estimación tiene un valor de <span class="math inline">\(0.2506\)</span></p>
 <p>Para ejemplificar el uso de <code>pos_l</code> y <code>neg_l</code>, el siguiente ejemplo los utiliza para calcular la verosimilitud de los primeros dos ejemplo del conjunto <code>D</code>.</p>
-<div id="6abf40d3" class="cell" data-execution_count="8">
+<div id="3f279f7c" class="cell" data-execution_count="8">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>pos_vero <span class="op">=</span> pos_l.log_prob(D[:<span class="dv">2</span>])</span>
 <span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>neg_vero <span class="op">=</span> neg_l.log_prob(D[:<span class="dv">2</span>])</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El logaritmo de la probabilidad a priori se puede calcular con la siguientes instrucciones.</p>
-<div id="9c60ebe5" class="cell" data-execution_count="9">
+<div id="d68be389" class="cell" data-execution_count="9">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>_, priors <span class="op">=</span> np.unique([x[<span class="st">'clase'</span>] <span class="cf">for</span> x <span class="kw">in</span> D],</span>
 <span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>                      return_counts<span class="op">=</span><span class="va">True</span>)</span>
 <span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>priors <span class="op">=</span> np.log(priors)</span>
@@ -492,7 +492,7 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 <span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>neg_prior <span class="op">=</span> priors[<span class="dv">0</span>] <span class="op">-</span> N</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Una ves que se han identificador los parámetros, estos pueden ser utilizados para predecir la clase dada unas secuencias. El primer paso es calcular la verosimilitud (i.e., <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y)\)</span>) para cada clase y multiplicar este valor por la probabilidad a priori (i.e., <span class="math inline">\(\mathbb P(\mathcal Y)\)</span>) para obtener <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)\)</span> tal y como se muestra en el siguiente código.</p>
-<div id="db635eb3" class="cell" data-execution_count="10">
+<div id="da6dd147" class="cell" data-execution_count="10">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-8"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><span id="annotated-cell-8-1"><a href="#annotated-cell-8-1" aria-hidden="true" tabindex="-1"></a>pos_cond <span class="op">=</span> np.exp(</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-8" data-target-annotation="1">1</button><span id="annotated-cell-8-2" class="code-annotation-target"><a href="#annotated-cell-8-2" aria-hidden="true" tabindex="-1"></a>  pos_l.log_prob(D) <span class="op">+</span> pos_prior</span>
 <span id="annotated-cell-8-3"><a href="#annotated-cell-8-3" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -511,11 +511,11 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 </div>
 </div>
 <p>El siguiente paso para calcular la probabilidad a posteriori es calcular la evidencia la cual corresponde a la suma de <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)\)</span> tal y como se muestra en la siguiente instrucción.</p>
-<div id="ae977483" class="cell" data-execution_count="11">
+<div id="8b802154" class="cell" data-execution_count="11">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb6"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>evidencia <span class="op">=</span> np.vstack([pos_cond, neg_cond]).<span class="bu">sum</span>(axis<span class="op">=</span><span class="dv">0</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Finalmente la probabilidad a posteriori (<a href="#eq-teorema-bayes" class="quarto-xref">Ecuación&nbsp;<span>4.1</span></a>) para la clase positiva y negativa se calcula con las siguientes instrucciones.</p>
-<div id="b5639364" class="cell" data-execution_count="12">
+<div id="dcc49aa1" class="cell" data-execution_count="12">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="annotated-cell-10"><pre class="sourceCode python code-annotation-code code-with-copy code-annotated"><code class="sourceCode python"><button class="code-annotation-anchor" data-target-cell="annotated-cell-10" data-target-annotation="1">1</button><span id="annotated-cell-10-1" class="code-annotation-target"><a href="#annotated-cell-10-1" aria-hidden="true" tabindex="-1"></a>pos_post <span class="op">=</span> pos_cond <span class="op">/</span> evidencia</span>
 <button class="code-annotation-anchor" data-target-cell="annotated-cell-10" data-target-annotation="2">2</button><span id="annotated-cell-10-2" class="code-annotation-target"><a href="#annotated-cell-10-2" aria-hidden="true" tabindex="-1"></a>neg_post <span class="op">=</span> neg_cond <span class="op">/</span> evidencia</span><div class="code-annotation-gutter-bg"></div><div class="code-annotation-gutter"></div></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-annotation">
@@ -532,12 +532,12 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 </div>
 </div>
 <p>Finalmente la case corresponde al evento más probable, es decir, la secuencia corresponde a la clase positiva si <span class="math inline">\(\mathbb P(\mathcal Y=1 \mid \mathcal X) &gt; \mathbb P(\mathcal Y=0 \mid \mathcal X)\)</span>. Esto se puede calcular usando la función <code>np.where</code>. Teniendo las predicciones se puede mendir el rendimiento del modelo en el conjunto de entrenamiento. En el siguiente fragmento, el rendimiento corresponde al promedio de la cobertura por clase, i.e., macro-recall.</p>
-<div id="fb7bb73f" class="cell" data-execution_count="13">
+<div id="2ebca2c0" class="cell" data-execution_count="13">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb7"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> np.where(pos_post <span class="op">&gt;</span> neg_post, <span class="dv">1</span>, <span class="dv">0</span>)</span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> [x[<span class="st">'clase'</span>] <span class="cf">for</span> x <span class="kw">in</span> D]</span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>pp(macro_recall(y, hy, name<span class="op">=</span><span class="st">'Entrenamiento'</span>).statistic)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-stdout">
-<pre><code>0.7545</code></pre>
+<pre><code>0.7464999999999999</code></pre>
 </div>
 </div>
 <div class="callout callout-style-default callout-tip callout-titled">
@@ -564,22 +564,22 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 <h2 data-number="4.4" class="anchored" data-anchor-id="sec-tc-categorical"><span class="header-section-number">4.4</span> Clasificador de Texto</h2>
 <p>En la sección anterior se trabajo desde la creación de un conjunto de datos sintético, que fue generado mediante dos Distribuciones Categóricas, donde a cada distribución se le asignó una clase, e.g., positiva o negativa. Esto permitió observar todas las partes de modelado, aunque es relevante mencionar que se desconoce el procedimiento que genera los textos y el proceso de aprendizaje empieza con un conjunto de datos.</p>
 <p>En esta sección utilizaremos el siguiente conjunto de datos</p>
-<div id="2af207a9" class="cell" data-execution_count="14">
+<div id="67d19a5a" class="cell" data-execution_count="14">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb9"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a>dataset <span class="op">=</span> load_dataset(lang<span class="op">=</span><span class="st">'es'</span>, dataset<span class="op">=</span><span class="st">'train'</span>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>el cual tiene asociado a cada texto el pais de procedencia. De este conjunto se seleccionan solo los textos que provienen de México y Argentina como se muestra en la siguiente instrucción</p>
-<div id="9343e62a" class="cell" data-execution_count="15">
+<div id="c438a759" class="cell" data-execution_count="15">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb10"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb10-1"><a href="#cb10-1" aria-hidden="true" tabindex="-1"></a>ar_mx <span class="op">=</span> [x <span class="cf">for</span> x <span class="kw">in</span> dataset <span class="cf">if</span> x[<span class="st">'country'</span>] <span class="kw">in</span> [<span class="st">'ar'</span>, <span class="st">'mx'</span>]]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El 20% de los datos se utilizarán para hacer el conjunto de prueba y el 80% serán el conjunto de entrenamiento, esto con el objetivo de medir el rendimiento del clasificador de texto que se desarrollará.</p>
-<div id="81f56452" class="cell" data-execution_count="16">
+<div id="95ae284c" class="cell" data-execution_count="16">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb11"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a>s <span class="op">=</span> <span class="bu">int</span>(<span class="bu">len</span>(ar_mx) <span class="op">*</span> <span class="fl">0.8</span>)</span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>entrenamiento <span class="op">=</span> ar_mx[:s]</span>
 <span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>prueba <span class="op">=</span> ar_mx[s:]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>Como se puede observar, los conjuntos en las variables <code>entrenamiento</code> y <code>prueba</code> son similares al conjunto <code>D</code> – creado en <a href="#lst-problema-sintetitco" class="quarto-xref">Listado&nbsp;<span>4.1</span></a>. La diferencia es que la secuencia de letras está cambiada por un texto y que la clase corresponde al pais donde se originó el texto.</p>
 <p>En la <a href="#sec-categorical-distribution" class="quarto-xref"><span>Sección 4.3</span></a> se extendió la clase <code>ModeloNGram</code> (<a href="03ModeladoLenguaje.html#lst-modelo-n-gram" class="quarto-xref">Listado&nbsp;<span>3.5</span></a>) para considerar que las palabras solo eran cuatro caracteres y que el procedimiento de segmentar correspondía al espacio; esto dío lugar a la clase <code>ModeloPalabra</code> que se utilizó para calcular los parámetros <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y)\)</span>. Por otror lado, el conjunto en las variables <code>entrenamiento</code> y <code>prueba</code> ha sido previamente analiza con la clase <code>ModeloNGram</code>. Es relevante recordar que <code>ModeloNGram</code> utiliza para segmentar el método implementado en <code>bilmaLAT</code> (ver <a href="02ManejandoTexto.html#sec-modelo-mexicano-tok" class="quarto-xref"><span>Sección 2.7</span></a>), entonces se puede concluir que esta clase sirve para calcular los parámetros <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y)\)</span> en el conjunto de prueba. En el siguiente código se utiliza <code>ModeloNGram</code> para estimar los parámetros correpondientes a <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y=\)</span>mx<span class="math inline">\()\)</span> y <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y=\)</span>ar<span class="math inline">\().\)</span></p>
-<div id="e542f99b" class="cell" data-execution_count="17">
+<div id="62759310" class="cell" data-execution_count="17">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb12"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb12-1"><a href="#cb12-1" aria-hidden="true" tabindex="-1"></a>mx_l <span class="op">=</span> ModeloNGram(N<span class="op">=</span><span class="dv">1</span>, k_suavizado<span class="op">=</span><span class="fl">0.01</span>).fit(</span>
 <span id="cb12-2"><a href="#cb12-2" aria-hidden="true" tabindex="-1"></a>  [x <span class="cf">for</span> x <span class="kw">in</span> entrenamiento <span class="cf">if</span> x[<span class="st">'country'</span>] <span class="op">==</span> <span class="st">'mx'</span>]</span>
 <span id="cb12-3"><a href="#cb12-3" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -589,7 +589,7 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 <span id="cb12-7"><a href="#cb12-7" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El logaritmo de la probabilidad a priori se puede calcular con la siguientes instrucciones.</p>
-<div id="62f2550e" class="cell" data-execution_count="18">
+<div id="ac71e5f8" class="cell" data-execution_count="18">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb13"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>uniq_labels, priors <span class="op">=</span> np.unique(</span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>  [x[<span class="st">'country'</span>] <span class="cf">for</span> x <span class="kw">in</span> entrenamiento],</span>
 <span id="cb13-3"><a href="#cb13-3" aria-hidden="true" tabindex="-1"></a>  return_counts<span class="op">=</span><span class="va">True</span></span>
@@ -601,18 +601,18 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 </div>
 <p>Verifique que el primer valor de <code>uniq_labels</code> corresponde a ar</p>
 <p>Hasta el momento se tienen todos los elementos para calcular el logaritmo de <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)\)</span>; en esta ocasión se crea una función para utilizarla en cualquier conjunto <span class="math inline">\(\mathcal X\)</span> tal y como se muestra en el siguiente código.</p>
-<div id="ce54d2fc" class="cell" data-execution_count="19">
+<div id="85511ff8" class="cell" data-execution_count="19">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb14"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" aria-hidden="true" tabindex="-1"></a><span class="kw">def</span> log_prob_conditional(X):</span>
 <span id="cb14-2"><a href="#cb14-2" aria-hidden="true" tabindex="-1"></a>  ar_cond <span class="op">=</span> ar_l.log_prob(X) <span class="op">+</span> ar_prior</span>
 <span id="cb14-3"><a href="#cb14-3" aria-hidden="true" tabindex="-1"></a>  mx_cond <span class="op">=</span> mx_l.log_prob(X) <span class="op">+</span> mx_prior</span>
 <span id="cb14-4"><a href="#cb14-4" aria-hidden="true" tabindex="-1"></a>  <span class="cf">return</span> np.c_[ar_cond, mx_cond]</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>En el siguiente código se utiliza la función <code>log_pro_conditional</code> en el conjunto que se encuentra en la variable <code>prueba</code> y que no fue utilizado para estimar los parámetros.</p>
-<div id="6a00c505" class="cell" data-execution_count="20">
+<div id="d86a8b45" class="cell" data-execution_count="20">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb15"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a>ll <span class="op">=</span> log_prob_conditional(prueba)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>El logaritmo de <span class="math inline">\(\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)\)</span> contiene la información necesaria para estimar la clase de cada texto. La clase corresponde al valor máximo, que corresponde a la probabilidad máxima cuando se normaliza con la evidencia. El siguiente código calcula la clase para cada texto que está en la variable <code>prueba</code> y calcula el rendimiento; medido con el promedio de la cobertura (i.e., macro-recall).</p>
-<div id="db866505" class="cell" data-execution_count="21">
+<div id="92d1ad01" class="cell" data-execution_count="21">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb16"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb16-1"><a href="#cb16-1" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> uniq_labels[ll.argmax(axis<span class="op">=</span><span class="dv">1</span>)]</span>
 <span id="cb16-2"><a href="#cb16-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> [x[<span class="st">'country'</span>] <span class="cf">for</span> x <span class="kw">in</span> prueba]</span>
 <span id="cb16-3"><a href="#cb16-3" aria-hidden="true" tabindex="-1"></a>score <span class="op">=</span> macro_recall(y, hy, name<span class="op">=</span><span class="st">'N=1'</span>)</span>
@@ -626,7 +626,7 @@ Tabla&nbsp;4.1: Conjunto generado de clasificación de texto
 <h2 data-number="4.5" class="anchored" data-anchor-id="encapsulando-el-clasificador"><span class="header-section-number">4.5</span> Encapsulando el clasificador</h2>
 <p>El clasificador implementado en la sección anterior se puede encapsular en la clase <code>ClasificadorMNGram</code> para facilitar su uso. Lo parámetros de esta calse son <code>N</code> que corresponde al tamaño del modelo y <code>k_suavizado</code> que corresponde al parámetro utilizado para estimar la probabilidad de palabras que no se encuentran en el vocabulario (ver <a href="03ModeladoLenguaje.html#sec-k-suavizado" class="quarto-xref"><span>Sección 3.3.1</span></a>).</p>
 <p>Después de haber inicializado la clase, es necesario estimar los parámetros, esto se hace llamando al método <code>ClasificadorMNGram.fit</code>, el cual regresa la instancia de la clase. El método <code>ClasificadorMNGram.predict</code> se utiliza para predecir la clase de los textos dados.</p>
-<div id="9ff801be" class="cell" data-execution_count="22">
+<div id="09662615" class="cell" data-execution_count="22">
 <div id="lst-clasificador-model-n-gram" class="python cell-code listing quarto-float quarto-figure quarto-figure-left anchored">
 <figure class="quarto-float quarto-float-lst figure">
 <figcaption class="quarto-float-caption-top quarto-float-caption quarto-float-lst" id="lst-clasificador-model-n-gram-caption-0ceaefa1-69ba-4598-a22c-09a6ac19f8ca">
@@ -735,14 +735,14 @@ Listado&nbsp;4.2: Clasificador de texto basado en el modelo de lenguaje de grama
 </div>
 </div>
 <p>En las siguientes lineas de código se ejemplica como se hace una instancia de <code>ClasificadorMNGram</code> con el conjunto de datos usado en la <a href="#sec-tc-categorical" class="quarto-xref"><span>Sección 4.4</span></a>.</p>
-<div id="5548b90b" class="cell" data-execution_count="23">
+<div id="7617d85d" class="cell" data-execution_count="23">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb18"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb18-1"><a href="#cb18-1" aria-hidden="true" tabindex="-1"></a>cl <span class="op">=</span> ClasificadorMNGram().fit(</span>
 <span id="cb18-2"><a href="#cb18-2" aria-hidden="true" tabindex="-1"></a>  entrenamiento,</span>
 <span id="cb18-3"><a href="#cb18-3" aria-hidden="true" tabindex="-1"></a>  [x[<span class="st">'country'</span>] <span class="cf">for</span> x <span class="kw">in</span> entrenamiento]</span>
 <span id="cb18-4"><a href="#cb18-4" aria-hidden="true" tabindex="-1"></a>)</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 </div>
 <p>En la siguiente linea se predicen las clases del conjunto <code>prueba</code> y se mide el rendimiento; en la salida se puede observar que el rendimiento de <code>ClasificadorMNGram</code> es igual al encontrado por <code>N=1</code> que fue el realizado en la <a href="#sec-tc-categorical" class="quarto-xref"><span>Sección 4.4</span></a>.</p>
-<div id="9b1fb10d" class="cell" data-execution_count="24">
+<div id="986de6e2" class="cell" data-execution_count="24">
 <div class="code-copy-outer-scaffold"><div class="sourceCode cell-code" id="cb19"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a>hy <span class="op">=</span> cl.predict(prueba)</span>
 <span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>score(hy, name<span class="op">=</span><span class="st">'ClasificadorMNGram'</span>).statistic</span></code></pre></div><button title="Copiar al portapapeles" class="code-copy-button"><i class="bi"></i></button></div>
 <div class="cell-output cell-output-display" data-execution_count="24">
@@ -768,7 +768,7 @@ Listado&nbsp;4.2: Clasificador de texto basado en el modelo de lenguaje de grama
 </ul>
 </div>
 <div id="exr-ClasificadorMNGram-mejor" class="theorem exercise">
-<p><span class="theorem-title"><strong>Ejercicio 4.3</strong></span> Indique si el rendimiento de <code>ClasificadorMNGram</code> y el obtenido con <code>ClasificadorMNGram(N=1, k_suavizado=0.1)</code> es significativamente diferente.</p>
+<p><span class="theorem-title"><strong>Ejercicio 4.3</strong></span> Indique si el rendimiento obtenido utilizando macro-recall en el conjunto <code>prueba</code> de <code>ClasificadorMNGram</code> y el de <code>ClasificadorMNGram(N=1, k_suavizado=0.1)</code> es significativamente diferente.</p>
 <ul>
 <li>Verdadero</li>
 <li>Falso</li>
@@ -1287,7 +1287,7 @@ Listado&nbsp;4.2: Clasificador de texto basado en el modelo de lenguaje de grama
       </a>
   </div>
 </nav><div class="modal fade" id="quarto-embedded-source-code-modal" tabindex="-1" aria-labelledby="quarto-embedded-source-code-modal-label" aria-hidden="true"><div class="modal-dialog modal-dialog-scrollable"><div class="modal-content"><div class="modal-header"><h5 class="modal-title" id="quarto-embedded-source-code-modal-label">Ejecutar el código</h5><button class="btn-close" data-bs-dismiss="modal"></button></div><div class="modal-body"><div class="">
-<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Fundamentos de Clasificación de Texto</span></span>
+<div class="code-copy-outer-scaffold"><div class="sourceCode" id="cb21" data-shortcodes="false"><pre class="sourceCode markdown code-with-copy"><code class="sourceCode markdown"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="fu"># Fundamentos de Clasificación de Texto {#sec-fund-cl-texto}</span></span>
 <span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a></span>
 <span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>El **objetivo** de la unidad es analizar los fundamentos de un modelo de clasificación de texto. </span>
 <span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
