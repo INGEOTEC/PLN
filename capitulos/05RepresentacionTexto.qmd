@@ -1,6 +1,6 @@
 # Representación de Texto
 
-El **objetivo** de la unidad es 
+El **objetivo** de la unidad es analizar diferentes representaciones de texto basadas en vectores. 
 
 ## Paquetes usados {.unnumbered}
 
@@ -25,7 +25,11 @@ sns.set_style('whitegrid')
 ```{python}
 #| echo: false
 #| output: false
+
+from collections import Counter
 from os.path import isfile, isdir
+from transformers import AutoTokenizer
+from encexp.utils import load_dataset
 from EvoMSA.utils import Download
 from EvoMSA import utils
 utils.USE_TQDM = False
@@ -35,6 +39,147 @@ if not isfile('delitos.zip'):
 if not isdir('delitos'):
     !unzip -Pingeotec delitos.zip
 ```
+
+```{python}
+#| echo: false
+from IPython.display import Markdown
+
+class Frec:
+  def __init__(self, N: int=2):
+    self.N = N # <1>
+    self.voc = Counter()
+    self.frase = Counter()
+    self.hist = Counter()
+
+  @property
+  def segmentador(self):
+    try:
+      return self._segmentador
+    except AttributeError:
+      _ = AutoTokenizer.from_pretrained('guillermoruiz/bilmaLAT') # <5>
+      self._segmentador = _
+      return _
+
+  def fit(self, X, y=None):
+    N = self.N
+    voc = self.voc
+    for ele in X:
+      tokens = self.segmentar(ele)
+      voc.update(tokens)
+      _ = ["|".join(map(str, lst))
+          for lst in zip(*[tokens[i:] for i in range(N)])]
+      self.frase.update(_)
+      _ = ["|".join(map(str, lst))
+          for lst in zip(*[tokens[i:] for i in range(N-1)])]
+      self.hist.update(_)
+    self.voc = len(voc)
+    if N == 1:
+      self.hist = sum(self.frase.values())
+    return self
+
+  def segmentar(self, texto):
+    _ = self.get_text(texto)
+    return self.segmentador(_).input_ids
+
+  def get_text(self, ele):
+    if isinstance(ele, dict):
+      return ele['text']
+    return ele
+
+  def frecuencias(self, code, log=False):
+    num = self.frase["|".join(map(str, code))]
+    if self.N == 1:
+      den = self.hist
+    else:
+      den = self.hist["|".join(map(str, code[:-1]))]
+    if log: # <14>
+      return np.log(num), np.log(den)
+    return num, den
+
+
+class Freck(Frec):
+  def __init__(self, N: int=2, k_suavizado: float=1):
+    super(Freck, self).__init__(N)
+    self.k_suavizado = k_suavizado
+
+  def frecuencias(self, code, log=False):
+    num, den = super(Freck, self).frecuencias(code)
+    num = num + self.k_suavizado
+    den = den + self.k_suavizado * self.voc
+    if log:
+      return np.log(num), np.log(den)
+    return num, den
+
+
+class ModeloNGram(Freck):
+  def __init__(self, N: int=2,
+               k_suavizado: float=1,
+               promedio: bool=False):
+    super(ModeloNGram, self).__init__(N, k_suavizado)
+    self.promedio = promedio
+
+  def _log_prob(self, ele):
+    tokens = self.segmentar(ele)
+    acc = 0
+    for code in zip(*[tokens[i:] for i in range(self.N)]):
+      num, den = self.frecuencias(code, log=True)
+      acc += num - den
+    if self.promedio:
+      return acc / len(tokens)
+    return acc
+
+  def log_prob(self, X):
+    _log_prob = self._log_prob
+    return np.r_[[_log_prob(x) for x in X]]
+```
+
+## Introducción
+
+En el @sec-fund-cl-texto se describió un clasificador de texto que está basado en el modelo de lenguaje de gramas. Uno se podría imaginar que este clasificador representa de alguna manera al texto, es decir, que exite una estructura matemática donde los textos están representados. En este caso particular se observará que los textos están representados en un espacio vectorial. En los siguientes fragmentos de código se realizará una implementación equivalente que ayuda a visualizar esta representación.  
+
+Lo primer que se realiza es cargar el conjunto de datos que ha sido utilizado en el @sec-fund-cl-texto y se crea un modelo de lenguaje (i.e., `ModeloNGram`) de unigramas y sin $k$-suavizado. 
+
+```{python}
+#| echo: true
+#| output: false
+
+dataset = load_dataset(lang='es', dataset='dev')
+modelo = ModeloNGram(N=1, k_suavizado=0).fit(dataset)
+```
+
+Los parametros se encuentran en las atributos `modelo.frase` y `modelo.hist`, en el caso de `modelo.hist` este tiene un valor de `{python} Markdown(f'{modelo.hist}')`. Se observa que `modelo.frase` es un diccionario donde el índice es el identificador del segmento y el valor corresponde a la frecuencia. Por otro lado, el método `modelo._log_prob` (ver @lst-modelo-n-gram) utiliza la información de `modelo.frase` y `modelo.hist` para calcular el logaritmo de la probabilidad. En las siguientes instrucciones se representa la información de `modelo.frase` y `modelo.hist` en un vector. Lo primero es guarda en la variable `den` el logaritmo de `modelo.hist`, después se utiliza la variable `idx` para dar un orden al vocabulario, es decir, el primer elemento de `idx` corresponderá a la primera palabra del vocabulario y así sucesivamente. Utilizando `idx` se itera por todo el vocabulario y se guarda el logaritmo de la probabilidad para cada segmento en el arreglo `pesos`.  
+
+```{python}
+den = np.log(modelo.hist)
+idx = sorted(modelo.frase.keys())
+pesos = np.array(
+    [np.log(modelo.frase[k]) - den
+     for k in idx]
+)
+```
+
+La variable `pesos` tiene un tamaño de `{python} Markdown(f'{pesos.shape[0]}')` que corresponde al tamaño del vocabulario. Para concluir el ejemplo, se va a calcular el logaritmo de observar la frase *Buenos días*. Lo primero que se tiene que realizar es conocer la posición de cada segmento (e.g., palabra) en el vector `pesos` esto se realiza con la asociación mostrada en `idx2pos`. Lo segundo es crear un vector de ceros (i.e., `vec`) que contendrá la frase segmentadas. El tercer paso es segmentar la frase, iterar por cada segmento y agregar uno en la posición que corresponde a cada segmento en `vec`. El resultado es que `vec` tiene codificada la frase tal y como la realiza `ModeloNGram.`
+
+```{python}
+#| echo: true
+
+idx2pos = {k: v for v, k in enumerate(idx)}
+vec = np.zeros(len(pesos))
+for seg in modelo.segmentar('Buenos días'):
+    vec[idx2pos[f'{seg}']] += 1
+```
+
+Con la información de `vec` y `pesos` se puede calcular el logaritmo de la probabilidad el cual corresponde al producto punto entre `vec` y `pesos` tal como se muestra en la siguiente instrucción. 
+
+```{python}
+#| echo: true
+
+f'{np.dot(vec, pesos):0.4f}'
+```
+
+Se puede verificar que el valor de `modelo._log_prob("Buenos días")` corresponde a `{python} Markdown(f'{modelo._log_prob("Buenos días"):0.4f}')`, que es equivalente al encontrado por la representación alternativa. 
+
+Se observa que la variable `vec` y `pesos` se pueden considerar como vectores que están $\mathbb R^d$ donde $d$ tiene un valor de `{python} Markdown(f'{pesos.shape[0]}')`; por otro lado, la frase *Buenos días* está codificada en `vec`, haciendo que esta este representada como un vector en $\mathbb R.$
 
 ## Bolsa de Palabras Dispersa 
 
