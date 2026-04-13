@@ -251,7 +251,7 @@ pos_prior = priors[1]  -  N
 neg_prior = priors[0] - N
 ```
 
-Una ves que se han identificador los parámetros, estos pueden ser utilizados para predecir la clase dada unas secuencias. El primer paso es calcular la verosimilitud (i.e., $\mathbb P(\mathcal X \mid \mathcal Y)$) para cada clase y multiplicar este valor por la probabilidad a priori (i.e., $\mathbb P(\mathcal Y)$) para obtener $\mathbb P(\mathcal X \mid \mathcal Y) * \mathbb P(\mathcal Y)$ tal y como se muestra en el siguiente código.
+Una ves que se han identificador los parámetros, estos pueden ser utilizados para predecir la clase dada unas secuencias. El primer paso es calcular la verosimilitud (i.e., $\mathbb P(\mathcal X \mid \mathcal Y)$) para cada clase y multiplicar este valor por la probabilidad a priori (i.e., $\mathbb P(\mathcal Y)$) para obtener $\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$ tal y como se muestra en el siguiente código.
 
 ```{python}
 #| echo: true
@@ -262,10 +262,10 @@ pos_cond = np.exp(
 neg_cond = np.exp(neg_l.log_prob(D) + neg_prior) # <2>
 ```
 
-1. $\mathbb P(\mathcal X \mid \mathcal Y=1) * \mathbb P(\mathcal Y=1)$
-2. $\mathbb P(\mathcal X \mid \mathcal Y=0) * \mathbb P(\mathcal Y=0)$
+1. $\mathbb P(\mathcal X \mid \mathcal Y=1) \mathbb P(\mathcal Y=1)$
+2. $\mathbb P(\mathcal X \mid \mathcal Y=0) \mathbb P(\mathcal Y=0)$
 
-El siguiente paso para calcular la probabilidad a posteriori es calcular la evidencia la cual corresponde a la suma de $\mathbb P(\mathcal X \mid \mathcal Y) * \mathbb P(\mathcal Y)$ tal y como se muestra en la siguiente instrucción. 
+El siguiente paso para calcular la probabilidad a posteriori es calcular la evidencia la cual corresponde a la suma de $\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$ tal y como se muestra en la siguiente instrucción. 
 
 ```{python}
 #| echo: true
@@ -369,7 +369,7 @@ mx_prior = priors[1] - N
 
 Verifique que el primer valor de `uniq_labels` corresponde a `{python} Markdown(f'{uniq_labels[0]}')`
 
-Hasta el momento se tienen todos los elementos para calcular el logaritmo de $\mathbb P(\mathcal X \mid \mathcal Y) * \mathbb P(\mathcal Y)$; en esta ocasión se crea una función para utilizarla en cualquier conjunto $\mathcal X$ tal y como se muestra en el siguiente código. 
+Hasta el momento se tienen todos los elementos para calcular el logaritmo de $\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$; en esta ocasión se crea una función para utilizarla en cualquier conjunto $\mathcal X$ tal y como se muestra en el siguiente código. 
 
 ```{python}
 #| echo: true
@@ -388,7 +388,7 @@ En el siguiente código se utiliza la función `log_pro_conditional` en el conju
 ll = log_prob_conditional(prueba)
 ```
 
-El logaritmo de $\mathbb P(\mathcal X \mid \mathcal Y) * \mathbb P(\mathcal Y)$ contiene la información necesaria para estimar la clase de cada texto. La clase corresponde al valor máximo, que corresponde a la probabilidad máxima cuando se normaliza con la evidencia. El siguiente código calcula la clase para cada texto que está en la variable `prueba` y calcula el rendimiento; medido con el promedio de la cobertura (i.e., macro-recall). 
+El logaritmo de $\mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$ contiene la información necesaria para estimar la clase de cada texto. La clase corresponde al valor máximo, que corresponde a la probabilidad máxima cuando se normaliza con la evidencia. El siguiente código calcula la clase para cada texto que está en la variable `prueba` y calcula el rendimiento; medido con el promedio de la cobertura (i.e., macro-recall). 
 
 ```{python}
 #| echo: true
@@ -401,40 +401,60 @@ pp(score.statistic)
 
 ## Encapsulando el clasificador 
 
+El clasificador implementado en la sección anterior se puede encapsular en la clase `ClasificadorMNGram` para facilitar su uso. Lo parámetros de esta calse son `N` que corresponde al tamaño del modelo y `k_suavizado` que corresponde al parámetro utilizado para estimar la probabilidad de palabras que no se encuentran en el vocabulario (ver @sec-k-suavizado). 
+
 ```{python}
 #| echo: true
+#| lst-label: lst-clasificador-model-n-gram
+#| lst-cap: Clasificador de texto basado en el modelo de lenguaje de gramas (ver @lst-modelo-n-gram)
 
 class ClasificadorMNGram:
   def __init__(self, N=1, k_suavizado=0.01):
-    self.N = N
-    self.k_suavizado = k_suavizado
-    self.modelos = None
+    self.N = N # <1>
+    self.k_suavizado = k_suavizado # <2>
+    self.modelos = None # <3>
 
-  def fit(self, X, y):
-    if self.modelos is not None:
+  def fit(self, X, y): # <4>
+    if self.modelos is not None: # <5>
       return self
-    self.uniq_labels, priors = np.unique(y, return_counts=True)
-    self.priors = np.log(priors) - np.log(priors.sum())
+    self.uniq_labels, priors = np.unique( # <6>
+      y, return_counts=True # <6>
+    ) # <6>
+    self.priors = np.log(priors) - np.log(priors.sum()) # <6>
     modelos = []
-    for clase in self.uniq_labels:
-      _ = ModeloNGram(N=self.N,
-                      k_suavizado=self.k_suavizado).fit(
-        [x for x, _y in zip(X, y) if _y == clase]
-      )
+    for clase in self.uniq_labels: # <7>
+      _ = ModeloNGram( # <8>
+        N=self.N, # <8>
+        k_suavizado=self.k_suavizado # <8>
+      ).fit([x for x, _y in zip(X, y) # <9>
+             if _y == clase]) # <9>
       modelos.append(_)
     self.modelos = modelos
     return self
 
-  def predict_log_proba(self, X):
-    X = np.column_stack(
-      [m.log_prob(X) for m in cl.modelos]
-    )
-    return X + self.priors
+  def predict_log_proba(self, X): # <10>
+    X = np.column_stack( # <11>
+      [m.log_prob(X) for m in cl.modelos] # <11>
+    ) # <11>
+    return X + self.priors # <12>
 
   def predict(self, X):
     X = self.predict_log_proba(X)
     return self.uniq_labels[X.argmax(axis=1)]
 ```
+
+1. Tamaño de la ventanda
+2. Valor del suavizado
+3. Lista de `ModeloNGram`, uno para cada clase
+4. Metodo para estimar los parámetros recibe los textos en `X` y las clases asociadas en `y`
+5. Verifica si el modelo ya fue entrenado
+6. Logaritmo de la probabilida a priori, i.e. $\log \mathbb P(\mathcal Y)$
+7. Ciclo por cada clase
+8. `ModeloNGram` por cada clase, i.e., $\mathbb P(\mathcal X \mid \mathcal Y)$, donde $\mathcal Y$ corresponde a `clase`
+9. Selecciona los textos que corresponden a la etiqueta `clase`
+10. Calcula $\log \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)$
+11. Calcula $\log \mathbb P(\mathcal X \mid \mathcal Y)$ para cada clase
+12. Regresa la suma de los logaritmos
 
 ```{python}
 #| echo: true

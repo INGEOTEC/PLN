@@ -299,7 +299,7 @@ Seleccione la probabilida del segmento *!* dado la frase *buenos días*. Note qu
 ::::
 :::
 
-### $k$-suavizado
+### $k$-suavizado {#sec-k-suavizado}
 
 Para poder calcular la probabilidad de una secuencia, es necesario calcular una probabilidad diferente de cero a cualquier palabra que no ha sido vista en el conjunto donde se estiman las frecuencias. Una manera para realizar esto es asignar una pequeña masa a todas las palabras que no fueron vistas, a eso se le conoce como suavizado.
 
