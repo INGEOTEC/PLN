@@ -169,6 +169,18 @@ for seg in modelo.segmentar('Buenos días'):
     vec[idx2pos[f'{seg}']] += 1
 ```
 
+::: {.callout-tip}
+### Actividad
+
+:::: {#exr-bow-index}
+Indique los indices en el vector `pesos` de representar la frase *buen día*
+
+* `[9090, 720, 279, 19039]`
+* `[9090, 253, 279, 19039]`
+* `[9090, 403, 1158, 19039]`
+::::
+:::
+
 Con la información de `vec` y `pesos` se puede calcular el logaritmo de la probabilidad el cual corresponde al producto punto entre `vec` y `pesos` tal como se muestra en la siguiente instrucción. 
 
 ```{python}
