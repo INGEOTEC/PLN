@@ -6,14 +6,17 @@ El **objetivo** de la unidad es analizar diferentes representaciones de texto ba
 
 ```{python}
 #| echo: true
-from EvoMSA import BoW,\
-                   DenseBoW
-from microtc.utils import tweet_iterator
-from wordcloud import WordCloud                            
+import pprint
 import numpy as np
 import pandas as pd
 from matplotlib import pylab as plt
 import seaborn as sns
+from wordcloud import WordCloud
+import spacy
+from EvoMSA import BoW,\
+                   DenseBoW
+from encexp.utils import load_dataset
+pp = pprint.PrettyPrinter(width=60, compact=True).pprint
 ```
 
 ```{python}
@@ -281,7 +284,9 @@ Una manera de visualizar la representación es creando una nube de palabras de l
 #| label: fig-repr-texto-nube
 txt = 'Es un placer estar platicando con ustedes.'
 tokens = {bow.names[id]: v for id, v in tm[txt]}
-word_cloud = WordCloud().generate_from_frequencies(tokens)
+word_cloud = WordCloud(
+  background_color='white'
+).generate_from_frequencies(tokens)
 plt.imshow(word_cloud, interpolation='bilinear')
 plt.grid(False)
 plt.tick_params(left=False, right=False, labelleft=False,
@@ -293,7 +298,7 @@ plt.tick_params(left=False, right=False, labelleft=False,
 
 :::: {#exr-bow-max-tfidf}
 
-*Procesamiento de Lenguaje Natural*
+Indicar de la frase Procesamiento de Lenguaje Natural* ¿cuál de los siguientes términos son los tres más importantes de acuerdo al pesado *TFIDF*?
 
 * `['procesamiento', 'de', 'lenguaje']`
 * `['de', 'lenguaje', 'natural']`
@@ -326,19 +331,18 @@ f = {k: v for k, v in vec1}
 np.sum([f[k] * v for k, v in vec2 if k in f])
 ```
 
- Habiendo realizado la similitud entre algunos textos lleva a preguntarse cómo será la distribución de similitud entre varios textos, para poder contestar esta pregunta, se utilizarán los datos de [Delitos](https://ingeotec.github.io/Delitos), los cuales se guardan en la variable `D` tal y como se en las siguientes instrucciones. 
+Habiendo realizado la similitud entre algunos textos lleva a preguntarse cómo será la distribución de similitud entre varios textos, para poder contestar esta pregunta, se utilizarán los primero 1024 datos del siguiente conjunto.
 
 ```{python}
 #| echo: true
-fname = 'delitos/delitos_ingeotec_Es_train.json'
-D = list(tweet_iterator(fname))
+dataset = load_dataset(lang='es', dataset='dev')[:1024]
 ```
 
 El primer paso es representar todos los textos en el espacio vectorial de la bolsa de palabras, lo cual se logra con el método `BoW.transform` (primera linea), el segundo paso es calcular la similitud entre todos los textos, como se muestra en la segunda linea. 
 
 ```{python}
 #| echo: true
-X = tm.transform(D)
+X = tm.transform(dataset)
 sim = np.dot(X, X.T)
 ```
 
@@ -363,13 +367,13 @@ La @fig-repr-texto-bolsa-densa muestra el procedimiento que se sigue para repres
 //| file: fig/repr-bolsa-densa.dot
 ```
 
-El texto se representa como el vector $\mathbf u$ que se calcula usando la @eq-bolsa-densas donde se observa que es la suma de los vectores asociados a cada término más un coeficiente $\mathbf{w_0}$. En particular el coeficiente $\mathbf{w_0} \in \mathbb R^{M}$ no se encuentra en todas las representaciones densas, pero en la representación que se usará contiene este vector, $M$ es la dimensión de la representación densa. 
+En particular se describirán los vectores densos utilizados en @EvoMSA. El texto se representa como el vector $\mathbf u$ que se calcula usando la @eq-bolsa-densas, donde se observa que es la suma de los vectores asociados a cada término más un coeficiente $\mathbf{w_0}$. En particular el coeficiente $\mathbf{w_0} \in \mathbb R^{M}$ no se encuentra en todas las representaciones densas y $M$ es la dimensión de la representación densa. 
 
 $$
 \mathbf u = \sum_t \mathbf{u_t} + \mathbf{w_0}.
 $$ {#eq-bolsa-densas}
 
-En vector $\mathbf {u_t}$ está asociado al término $t$, en particular este vector en la representación densa que se describirá está definido en términos de una bolsa de palabras dispersa (@eq-bolsa-palabras) como se puede observar en la @eq-bolsa-densa-ut
+El vector $\mathbf {u_t}$ está asociado al término $t$, en particular este vector está definido en términos de una bolsa de palabras dispersa (@eq-bolsa-palabras) como se puede observar en la @eq-bolsa-densa-ut
 
 $$
 \mathbf{u_t} = \frac{\mathbf W \mathbf {v_t}}{\lVert \sum_t \mathbf{v_t} \rVert},
@@ -377,7 +381,7 @@ $$ {#eq-bolsa-densa-ut}
 
 donde $\mathbf W \in \mathbb R^{M \times d}$ es la matriz que hace la proyección de la representación dispersa a la representación densa, se puede observar esa operación está normalizada con la norma Euclideana de la representación dispersa. 
 
-Combinando las @eq-bolsa-densas y @eq-bolsa-densa-ut queda la 
+Combinando las @eq-bolsa-densas y @eq-bolsa-densa-ut queda 
 
 $$
 \begin{split}
@@ -386,7 +390,7 @@ $$
 \end{split}
 $$
 
-donde se puede observar la representación dispersa (@eq-bolsa-palabras), i.e., $\frac{\sum_t \mathbf {v_t}}{\lVert \sum_t \mathbf{v_t} \rVert}$ lo cual resulta en la @eq-bolsa-densa-texto
+donde se observa que la representación dispersa (@eq-bolsa-palabras), i.e., $\frac{\sum_t \mathbf {v_t}}{\lVert \sum_t \mathbf{v_t} \rVert}$, resulta en 
 
 $$
 \mathbf u = \mathbf W \mathbf x + \mathbf{w_0},
@@ -424,7 +428,7 @@ Lo primero que se observa es que los valores son negativos, a diferencia del cas
 dense.names[:3]
 ```
 
-Siguiente la idea de utilizar una nube de palabras para visualizar el vector que representa el texto modelado, La @fig-repr-texto-nube-densa muestra las nubes de palabras generada con las características y sus respectivos valores del texto *Es un placer estar platicando con ustedes.* Durante la generación de la nube de palabras se decidió representar genera una nube de palabras con las palabras con coeficiente negativo más significativo y aquellas con los coeficientes positivos más significativos. Se puede observar que las palabras positivas contienen componentes que están relacionados al enunciado, pero al mismo tiempo leyendo los términos positivos es complicado construir el texto representado. Adicionalmente las términos negativos que se observan en la nube de palabras en su mayoría son hashtags que tiene muy poca relación al texto representado. 
+Siguiendo la idea de utilizar una nube de palabras para visualizar el vector que representa el texto modelado, La @fig-repr-texto-nube-densa muestra las nubes de palabras generada con las características y sus respectivos valores del texto *Es un placer estar platicando con ustedes.* Durante la generación de la nube de palabras se decidió generar una nube de palabras con las palabras con coeficiente negativo más significativo y aquellas con los coeficientes positivos más significativos. Se puede observar que las palabras positivas contienen componentes que están relacionados al enunciado, pero al mismo tiempo leyendo los términos positivos es complicado construir el texto representado. Adicionalmente las términos negativos que se observan en la nube de palabras en su mayoría son hashtags que tiene muy poca relación al texto representado. 
 
 ```{python}
 #| code-fold: true
@@ -435,8 +439,12 @@ names = dense.names
 tokens_pos = {names[id]: v for id, v in enumerate(values[0]) if v > 0}
 tokens_neg = {names[id]: v * -1 for id, v in enumerate(values[0]) if v < 0}
 
-word_pos = WordCloud().generate_from_frequencies(tokens_pos)
-word_neg = WordCloud().generate_from_frequencies(tokens_neg)
+word_pos = WordCloud(
+  background_color='white'
+).generate_from_frequencies(tokens_pos)
+word_neg = WordCloud(
+  background_color='white'
+).generate_from_frequencies(tokens_neg)
 
 fig, (ax1, ax2) = plt.subplots(1, 2)
 
@@ -475,9 +483,15 @@ tokens_pos = {names[id]: v for id, v in enumerate(values[0]) if v > 0}
 tokens_neg = {names[id]: v for id, v in enumerate(values[1]) if v > 0}
 tokens_otro = {names[id]: v for id, v in enumerate(values[2]) if v > 0}
 
-word_pos = WordCloud().generate_from_frequencies(tokens_pos)
-word_neg = WordCloud().generate_from_frequencies(tokens_neg)
-word_otro = WordCloud().generate_from_frequencies(tokens_otro)
+word_pos = WordCloud(
+  background_color='white'
+).generate_from_frequencies(tokens_pos)
+word_neg = WordCloud(
+  background_color='white'
+).generate_from_frequencies(tokens_neg)
+word_otro = WordCloud(
+  background_color='white'
+).generate_from_frequencies(tokens_otro)
 
 
 fig, (ax1, ax2, ax3) = plt.subplots(1, 3)
@@ -498,7 +512,7 @@ Al igual que en el caso disperso se puede calcular la distribución de similitud
 
 ```{python}
 #| echo: true
-X = dense.transform(D)
+X = dense.transform(dataset)
 sim = np.dot(X, X.T)
 ```
 
@@ -511,13 +525,88 @@ La @fig-text-repr-similitud-dense muestra el histograma de las similitudes calcu
 sns.displot(sim.flatten())
 ```
 
+# spaCy
 
+@pennington-etal-2014-glove @mikolov2013efficientestimationwordrepresentations
 
+```{python}
+#| echo: true
+pln = spacy.load(
+  "es_core_news_lg",
+  disable=['tok2vec', 'morphologizer', 'parser',
+           'attribute_ruler', 'lemmatizer', 'ner']
+)
+```
 
+En la siguiente instrucción se segmenta la palabra casa para ejemplificar la representación vectorial de esta. Lo primero que se tiene que verificar es que la palabra se encuentre dentro del vocabulario del modelo esto se hace mediante el atributo `casa.is_oov` que indica si el segmento está fuera del vocabulario. Como se puede observar en la salida de la siguiente instrucción este segmento se encuentra en el vocabulario.
 
+```{python}
+#| echo: true
 
+casa = pln('casa')[0]
+casa.is_oov
+```
 
+```{python}
+#| echo: true
 
+hogar = pln('hogar')[0]
+casa.similarity(hogar)
+```
 
+El método `similarity` calcula la similitud coseno entre las dos representaciones. La representación vectorial se encuentra en el atributo `vector`; el atributo `vector_norm` contiene la norma y estos dos atributos pueden ser utilizados para calcular la similitud coseno entre las dos palabras utilizadas anteriormente, como se puede observar en la siguiente instrucción.
 
+```{python}
+#| echo: true
+
+np.dot(casa.vector / casa.vector_norm,
+       hogar.vector / hogar.vector_norm)
+```
+
+```{python}
+#| echo: false
+
+casa_hogar_man = dense.transform(
+  ['casa', 'hogar', 'manzana']
+)
+```
+
+`{python} Markdown(f'{np.dot(X[0], X[1]):0.4f}')`
+
+```{python}
+#| echo: true
+
+manzana = pln('manzana')[0]
+casa.similarity(manzana)
+```
+
+`{python} Markdown(f'{np.dot(X[0], X[2]):0.4f}')`
+
+El proceso de representar una frase corresponde en iterar por todos los segmentos de la frase y asegurar que el segmento es una palabra del modelo, aquellas palabras que no son palabras que no son parte del vocabulario se descartan, tal y como se observa en la siguiente instrucción.
+
+```{python}
+#| echo: true
+
+ele1 = np.c_[[(token.vector / token.vector_norm)
+              for token in pln(dataset[0]['text'])
+              if not token.is_oov]]
+```
+
+En la siguiente instrucción es modela el segundo elemento del conjunto `dataset`.
+
+```{python}
+#| echo: true
+
+ele2 = np.c_[[(token.vector / token.vector_norm)
+              for token in pln(dataset[1]['text'])
+              if not token.is_oov]]
+```
+
+Las variables `ele1` y `ele2` tienen la representación semántica del primer y segundo texto del conjunto `dataset` se puede observar, en la siguiente instrucción, que estas representaciones se representan como una matriz de 10 y 11 renglones en $\mathbb{R}^{300}.$
+
+```{python}
+#| echo: true
+
+ele1.shape, ele2.shape
+```
 
