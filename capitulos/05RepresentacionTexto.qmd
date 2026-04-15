@@ -133,7 +133,7 @@ class ModeloNGram(Freck):
     return np.r_[[_log_prob(x) for x in X]]
 ```
 
-## Introducción
+## Introducción {#sec-introduccion-05rt}
 
 En el @sec-fund-cl-texto se describió un clasificador de texto que está basado en el modelo de lenguaje de gramas. Uno se podría imaginar que este clasificador representa de alguna manera al texto, es decir, que exite una estructura matemática donde los textos están representados. En este caso particular se observará que los textos están representados en un espacio vectorial. En los siguientes fragmentos de código se realizará una implementación equivalente que ayuda a visualizar esta representación.  
 
@@ -153,10 +153,12 @@ Los parametros se encuentran en las atributos `modelo.frase` y `modelo.hist`, en
 den = np.log(modelo.hist)
 idx = sorted(modelo.frase.keys())
 pesos = np.array(
-    [np.log(modelo.frase[k]) - den
+    [np.log(modelo.frase[k]) - den # <1>
      for k in idx]
 )
 ```
+
+1. Cálculo de @eq-prob-palabra donde $w$ corresponde a `k` 
 
 La variable `pesos` tiene un tamaño de `{python} Markdown(f'{pesos.shape[0]}')` que corresponde al tamaño del vocabulario. Para concluir el ejemplo, se va a calcular el logaritmo de observar la frase *Buenos días*. Lo primero que se tiene que realizar es conocer la posición de cada segmento (e.g., palabra) en el vector `pesos` esto se realiza con la asociación mostrada en `idx2pos`. Lo segundo es crear un vector de ceros (i.e., `vec`) que contendrá la frase segmentadas. El tercer paso es segmentar la frase, iterar por cada segmento y agregar uno en la posición que corresponde a cada segmento en `vec`. El resultado es que `vec` tiene codificada la frase tal y como la realiza `ModeloNGram.`
 
@@ -173,7 +175,7 @@ for seg in modelo.segmentar('Buenos días'):
 ### Actividad
 
 :::: {#exr-bow-index}
-Indique los indices en el vector `pesos` de representar la frase *buen día*
+Indique los indices, en el vector `pesos`, correspondientes a la frase *buen día*
 
 * `[9090, 720, 279, 19039]`
 * `[9090, 253, 279, 19039]`
@@ -195,7 +197,7 @@ Se observa que la variable `vec` y `pesos` se pueden considerar como vectores qu
 
 ## Bolsa de Palabras Dispersa 
 
-La idea anterior se podría considerar como una bolsa de palabras, donde cada término o segmento de palabra $t$ está asociado a un vector único $\mathbf{v_t} \in \mathbb R^d$ donde la $i$-ésima componente, i.e., $\mathbf{v_t}_i$, es diferente de cero y $\forall_{j \neq i} \mathbf{v_t}_j=0$. Es decir la $i$-ésima componente está asociada al término $t$, se podría pensar que si el vocabulario está ordenado de alguna manera, entonces $t$ está en la posición $i$. Por otro lado el valor que contiene la componente se usa para representar alguna característica del término. 
+La idea anterior es un ejemplo de una bolsa de palabras dispersa, donde cada término o segmento de palabra $t$ está asociado a un vector único $\mathbf{v_t} \in \mathbb R^d$ donde la $i$-ésima componente, i.e., $\mathbf{v_t}_i$, es diferente de cero y $\forall_{j \neq i} \mathbf{v_t}_j=0$. Es decir la $i$-ésima componente está asociada al término $t$, se podría pensar que si el vocabulario está ordenado de alguna manera, entonces $t$ está en la posición $i$. Por otro lado el valor que contiene la componente se usa para representar alguna característica del término. 
 
 El conjunto de vectores $\mathbf v$ corresponde al vocabulario, teniendo $d$ diferentes token en el mismo y por definición $\forall_{i \neq j} \mathbf{v_i} \cdot \mathbf{v_j} = 0$, donde $\mathbf{v_i} \in \mathbb R^d$, $\mathbf{v_j} \in \mathbb R^d$, y $(\cdot)$ es el producto punto. Cabe mencionar que cualquier segmento fuera del vocabulario es descartado. 
 
@@ -205,7 +207,7 @@ $$
 \mathbf x = \frac{\sum_t \mathbf{v_t}}{\lVert \sum_t \mathbf{v_t} \rVert},
 $$ {#eq-bolsa-palabras}
 
-donde la suma se hace para todos los elementos de la secuencia, $\mathbf x \in \mathbb R^d$, y $\lVert \mathbf w \rVert$ es la norma Euclideana del vector $\mathbf w.$
+donde la suma se hace para todos los elementos de la secuencia, $\mathbf x \in \mathbb R^d$, y $\lVert \mathbf w \rVert$ es la norma Euclideana del vector $\mathbf w$. Es importante notar que el denominador de @eq-bolsa-palabras es comunmente utilizado para mejorar el rendimiento de los clasificador basados en este tipo de representación; existiendo representaciones que no lo usan, como la vista revisada en la @sec-introduccion-05rt. 
 
 ```{dot}
 //| echo: false
@@ -218,7 +220,7 @@ Antes de iniciar la descripción detallada del proceso de representación utiliz
 
 ### Pesado de Términos 
 
-Como se había mencionado el valor que tiene la componente $i$-ésima del vector $\mathbf{v_t}_i$ corresponde a una característica del término asociado, este procedimiento se le conoce como el **esquema de pesado**. Por ejemplo, si el valor es $1$ (i.e., $\mathbf{v_{t_i}} = 1$) entonces el valor está indicando solo la presencia del término, este es el caso más simple. Considerando la @eq-bolsa-palabras se observa que el resultado, $\mathbf x$, cuenta las repeticiones de cada término, por esta característica a este esquema se le conoce como **frecuencia de términos** (*term frequency (TF)*). 
+Como se había mencionado el valor que tiene la componente $i$-ésima del vector $\mathbf{v_t}_i$ corresponde a una característica del término asociado, este procedimiento se le conoce como el **esquema de pesado**. Por ejemplo, si el valor es $1$ (i.e., $\mathbf{v_{t_i}} = 1$) entonces el valor está indicando solo la presencia del término, este es el caso más simple. Considerando la @eq-bolsa-palabras se observa que el resultado, $\mathbf x$, cuenta las repeticiones de cada término, por esta característica a este esquema se le conoce como **frecuencia de términos** (*term frequency (TF)*). En el caso descrito en @sec-introduccion-05rt corresponde a la @eq-prob-palabra combinada con la frecuencia del término. 
 
 Una medida que complementa la información que tiene la frecuencia de términos es el inverso de la frecuencia del término (*Inverse Document Frequency (IDF)*) en la colección, esta medida propuesta por @Jones1972 se usa en un método de pesado descrito por @Salton1973 el cual es conocido como **TFIDF**. Este método de pesado propone el considerar el producto de la frecuencia del término y el inverso de la frecuencia del término (*Inverse Document Frequency (IDF)* ) en la colección como el peso del término.
 
@@ -255,7 +257,6 @@ El uso del identificador del término se puede reemplazar por el término para p
  for k, v in vec[:3]]
 ```
 
-
 ```{python} 
 #| echo: false
 txt = 'Buen día colegas'
@@ -268,7 +269,7 @@ Con el objetivo de ilustrar una heurística que ha dado buenos resultados en el 
 ```{python} 
 #| echo: true
 txt = 'Buen día colegas'
-[(tm.id2token[k], v)
+[(bow.names[k], v)
  for k, v in tm[txt][:4]]
 ```
 
@@ -279,13 +280,27 @@ Una manera de visualizar la representación es creando una nube de palabras de l
 #| fig-cap: Nube de términos
 #| label: fig-repr-texto-nube
 txt = 'Es un placer estar platicando con ustedes.'
-tokens = {tm.id2token[id]: v for id, v in tm[txt]}
+tokens = {bow.names[id]: v for id, v in tm[txt]}
 word_cloud = WordCloud().generate_from_frequencies(tokens)
 plt.imshow(word_cloud, interpolation='bilinear')
 plt.grid(False)
 plt.tick_params(left=False, right=False, labelleft=False,
                 labelbottom=False, bottom=False)
 ```
+
+::: {.callout-tip}
+### Actividad
+
+:::: {#exr-bow-max-tfidf}
+
+*Procesamiento de Lenguaje Natural*
+
+* `['procesamiento', 'de', 'lenguaje']`
+* `['de', 'lenguaje', 'natural']`
+* `['procesamiento', 'lenguaje', 'q:guaj']`
+
+::::
+:::
 
 El texto se representa en un espacio vectorial, entonces es posible comparar la similitud entre dos textos en esta representación, por ejemplo, en el siguiente ejemplo se compara la similitud coseno entre los textos *Es un placer estar platicando con ustedes.* y *La lluvia genera un caos en la ciudad.* El valor obtenido es cercano a cero indicando que estos textos no son similares. 
 
@@ -310,7 +325,7 @@ vec2 = tm[txt2]
 f = {k: v for k, v in vec1}
 np.sum([f[k] * v for k, v in vec2 if k in f])
 ```
- 
+
  Habiendo realizado la similitud entre algunos textos lleva a preguntarse cómo será la distribución de similitud entre varios textos, para poder contestar esta pregunta, se utilizarán los datos de [Delitos](https://ingeotec.github.io/Delitos), los cuales se guardan en la variable `D` tal y como se en las siguientes instrucciones. 
 
 ```{python}
