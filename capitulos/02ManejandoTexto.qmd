@@ -347,7 +347,7 @@ Indique ¿cuántos segmentos genera `TextModel` al procesar la frase *buenos dí
 ::::
 ::: 
 
-## spaCy 
+## spaCy {#sec-spacy-seg}
 
 spaCy es una librería general para el procesamiento de lenguaje natural PLN. El primer paso en cualquier tarea de PLN corresponde a la segmentación, en este apartado se da un ejemplo de como se realiza la segmentación con esta librería.
 

@@ -6,6 +6,9 @@ El **objetivo** de la unidad es analizar diferentes representaciones de texto ba
 
 ```{python}
 #| echo: true
+from dataclasses import dataclass
+from collections import Counter
+from transformers import AutoTokenizer
 import pprint
 import numpy as np
 import pandas as pd
@@ -23,24 +26,6 @@ pp = pprint.PrettyPrinter(width=60, compact=True).pprint
 #| echo: false
 from IPython.display import Markdown
 sns.set_style('whitegrid')
-```
-
-```{python}
-#| echo: false
-#| output: false
-
-from collections import Counter
-from os.path import isfile, isdir
-from transformers import AutoTokenizer
-from encexp.utils import load_dataset
-from EvoMSA.utils import Download
-from EvoMSA import utils
-utils.USE_TQDM = False
-if not isfile('delitos.zip'):
-    Download('https://github.com/INGEOTEC/Delitos/releases/download/Datos/delitos.zip',
-             'delitos.zip')
-if not isdir('delitos'):
-    !unzip -Pingeotec delitos.zip
 ```
 
 ```{python}
@@ -140,7 +125,7 @@ class ModeloNGram(Freck):
 
 En el @sec-fund-cl-texto se describió un clasificador de texto que está basado en el modelo de lenguaje de gramas. Uno se podría imaginar que este clasificador representa de alguna manera al texto, es decir, que exite una estructura matemática donde los textos están representados. En este caso particular se observará que los textos están representados en un espacio vectorial. En los siguientes fragmentos de código se realizará una implementación equivalente que ayuda a visualizar esta representación.  
 
-Lo primer que se realiza es cargar el conjunto de datos que ha sido utilizado en el @sec-fund-cl-texto y se crea un modelo de lenguaje (i.e., `ModeloNGram`) de unigramas y sin $k$-suavizado. 
+Lo primer que se realiza es cargar el conjunto de datos que ha sido utilizado en el @sec-fund-cl-texto y crear un modelo de lenguaje (i.e., `ModeloNGram` @lst-modelo-n-gram) de unigramas y sin $k$-suavizado. 
 
 ```{python}
 #| echo: true
@@ -150,7 +135,9 @@ dataset = load_dataset(lang='es', dataset='dev')
 modelo = ModeloNGram(N=1, k_suavizado=0).fit(dataset)
 ```
 
-Los parametros se encuentran en las atributos `modelo.frase` y `modelo.hist`, en el caso de `modelo.hist` este tiene un valor de `{python} Markdown(f'{modelo.hist}')`. Se observa que `modelo.frase` es un diccionario donde el índice es el identificador del segmento y el valor corresponde a la frecuencia. Por otro lado, el método `modelo._log_prob` (ver @lst-modelo-n-gram) utiliza la información de `modelo.frase` y `modelo.hist` para calcular el logaritmo de la probabilidad. En las siguientes instrucciones se representa la información de `modelo.frase` y `modelo.hist` en un vector. Lo primero es guarda en la variable `den` el logaritmo de `modelo.hist`, después se utiliza la variable `idx` para dar un orden al vocabulario, es decir, el primer elemento de `idx` corresponderá a la primera palabra del vocabulario y así sucesivamente. Utilizando `idx` se itera por todo el vocabulario y se guarda el logaritmo de la probabilidad para cada segmento en el arreglo `pesos`.  
+Los parametros se encuentran en las atributos `modelo.frase` y `modelo.hist`, en el caso de `modelo.hist` este tiene un valor de `{python} Markdown(f'{modelo.hist}')`. Se observa que `modelo.frase` es un diccionario donde el índice es el identificador del segmento y el valor corresponde a la frecuencia. Por otro lado, el método `modelo._log_prob` (ver @lst-modelo-n-gram) utiliza la información de `modelo.frase` y `modelo.hist` para calcular el logaritmo de la probabilidad. 
+
+El primer paso es representar la información de `modelo.frase` y `modelo.hist` en un vector. Lo primero es guardar, en la variable `den`, el logaritmo de `modelo.hist`, después es utilizar la variable `idx` para dar un orden al vocabulario, es decir, el primer elemento de `idx` corresponderá a la primera palabra del vocabulario y así sucesivamente. Utilizando `idx` se itera por todo el vocabulario y se guarda el logaritmo de la probabilidad para cada segmento en el arreglo `pesos`.  
 
 ```{python}
 den = np.log(modelo.hist)
@@ -198,7 +185,7 @@ Se puede verificar que el valor de `modelo._log_prob("Buenos días")` correspond
 
 Se observa que la variable `vec` y `pesos` se pueden considerar como vectores que están $\mathbb R^d$ donde $d$ tiene un valor de `{python} Markdown(f'{pesos.shape[0]}')`; por otro lado, la frase *Buenos días* está codificada en `vec`, haciendo que esta este representada como un vector en $\mathbb R.$
 
-## Bolsa de Palabras Dispersa 
+## Bolsa de Palabras Dispersa {#sec-evomsa-bow}
 
 La idea anterior es un ejemplo de una bolsa de palabras dispersa, donde cada término o segmento de palabra $t$ está asociado a un vector único $\mathbf{v_t} \in \mathbb R^d$ donde la $i$-ésima componente, i.e., $\mathbf{v_t}_i$, es diferente de cero y $\forall_{j \neq i} \mathbf{v_t}_j=0$. Es decir la $i$-ésima componente está asociada al término $t$, se podría pensar que si el vocabulario está ordenado de alguna manera, entonces $t$ está en la posición $i$. Por otro lado el valor que contiene la componente se usa para representar alguna característica del término. 
 
@@ -356,7 +343,7 @@ La distribución de similitud se muestra en la @fig-text-repr-similitud-bow se p
 sns.displot(sim.data)
 ```
 
-## Bolsa de Palabras Densa 
+## Bolsa de Palabras Densa {#sec-evomsa-dense}
 
 La @fig-repr-texto-bolsa-densa muestra el procedimiento que se sigue para representar un texto en una bolsa de palabras dispersa. En primer lugar la bolsa de palabras densa considera que los vectores asociados a los términos se encuentra pre-entrenados y en general no es factible entrenarlos en el momento, esto por el tiempo que lleva estimar estos vectores. 
 
@@ -464,6 +451,10 @@ Esta representación también permite comparación de similitud entre textos, en
 
 ```{python} 
 #| echo: true
+#| lst-label: lst-comp-dense-3
+#| lst-cap: Comparasión de tres textos usando el modelo de bolsa de palabras denso
+
+
 txt1 = 'Es un placer estar platicando con ustedes.'
 txt2 = 'La lluvia genera un caos en la ciudad.'
 txt3 = 'Estoy dando una platica en Morelia.'
@@ -525,9 +516,37 @@ La @fig-text-repr-similitud-dense muestra el histograma de las similitudes calcu
 sns.displot(sim.flatten())
 ```
 
-# spaCy
+::: {.callout-tip}
+### Actividad
 
-@pennington-etal-2014-glove @mikolov2013efficientestimationwordrepresentations
+:::: {#exr-evomsa-dense-sim}
+
+Utilizar la representación densa, con parámetros que se muestran en el siguiente código 
+
+```{python}
+#| echo: true
+
+dense = DenseBoW(lang='es',
+                 voc_size_exponent=15,
+                 emoji=True, keyword=False,
+                 distance_hyperplane=True,
+                 dataset=False)
+```
+
+para comparar las similitud de los textos del conjunto `dataset`. Indicar el par de indices que presentan la menor similitud. 
+
+* `[435, 492]`
+* `[605, 708]`
+* `[172, 198]`
+* `[307 871]`
+::::
+:::
+
+## spaCy
+
+Existen diferentes algoritmos que se han desarrollado para la creación de representaciones densas, algunos de los ejemplos más representativos son word2vec desarrollado por @mikolov2013efficientestimationwordrepresentations y GloVe propuesto por @pennington-etal-2014-glove. La idea de estos enfoques se resumen en estimar un vector por cada palabra que definida en un vocabulario. 
+
+La librería spaCy tiene implementado un algoritmo que sigue este principio, en la siguiente instrucción se carga esta librería y se deshabilitan algunas partes para hacer más eficiente el proceso de representación. Esta librería ha sido descrito previamente en la @sec-spacy-seg.
 
 ```{python}
 #| echo: true
@@ -538,7 +557,7 @@ pln = spacy.load(
 )
 ```
 
-En la siguiente instrucción se segmenta la palabra casa para ejemplificar la representación vectorial de esta. Lo primero que se tiene que verificar es que la palabra se encuentre dentro del vocabulario del modelo esto se hace mediante el atributo `casa.is_oov` que indica si el segmento está fuera del vocabulario. Como se puede observar en la salida de la siguiente instrucción este segmento se encuentra en el vocabulario.
+En la siguiente instrucción se segmenta la palabra casa para ejemplificar la representación vectorial de esta. Lo primero que se tiene que verificar es que la palabra se encuentre dentro del vocabulario del modelo esto se hace mediante el atributo `casa.is_oov` (fuera del vocabulario) que indica si el segmento está fuera del vocabulario. Como se puede observar en la salida de la siguiente instrucción este segmento se encuentra en el vocabulario.
 
 ```{python}
 #| echo: true
@@ -547,6 +566,8 @@ casa = pln('casa')[0]
 casa.is_oov
 ```
 
+Cada segmento cuenta con el método `casa.similarity` el cual calcula la similitud coseno entre las dos términos. 
+
 ```{python}
 #| echo: true
 
@@ -554,7 +575,7 @@ hogar = pln('hogar')[0]
 casa.similarity(hogar)
 ```
 
-El método `similarity` calcula la similitud coseno entre las dos representaciones. La representación vectorial se encuentra en el atributo `vector`; el atributo `vector_norm` contiene la norma y estos dos atributos pueden ser utilizados para calcular la similitud coseno entre las dos palabras utilizadas anteriormente, como se puede observar en la siguiente instrucción.
+La representación vectorial se encuentra en el atributo `vector`; el atributo `vector_norm` contiene la norma; estos dos atributos pueden ser utilizados para calcular la similitud coseno entre las dos palabras utilizadas anteriormente, como se puede observar en la siguiente instrucción.
 
 ```{python}
 #| echo: true
@@ -563,36 +584,38 @@ np.dot(casa.vector / casa.vector_norm,
        hogar.vector / hogar.vector_norm)
 ```
 
-```{python}
-#| echo: false
-
-casa_hogar_man = dense.transform(
-  ['casa', 'hogar', 'manzana']
-)
-```
-
-`{python} Markdown(f'{np.dot(X[0], X[1]):0.4f}')`
+Es dificil interpretar si el valor de `{python} Markdown(f'{casa.similarity(hogar):0.4f}')` encontrado al comparar *casa* y *hogar* significa que estas palabras son cercanas o lejanas. Para obtener una idea en el siguiente código se calcula la similitud entre *casa* y *gasolina*. Se observa que el valor de similitud es significativamente menor que el encontrado entre *casa* y *hogar*, lo cual es consistente con la intuición de que *casa* y *hogar* son más cercanas que *casa* y *gasolina*. 
 
 ```{python}
 #| echo: true
 
-manzana = pln('manzana')[0]
-casa.similarity(manzana)
+gasolina = pln('gasolina')[0]
+casa.similarity(gasolina)
 ```
 
-`{python} Markdown(f'{np.dot(X[0], X[2]):0.4f}')`
+```{python}
+#| echo: false
+
+casa_hogar_gas = dense.transform(
+  ['casa', 'hogar', 'gasolina']
+)
+```
+
+La comparación entre estas palabras también se puede realizar con la bolsa de palabras descritas en @sec-evomsa-dense. Usando esa implementación la similitud entre *casa* y *hogar* tiene un valor de `{python} Markdown(f'{np.dot(casa_hogar_gas[0], casa_hogar_gas[1]):0.4f}')` y la comparación entre *casa* y *mazana* tiene un valor de `{python} Markdown(f'{np.dot(casa_hogar_gas[0], casa_hogar_gas[2]):0.4f}')`.
 
 El proceso de representar una frase corresponde en iterar por todos los segmentos de la frase y asegurar que el segmento es una palabra del modelo, aquellas palabras que no son palabras que no son parte del vocabulario se descartan, tal y como se observa en la siguiente instrucción.
 
 ```{python}
 #| echo: true
+#| lst-label: lst-spacy-matriz
+#| lst-cap: Representación vectorial de cada término del primer texto del conjunto `dataset`
 
 ele1 = np.c_[[(token.vector / token.vector_norm)
               for token in pln(dataset[0]['text'])
               if not token.is_oov]]
 ```
 
-En la siguiente instrucción es modela el segundo elemento del conjunto `dataset`.
+En la siguiente instrucción se modela el segundo elemento del conjunto `dataset`.
 
 ```{python}
 #| echo: true
@@ -602,11 +625,124 @@ ele2 = np.c_[[(token.vector / token.vector_norm)
               if not token.is_oov]]
 ```
 
-Las variables `ele1` y `ele2` tienen la representación semántica del primer y segundo texto del conjunto `dataset` se puede observar, en la siguiente instrucción, que estas representaciones se representan como una matriz de 10 y 11 renglones en $\mathbb{R}^{300}.$
+Las variables `ele1` y `ele2` tienen la representación semántica del primer y segundo texto del conjunto `dataset`. Se observa, en la siguiente instrucción, que estas representaciones se representan como una matriz de 10 y 11 renglones en $\mathbb{R}^{300}.$
 
 ```{python}
 #| echo: true
 
 ele1.shape, ele2.shape
 ```
+
+Estas dos representaciones no se puede comparar directamente dado que no se encuentran en la misma dimensión, tampoco son útiles para representar todo el texto en un vector. Un procedimiento ampliamente utilizado es representar el texto usando la @eq-bolsa-palabras; el siguiente código se realiza este procedimiento para las matrices de las variables `ele1` y `ele2`. 
+
+```{python}
+#| echo: true
+
+ele1_v = ele1.sum(axis=0)
+ele1_v = ele1_v / np.linalg.norm(ele1_v)
+ele2_v = ele2.sum(axis=0)
+ele2_v = ele2_v / np.linalg.norm(ele2_v)
+```
+
+Finalmente para comparar los dos enunciados solo se requiere hacer el producto punto, es decir, `np.dot(ele1_v, ele2_v)` lo cual da un valor de `{python} Markdown(f'{np.dot(ele1_v, ele2_v):0.4f}')`.
+
+### Encapsulando
+
+Los elementos descritos anteriormente se organizan en la clase `spaCyTransform`. El atributo `spaCyTransform.pln` contiene la instancia del modelo implementado en el lenguaje (`lang`) seleccionado, en particular está implementación considera tres lenguajes, los cuales son inglés, español e italino. Es claro como se pueden extender a otros lenguajes y modelos soportados por spaCy. El método `spaCyTransform.fit` solamente carga el modelo y no hace uso de ninguno de los parámetros.
+
+Los métodod `spaCyTransform.repr` y `spaCyTransform.transform` son el corazón de la clase. Se observa que las instrucciones en el método `spaCyTransform.repr` fueron utilizadas en @lst-spacy-matriz para representar un texto como una matriz. Por otro lado, el código `spaCyTransform.transform` implementa la @eq-bolsa-palabras para cada texto en `X`.
+
+```{python}
+#| echo: true
+
+@dataclass
+class spaCyTransform:
+  lang: str='es'
+
+  @property
+  def pln(self): # <1>
+    try:
+      return self._pln
+    except AttributeError:
+      spacy_model = dict(en='en_core_web_lg',
+                         es='es_core_news_lg',
+                         it='it_core_news_lg')
+      self._pln = spacy.load(
+        spacy_model[self.lang],
+        disable=['tok2vec', 'morphologizer', 'parser',
+                 'attribute_ruler', 'lemmatizer', 'ner']
+      )
+      return self._pln
+
+  def get_text(self, ele): # <2>
+    if isinstance(ele, dict):
+      return ele['text']
+    return ele
+
+  def fit(self, X=None, y=None): # <3>
+    _ = self.pln
+    return self
+
+  def repr(self, texto): # <4>
+    pln = self.pln
+    get_text = self.get_text
+    return np.c_[[(token.vector / token.vector_norm) # <5>
+                  for token in pln(get_text(texto)) # <5>
+                  if not token.is_oov]] # <5>
+
+  def transform(self, X): # <6>
+    out = []
+    for text in X:
+      x = self.repr(text).sum(axis=0).astype(np.float32) # <7>
+      if x.shape[0] == 1:
+        out.append(np.ones(300, dtype=np.float32))
+      else:
+        out.append(x)
+    X = np.array(out, dtype=np.float32)
+    den = np.c_[np.linalg.norm(X, axis=1)] # <8>
+    return (X / den).astype(np.float32) # <9>
+```
+
+1. Instancia de spaCy
+2. Método para regresar el texto asumiendo que está en un diccionario
+3. Inicializa la instancia de spaCy
+4. Representación matricial de un texto
+5. Calcula la representación vectorial de cada término de `texto` 
+6. Regresentación vectorial de los textos en `X`
+7. Implementación del numerador de la @eq-bolsa-palabras
+8. Denominador de la @eq-bolsa-palabras para cada texto en `X`
+9. Normiza las representaciones
+
+La clase `spaCyTransform` se puede utilizar de la siguiente manera. La primera linea inicializa la clase y en la segunda linea se transforman los textos del conjunto `dataset` al espacio generado por el modelo. 
+
+```{python}
+#| echo: true
+
+model_spacy = spaCyTransform().fit()
+X = model_spacy.transform(dataset)
+```
+
+::: {.callout-tip}
+### Actividad
+
+:::: {#exr-spacy-sim}
+Calcule la similitud entre `txt1`, `txt2`, y `txt3` definidos en el @lst-comp-dense-3 e indique el par que tiene la mayor similitud. 
+
+* `txt1` y `txt2`
+* `txt1` y `txt3`
+* `txt2` y `txt3`
+::::
+:::
+
+En la secciones anteriores, se mostró en la @fig-text-repr-similitud-bow la distribución generado para el modelo disperso (ver @sec-evomsa-bow) y para el modelo denso (ver @sec-evomsa-dense) se generó la @fig-text-repr-similitud-dense. Completando la información, la @fig-text-repr-similitud-spacy presenta la distribución correspondiente a la representación implementada en esta sección y basada en spaCy. 
+
+```{python}
+#| code-fold: true
+#| fig-cap: Histograma de la similitud usando spaCy
+#| label: fig-text-repr-similitud-spacy
+
+sim = np.dot(X, X.T)
+sns.displot(sim.flatten())
+```
+
 

@@ -6,9 +6,9 @@ project:
 book:
   title: "Procesamiento de Lenguaje Natural"
   author: 
-    - name: "Eric S. Téllez"
-      url: https://sadit.github.io
-      affiliation: INFOTEC Centro de Investigación e Innovación en Tecnologías de la Información y Comunicación    
+    # - name: "Eric S. Téllez"
+    #   url: https://sadit.github.io
+    #   affiliation: INFOTEC Centro de Investigación e Innovación en Tecnologías de la Información y Comunicación    
     - name: "Mario Graff"
       url: https://mgraffg.github.io
       affiliation: INFOTEC Centro de Investigación e Innovación en Tecnologías de la Información y Comunicación
