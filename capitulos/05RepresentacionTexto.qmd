@@ -1,4 +1,4 @@
-# Representación de Texto
+# Representación Vectorial
 
 El **objetivo** de la unidad es analizar diferentes representaciones de texto basadas en vectores. 
 
@@ -6,19 +6,25 @@ El **objetivo** de la unidad es analizar diferentes representaciones de texto ba
 
 ```{python}
 #| echo: true
+
+from os.path import isfile, isdir
+from zipfile import ZipFile
 from dataclasses import dataclass
 from collections import Counter
 from transformers import AutoTokenizer
 import pprint
 import numpy as np
+from sklearn.svm import LinearSVC
+from sklearn.pipeline import make_pipeline
 import pandas as pd
 from matplotlib import pylab as plt
 import seaborn as sns
+from CompStats.metrics import macro_recall
 from wordcloud import WordCloud
 import spacy
-from EvoMSA import BoW,\
-                   DenseBoW
-from encexp.utils import load_dataset
+from microtc.utils import tweet_iterator
+from encexp.utils import load_dataset, Download
+from EvoMSA import BoWT, DenseBoWT
 pp = pprint.PrettyPrinter(width=60, compact=True).pprint
 ```
 
@@ -119,6 +125,41 @@ class ModeloNGram(Freck):
   def log_prob(self, X):
     _log_prob = self._log_prob
     return np.r_[[_log_prob(x) for x in X]]
+
+
+class ClasificadorMNGram:
+  def __init__(self, N=1, k_suavizado=0.01):
+    self.N = N
+    self.k_suavizado = k_suavizado
+    self.modelos = None
+
+  def fit(self, X, y):
+    if self.modelos is not None:
+      return self
+    self.uniq_labels, priors = np.unique(
+      y, return_counts=True
+    )
+    self.priors = np.log(priors) - np.log(priors.sum())
+    modelos = []
+    for clase in self.uniq_labels:
+      _ = ModeloNGram(
+        N=self.N,
+        k_suavizado=self.k_suavizado
+      ).fit([x for x, _y in zip(X, y)
+             if _y == clase])
+      modelos.append(_)
+    self.modelos = modelos
+    return self
+
+  def predict_log_proba(self, X): # <10>
+    X = np.column_stack(
+      [m.log_prob(X) for m in self.modelos]
+    )
+    return X + self.priors
+
+  def predict(self, X):
+    X = self.predict_log_proba(X)
+    return self.uniq_labels[X.argmax(axis=1)]
 ```
 
 ## Introducción {#sec-introduccion-05rt}
@@ -219,7 +260,7 @@ Una medida que complementa la información que tiene la frecuencia de términos 
 
 ```{python} 
 #| echo: false
-bow = BoW(lang='es')
+bow = BoWT(lang='es')
 tm = bow.bow
 vec = tm['Buen día']
 key_f = Markdown(f'${vec[0][0]}$')
@@ -233,7 +274,7 @@ En los siguientes ejemplos se usa una bolsa de palabras con un pesado TFIDF pre-
 
 ```{python} 
 #| echo: true
-bow = BoW(lang='es')
+bow = BoWT(lang='es')
 tm = bow.bow
 vec = tm['Buen día']
 vec[:3]
@@ -393,11 +434,11 @@ Continuando con los ejemplos presentados para la bolsa dispersa (@sec-bolsa-disp
 
 ```{python}
 #| echo: true
-dense = DenseBoW(lang='es',
-                 voc_size_exponent=15,
-                 emoji=False, keyword=True,
-                 distance_hyperplane=True,
-                 dataset=False)
+dense = DenseBoWT(lang='es',
+                  voc_size_exponent=15,
+                  emoji=False, keyword=True,
+                  distance_hyperplane=True,
+                  dataset=False)
 ```
 
 Para representar un texto en el espacio vectorial denso se utiliza el método `transform`, por ejemplo la siguiente instrucción representa el texto *Es un placer estar platicando con ustedes.* Solo se visualizan los valores de las primeras tres componentes.
@@ -526,11 +567,11 @@ Utilizar la representación densa, con parámetros que se muestran en el siguien
 ```{python}
 #| echo: true
 
-dense = DenseBoW(lang='es',
-                 voc_size_exponent=15,
-                 emoji=True, keyword=False,
-                 distance_hyperplane=True,
-                 dataset=False)
+dense = DenseBoWT(lang='es',
+                  voc_size_exponent=15,
+                  emoji=True, keyword=False,
+                  distance_hyperplane=True,
+                  dataset=False)
 ```
 
 para comparar las similitud de los textos del conjunto `dataset`. Indicar el par de indices que presentan la menor similitud. 
@@ -746,3 +787,114 @@ sns.displot(sim.flatten())
 ```
 
 
+## Clasificación de Texto {#sec-clasificacion-texto-vect}
+
+Considerando que en este capitulo se ha descrito tres representaciones vectoriales, las cuales proyectan cada texto a un espacio vectorial, es posible utilizar estas representaciones para realizar la tarea de clasificación de texto utilizando cualquier algoritmo tabular de aprendizaje supervisado.
+
+El rendimiento de las diferentes representaciones se analizará en el conjunto de [Delitos](https://ingeotec.github.io/Delitos). Este conjunto de datos cuenta con 1,351 tuits negativos y 449 tuits positivos (label 1) lo cuales fueron etiquetados por tres personas. Los textos fueron etiquetados como positivos cuando se podía contestar la pregunta: ¿Cuál es el delito? y además se debe cumplía que el mensaje fuera un hecho, que el objetivo, del mensaje, sea sobre el delito, es decir, que no sea una opinión y que no se trate de un accidente; en caso contrario el mensaje se etiquetaba como negativo. 
+
+::: {.callout-note collapse="true"}
+### Conjunto de Delitos
+
+```{python}
+#| echo: true
+#| output: false
+
+filename = 'delitos.zip'
+if not isfile(filename):
+  Download(
+    'https://github.com/INGEOTEC/Delitos/releases/download/Datos/delitos.zip',
+    'delitos.zip',
+    use_tqdm=False
+  )
+  with ZipFile(filename, "r") as fpt:
+      fpt.extractall(path=".",
+                     pwd="ingeotec".encode("utf-8"))   
+```
+:::
+
+Para leer los datos del conjunto de entrenamiento y prueba se utilizan las siguientes instrucciones. En la variable `D` se tiene los datos que se utilizarán para entrenar el clasificador basado en la bolsa de palabras y en `Dtest` los datos del conjunto de prueba, que son usados para medir el rendimiento del clasificador.
+
+```{python}
+#| echo: true
+fname = 'delitos/delitos_ingeotec_Es_train.json'
+fname_test = 'delitos/delitos_ingeotec_Es_test.json'
+D = list(tweet_iterator(fname))
+Dtest = list(tweet_iterator(fname_test))
+```
+
+```{python}
+#| echo: true
+
+score = macro_recall(
+  [x['klass'] for x in Dtest]
+)
+```
+
+```{python}
+#| echo: false
+
+score.use_tqdm = False
+```
+
+
+```{python}
+#| echo: true
+#| output: false
+
+cl_gram = ClasificadorMNGram().fit(
+  D, [x['klass'] for x in D]
+)
+score(cl_gram.predict(Dtest), name='n-gram').statistic
+```
+
+```{python}
+#| echo: true
+
+cl_bow = make_pipeline(
+  BoWT(lang='es'),
+  LinearSVC(
+    class_weight='balanced',
+    dual='auto')
+  ).fit(D, [x['klass'] for x in D]
+)
+score(cl_bow.predict(Dtest), name='Disperso').statistic
+```
+
+```{python}
+#| echo: true
+
+cl_spacy = make_pipeline(
+  spaCyTransform(),
+  LinearSVC(
+    class_weight='balanced',
+    dual='auto')
+  ).fit(D, [x['klass'] for x in D]
+)
+score(cl_spacy.predict(Dtest), name='spaCy').statistic
+```
+
+```{python}
+#| echo: true
+
+cl_dense = make_pipeline(
+  DenseBoWT(lang='es'),
+  LinearSVC(
+    class_weight='balanced',
+    dual='auto')
+  ).fit(D, [x['klass'] for x in D]
+)
+score(cl_dense.predict(Dtest), name='Dense').statistic
+```
+
+
+```{python}
+#| echo: true
+
+score.plot(
+  var_name='Rendimiento', alg_legend='Algoritmo',
+  comp_legend='Comparasion', winner_legend='Mejor',
+  tie_legend='Equivalente', loser_legend='Diferente',
+  value_name='Valor'
+)
+```

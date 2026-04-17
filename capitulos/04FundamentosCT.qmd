@@ -436,7 +436,7 @@ class ClasificadorMNGram:
 
   def predict_log_proba(self, X): # <10>
     X = np.column_stack( # <11>
-      [m.log_prob(X) for m in cl.modelos] # <11>
+      [m.log_prob(X) for m in self.modelos] # <11>
     ) # <11>
     return X + self.priors # <12>
 
