@@ -25,12 +25,15 @@ import spacy
 from microtc.utils import tweet_iterator
 from encexp.utils import load_dataset, Download
 from EvoMSA import BoWT, DenseBoWT
+from EvoMSA.back_prop import StackBoW
 pp = pprint.PrettyPrinter(width=60, compact=True).pprint
 ```
 
 ```{python}
 #| echo: false
 from IPython.display import Markdown
+from EvoMSA import utils 
+utils.USE_TQDM = False
 sns.set_style('whitegrid')
 ```
 
@@ -583,7 +586,7 @@ para comparar las similitud de los textos del conjunto `dataset`. Indicar el par
 ::::
 :::
 
-## spaCy
+## spaCy {#sec-bow-spacy}
 
 Existen diferentes algoritmos que se han desarrollado para la creación de representaciones densas, algunos de los ejemplos más representativos son word2vec desarrollado por @mikolov2013efficientestimationwordrepresentations y GloVe propuesto por @pennington-etal-2014-glove. La idea de estos enfoques se resumen en estimar un vector por cada palabra que definida en un vocabulario. 
 
@@ -823,6 +826,8 @@ D = list(tweet_iterator(fname))
 Dtest = list(tweet_iterator(fname_test))
 ```
 
+En esta ocasión se estará midiendo el rendimiento se estará midiendo utilizando el promedio de la cobertura, i.e., macro-recall; para eso se estará utilizando la librería [CompStats](https://compstats.readthedocs.io/en/latest/metrics_api.html) descrita en @Nava2024, en particular la función `macro_recall`. Esta función recibe la variable dependiente, es decir, las clases medidas y regresa un objeto, que se guarda en la variable `score` y es el encargado de medir el rendimiento de los algoritmos analizados en esta sección.
+
 ```{python}
 #| echo: true
 
@@ -837,10 +842,10 @@ score = macro_recall(
 score.use_tqdm = False
 ```
 
+Lo primero que se realiza es entrenar un clasificador basado en el modelo de lenguaje de gramas (@sec-tc-categorical). En la siguientes instrucciones se crea esta modelo, la última linea utiliza `score` para calcular el rendimiento de este modelo. 
 
 ```{python}
 #| echo: true
-#| output: false
 
 cl_gram = ClasificadorMNGram().fit(
   D, [x['klass'] for x in D]
@@ -848,50 +853,94 @@ cl_gram = ClasificadorMNGram().fit(
 score(cl_gram.predict(Dtest), name='n-gram').statistic
 ```
 
+El siguiente clasificador de texto que se desarrolla es el basado en la representación dispersa descrita en la @sec-evomsa-bow. El siguiente código realiza esta implementación, utilizando la función `make_pipeline` la cual crea un flujo de trabajo, donde cada componente, excepto el último, aplica una transformación, es decir, llama al método `transform` a los datos, dejando todo listo para ejecutar los métodos del último componente. Se observa que el primer componente corresponde a la clase `BoWT` que implementa la representación dispersa y el segundo componente corresponde a una máquina de soporte vectorial lineal. La última linea muestra el rendimiento de los dos clasificadores analizados. 
+
+
 ```{python}
 #| echo: true
 
 cl_bow = make_pipeline(
-  BoWT(lang='es'),
-  LinearSVC(
-    class_weight='balanced',
-    dual='auto')
-  ).fit(D, [x['klass'] for x in D]
-)
+  BoWT(lang='es'), # <1>
+  LinearSVC( # <2>
+    class_weight='balanced', # <2>
+    dual='auto') # <2>
+).fit(D, [x['klass'] for x in D])
 score(cl_bow.predict(Dtest), name='Disperso').statistic
 ```
 
-```{python}
-#| echo: true
+1. Representación dispersa (ver @sec-evomsa-bow)
+2. Máquina de soporte vectorial lineal
 
-cl_spacy = make_pipeline(
-  spaCyTransform(),
-  LinearSVC(
-    class_weight='balanced',
-    dual='auto')
-  ).fit(D, [x['klass'] for x in D]
-)
-score(cl_spacy.predict(Dtest), name='spaCy').statistic
-```
+Utilizando el código anterior se puede desarrollar el clasificador de texto descrito en @sec-evomsa-dense sustituyendo el primer componente del flujo por la clase que implementa la representación deseada, esto es, `DenseBoWT`. En esta ocasión se dejan los parámetros por defecto y el rendimiento de los tres clasificadores de texto analizados hasta el momento se muestran en la salida de la celda. 
 
 ```{python}
 #| echo: true
 
 cl_dense = make_pipeline(
-  DenseBoWT(lang='es'),
+  DenseBoWT(lang='es'), # <1>
   LinearSVC(
     class_weight='balanced',
     dual='auto')
-  ).fit(D, [x['klass'] for x in D]
-)
+).fit(D, [x['klass'] for x in D])
 score(cl_dense.predict(Dtest), name='Dense').statistic
 ```
 
+1. Representación densa (ver @sec-evomsa-dense)
+
+La representación que falta analizar corresponde a la descrita en la @sec-bow-spacy; siguiendo los pasos anteriores, se realiza el reemplazo del primer componente por la clase `spaCyTransform` que implementa la representación deseada. 
 
 ```{python}
 #| echo: true
 
+cl_spacy = make_pipeline(
+  spaCyTransform(lang='es'), # <1>
+  LinearSVC(
+    class_weight='balanced',
+    dual='auto')
+).fit(D, [x['klass'] for x in D])
+score(cl_spacy.predict(Dtest), name='spaCy').statistic
+```
+
+1. Representación densa implementada en spaCy (ver @sec-bow-spacy)
+
+Hasta el momento solamente se han presentado los rendimientos puntuales de los clasificadores de textos, los cuales no permiten indicar si existe una diferencia significativa en el rendimiento, esto es complementado con una comparación estadística que se desarrolla en el método `score.plot`. El resultado de esta comparación se muestra en la @fig-comp-bow. En la figura se observa que el clasificador con mejor rendimiento corresponde a la representación densa y esta es estadísticamente diferente con respecto a las otras tres representaciones. 
+
+```{python}
+#| code-fold: true
+#| fig-cap: Comparación estadística de cuatro clasificadores de texto.
+#| label: fig-comp-bow
+
 score.plot(
+  var_name='Rendimiento', alg_legend='Algoritmo',
+  comp_legend='Comparasion', winner_legend='Mejor',
+  tie_legend='Equivalente', loser_legend='Diferente',
+  value_name='Valor'
+)
+```
+
+::: {.callout-tip}
+### Actividad
+
+:::: {#exr-comp-bow}
+Utilizando el código anterior, realice la comparación entre el modelo de lenguaje de gramas, la representación dispersa y la representación densa basada en spaCy, es decir, remueva de la comparación presentada en la @fig-comp-bow el sistema con el mejor rendimiento. Indique si los clasificadores de texto spaCy y Disperso tiene un rendimiento equivalente. 
+
+* Verdadero
+* Falso
+::::
+:::
+
+Se puede inferir que al tener representaciones vectoriales para cada texto, entonces se pueden ocupar directamente cualquier estrategia que se usa en algoritmos supervisado diseñados para datos tabulares. @GRAFF2025100154 propone crear un modelo de referencia mediante la creación de un ensable que use la técnica de *Stack Generalization* (@Wolpert1992StackedGeneralization), esta idea se implementa en la clase `StackBoW` que se usa en el siguiente fragmento de código. 
+
+```{python}
+#| echo: true
+
+evomsa = StackBoW(
+  lang='es'
+).fit(D, np.r_[[x['klass'] for x in D]])
+score(
+  evomsa.predict(Dtest),
+  name='StackBoW'
+).plot(
   var_name='Rendimiento', alg_legend='Algoritmo',
   comp_legend='Comparasion', winner_legend='Mejor',
   tie_legend='Equivalente', loser_legend='Diferente',
