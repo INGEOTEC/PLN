@@ -33,7 +33,9 @@ pp = pprint.PrettyPrinter(width=60, compact=True).pprint
 #| echo: false
 from IPython.display import Markdown
 from EvoMSA import utils 
+import IngeoML
 utils.USE_TQDM = False
+IngeoML.utils.USE_TQDM = False
 sns.set_style('whitegrid')
 ```
 
