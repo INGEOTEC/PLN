@@ -47,9 +47,9 @@ except IOError:
 
 ## Introducción 
 
-Se podría suponer que el texto se que se analizará está bien escrito y tiene un formato adecuado para su procesamiento. Desafortunadamente, la realidad es que en la mayoría de aplicaciones el texto que se analiza tiene errores de ortográficos, errores de formato y además no es trivial identificar la unidad mínima de procesamiento que podría ser de manera natural, en el español, las palabras. Por este motivo, esta unidad trata técnicas comunes que se utilizan para normalizar el texto, esta normalización es un proceso previo al desarrollo de los algoritmos de PLN. 
+Se podría suponer que el texto que se analizará está bien escrito y tiene un formato adecuado para su procesamiento. Desafortunadamente, la realidad es que en la mayoría de aplicaciones el texto que se analiza tiene errores de ortográficos, errores de formato y además no es trivial identificar la unidad mínima de procesamiento que podría ser de manera natural, en el español, las palabras. Por este motivo, esta unidad trata técnicas comunes que se utilizan para normalizar el texto, esta normalización es un proceso previo al desarrollo de los algoritmos de PLN. 
 
-La @fig-pre-procesamiento esquematiza el procedimiento que se presenta en esta unidad, la idea es que se un texto pasa primeramente a un proceso de normalización (@sec-normalizacion y @sec-normalizacion-semantica), para después ser segmentado (ver @sec-segmentacion) y el resultado es lo que se utiliza para modelar el lenguaje. 
+La @fig-pre-procesamiento esquematiza el procedimiento que se presenta en esta unidad, la idea es que un texto pasa primeramente a un proceso de normalización (@sec-normalizacion y @sec-normalizacion-semantica), para después ser segmentado (ver @sec-segmentacion) y el resultado es lo que se utiliza para modelar el lenguaje. 
 
 ```{dot}
 //| echo: false
@@ -72,7 +72,7 @@ La descripción de las normalizaciones empieza presentando las que se puede apli
 
 ### Entidades {#sec-normalizacion-entidades}
 
-La descripción de diferentes técnicas de normalización empieza con el manejo de entidades en el texto. Algunas entidades que se tratarán serán los nombres de usuario, números o URLs mencionados en un texto. Por otro lado están las acciones que se realizarán a las entidades encontradas, estas acciones corresponden a su borrado o remplazo por algún otro toquen. 
+La descripción de diferentes técnicas de normalización empieza con el manejo de entidades en el texto. Algunas entidades que se tratarán serán los nombres de usuario, números o URLs mencionados en un texto. Por otro lado están las acciones que se realizarán a las entidades encontradas, estas acciones corresponden a su borrado o remplazo por algún otro token. 
 
 #### Usuarios
 
@@ -107,7 +107,7 @@ re.sub(r"https?://\S+", "", text)
 
 #### Números
 
-The previous code can be modified to deal with numbers and replace the number found with a shared label such as `_num`.
+De manera similar a los ejemplos previos, se puede modificar el código para trabajar con números y reemplazar el número encontrado por una etiqueta como `_num`.
 
 ```{python}
 #| echo: true
@@ -131,7 +131,7 @@ text.lower()
 
 #### Signos de Puntuación
 
-Los signos de puntuación son necesarios para tareas como la generación de textos, pero existen otras aplicaciones donde los signos de puntuación tienen un efecto positivo en el rendimiento del algorithm, este es el caso de tareas de categorización de texto. El efecto que tiene el quitar los signos de puntuación es que el vocabulario se reduce. Los símbolos de puntuación se pueden remover teniendo una lista de los mismos, esta lista de signos de puntuación se encuentra en la variable `SKIP_SYMBOLS` y el siguiente código muestra un procedimiento para quitarlos. 
+Los signos de puntuación son necesarios para tareas como la generación de textos, pero existen otras aplicaciones donde los signos de puntuación tienen un efecto positivo en el rendimiento del algoritmo, este es el caso de tareas de categorización de texto. El efecto que tiene el quitar los signos de puntuación es que el vocabulario se reduce. Los símbolos de puntuación se pueden remover teniendo una lista de los mismos, esta lista de signos de puntuación se encuentra en la variable `SKIP_SYMBOLS` y el siguiente código muestra un procedimiento para quitarlos. 
 
 ```{python}
 #| echo: true
@@ -144,11 +144,11 @@ for x in text:
 output
 ```
 
-#### Símbolos Diacríticos
+#### Signos Diacríticos
 
-Continuando con la misma idea de reducir el vocabulario, es común eliminar los símbolos diacríticos en las palabras. Esta transformación también tiene el objetivo de normalizar aquellos textos informales donde los símbolos diacríticos son usado con una menor frecuencia, en particular los acentos en el caso del español. Por ejemplo, es común encontrar la palabra *México* escrita como *Mexico*. 
+Continuando con la misma idea de reducir el vocabulario, es común eliminar los signos diacríticos en las palabras. Esta transformación también tiene el objetivo de normalizar aquellos textos informales donde los signos diacríticos son usados con una menor frecuencia, en particular los acentos en el caso del español. Por ejemplo, es común encontrar la palabra *México* escrita como *Mexico*. 
 
-El siguiente código muestra un procedimiento para eliminar los símbolos diacríticos.  
+El siguiente código muestra un procedimiento para eliminar los signos diacríticos.  
 
 ```{python}
 #| echo: true
@@ -170,7 +170,7 @@ Las siguientes normalizaciones comparten el objetivo con las normalizaciones pre
 
 Las palabras comunes (*stop words*) son palabras utilizadas frecuentemente en el lenguaje, las cuales son necesarias para comunicación, pero no aportan información para discriminar un texto de acuerdo a su significado. 
 
-The stop words are the most frequent words used in the language. These words are essential to communicate but are not so much on tasks where the aim is to discriminate texts according to their meaning. 
+
 
 Las palabras vacías se pueden guardar en un diccionario y el proceso de identificación consiste en buscar la existencia de la palabra en el diccionario. Una vez que la palabra analizada se encuentra en el diccionario, se procede a quitarla o cambiarla por un token particular. El proceso de borrado se muestra en el siguiente código. 
 
