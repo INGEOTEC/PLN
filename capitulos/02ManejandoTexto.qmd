@@ -268,7 +268,7 @@ texto = 'mira @xyz estoy triste. #UnDiaLluvioso'
 tm.text_transformations(texto)
 ```
 
-Siguiendo con las transformaciones sintácticas, toca el tiempo a describir aquellas que relacionadas a la ortografía (@sec-normalizacion-ortografia) las cuales corresponden a la conversión a minúsculas, borrado de signos de puntuación y símbolos diacríticos. Estas normalizaciones se activan con los siguiente parámetros. 
+Siguiendo con las transformaciones sintácticas, toca el tiempo a describir aquellas relacionadas a la ortografía (@sec-normalizacion-ortografia) las cuales corresponden a la conversión a minúsculas, borrado de signos de puntuación y símbolos diacríticos. Estas normalizaciones se activan con los siguiente parámetros. 
 
 * lc 
 * del_punc
