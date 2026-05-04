@@ -260,7 +260,7 @@ code = frec.segmentar(txt)[1:-1]
 code
 ```
 
-El siguiente paso es dividir la frecuencia de la cadena *buenos dias* entre la frecuencia de *buenos* utilizando el método `Frec.frecuencias` tal y como se muestra en la siguiente instrucción.
+El siguiente paso es dividir la frecuencia de la cadena *buenos dias* entre la frecuencia de *buenos* utilizando el método `frec.frecuencias` tal y como se muestra en la siguiente instrucción.
 
 ```{python}
 #| echo: true
@@ -357,7 +357,7 @@ Actualizando la instancia `frec` al uso de la frecuencia con $k$-suavizado
 frec = Freck(k_suavizado=0.01).fit(dataset)
 ```
 
-La función `prob` implementa este tipo de suavisado como se puede observar en el siguiente fragmento.
+La función `prob` implementa este tipo de suavizado como se puede observar en el siguiente fragmento.
 
 ```{python}
 #| echo: true
