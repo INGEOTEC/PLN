@@ -246,7 +246,7 @@ Habiendo descrito diferentes tipos de normalización (sintáctica y semántica) 
 
 ### Normalizaciones
 
-El primer conjunto de parámetros que se describen son los que corresponden a las entidades (@sec-normalizacion-entidades). Estos parámetros tiene tres opciones, borrar (`OPTION_DELETE`), remplazar (`OPTION_GROUP`) o ignorar. Los nombres de los parámetros son:
+El primer conjunto de parámetros que se describen son los que corresponden a las entidades (@sec-normalizacion-entidades). Estos parámetros tiene tres opciones, borrar (`OPTION_DELETE`), reemplazar (`OPTION_GROUP`) o ignorar. Los nombres de los parámetros son:
 
 * usr_option 
 * url_option
@@ -268,13 +268,13 @@ texto = 'mira @xyz estoy triste. #UnDiaLluvioso'
 tm.text_transformations(texto)
 ```
 
-Siguiendo con las transformaciones sintácticas, toca el tiempo a describir aquellas relacionadas a la ortografía (@sec-normalizacion-ortografia) las cuales corresponden a la conversión a minúsculas, borrado de signos de puntuación y símbolos diacríticos. Estas normalizaciones se activan con los siguiente parámetros. 
+Siguiendo con las transformaciones sintácticas, toca el tiempo a describir aquellas relacionadas a la ortografía (@sec-normalizacion-ortografia) las cuales corresponden a la conversión a minúsculas, borrado de signos de puntuación y signos diacríticos. Estas normalizaciones se activan con los siguiente parámetros. 
 
 * lc 
 * del_punc
 * del_diac
 
-En el siguiente ejemplo se transforman el texto a minúscula y se remueven los signos de puntuación. 
+En el siguiente ejemplo se transforma el texto a minúscula y se remueven los signos de puntuación. 
 
 ```{python}
 #| echo: true
@@ -303,9 +303,9 @@ tm.text_transformations(texto)
 
 ### Segmentación
 
-El paso final es describir el uso de la segmentación. La librería utiliza el parámetro `token_list` para indicar el tipo de segmentación que se desea realizar. El formato es una lista de número, donde el valor indica el tipo de segmentación. El número $1$ indica que se realizará una segmentación por palabras, los número positivo corresponden a los gramas de caracteres y los números negativos a los gramas de palabras. 
+El paso final es describir el uso de la segmentación. La librería utiliza el parámetro `token_list` para indicar el tipo de segmentación que se desea realizar. El formato es una lista de números, donde el valor indica el tipo de segmentación. El número $1$ indica que se realizará una segmentación por palabras, los números positivos corresponden a los gramas de caracteres y los números negativos a los gramas de palabras. 
 
-Por ejemplo, utilizando las normalizaciones que se tienen por defecto, el siguiente código segmenta utilizando gramas de caracteres de tamañan $4.$
+Por ejemplo, utilizando las normalizaciones que se tienen por defecto, el siguiente código segmenta utilizando gramas de caracteres de tamaño $4.$
 
 ```{python}
 #| echo: true
@@ -314,7 +314,7 @@ microTC_qgrams = TextModel(token_list=[4])
 pp(microTC_qgrams.tokenize(txt))
 ```
 
-para poder identificar cuando se trata de un segmento que corresponde a una palabra o un grama de caracteres, a los últimos se les agrega el prefijo `q:`. Cabe mencionar que por defecto se remueven los símbolos diacríticos.
+para poder identificar cuando se trata de un segmento que corresponde a una palabra o un grama de caracteres, a los últimos se les agrega el prefijo `q:`. Cabe mencionar que por defecto se remueven los signos diacríticos.
 
 El ejemplo anterior, se utiliza para generar un grama de palabras de tamaño $2.$ Como se ha mencionado los gramas de palabras se especifican con números negativos siendo el valor absoluto el tamaño del grama. 
 
@@ -367,7 +367,7 @@ La variable `pln` es la instancia que permite manipular los textos en español. 
 doc = pln(txt)
 ```
 
-El texto es procesado es organizado en una instancia de la clase `Doc` la cual es iterable. Los elementos corresponden a las palabras de la oración, así como a otros componentes, como los signos de puntuación. Además la librería proporciona información sintáctica y semántica de cada palabra, en el siguiente ejemplo se muestra las partes de la oración.
+El texto es procesado y organizado en una instancia de la clase `Doc` la cual es iterable. Los elementos corresponden a las palabras de la oración, así como a otros componentes, como los signos de puntuación. Además la librería proporciona información sintáctica y semántica de cada palabra, en el siguiente ejemplo se muestra las partes de la oración.
 
 ```{python}
 #| echo: true
@@ -427,7 +427,7 @@ Un modelo similar a `bilmaLAT` que fue entrenado con otro conjunto de datos y co
 robertuito = AutoTokenizer.from_pretrained('pysentimiento/robertuito-base-cased')
 ```
 
-Los autores de RoBERTuito mencionan que antes de pasar el texto al segmentador se deben de realizar un pre-procesamiento con la función `preprocess_tweet` tal y como se muetra en la siguiente instrucción.
+Los autores de RoBERTuito mencionan que antes de pasar el texto al segmentador se deben de realizar un pre-procesamiento con la función `preprocess_tweet` tal y como se muestra en la siguiente instrucción.
 
 El texto segmentado se representa en la misma estructura de datos que la utilizada por `bilmaLAT`.
 
@@ -437,7 +437,7 @@ code = robertuito(preprocess_tweet(txt))
 pp(code)
 ```
 
-La secuencia se decodifica utilizando el método `robertuito.decode` como se observa en la siguiente instrucción. En el salida de la celda se observa como al inicio de la frase se coloca la etiqueta **\<s\>** y al final la etiqueta **\</s\>**.
+La secuencia se decodifica utilizando el método `robertuito.decode` como se observa en la siguiente instrucción. En la salida de la celda se observa como al inicio de la frase se coloca la etiqueta **\<s\>** y al final la etiqueta **\</s\>**.
 
 ```{python}
 #| echo: true
@@ -446,7 +446,7 @@ robertuito.decode(code['input_ids'])
 
 ## Crecimiento del vocabulario
 
-En este apartado se utilizan diferentes segmentadores de texto para medir el crecimiento del vocabulario con respecto al número de palabras leidas.
+En este apartado se utilizan diferentes segmentadores de texto para medir el crecimiento del vocabulario con respecto al número de palabras leídas.
 
 Se utiliza un conjunto de datos que se obtiene con la función `load_dataset` utilizando los parámetros que se muestran en la siguiente instrucción.
 
@@ -455,7 +455,7 @@ Se utiliza un conjunto de datos que se obtiene con la función `load_dataset` ut
 dataset = load_dataset(lang='es', dataset='dev')
 ```
 
-El crecimiento del vocabulario se mide utilizando la función `dinamica_vocabulario` la cual recibe una función (argumento `tokenizer`) que segmenta el texto y esta función la aplica a cada elemento del conjunto de datos (variable `dataset`). En cada paso del ciclo se actualiza el vocabulario (variable `voc`) y se guarda la cantidad de palabras leidas y el tamaño del vocabulario en la lista `data`.
+El crecimiento del vocabulario se mide utilizando la función `dinamica_vocabulario` la cual recibe una función (argumento `tokenizer`) que segmenta el texto y esta función la aplica a cada elemento del conjunto de datos (variable `dataset`). En cada paso del ciclo se actualiza el vocabulario (variable `voc`) y se guarda la cantidad de palabras leídas y el tamaño del vocabulario en la lista `data`.
 
 ```{python}
 #| echo: true
@@ -508,7 +508,7 @@ sns.lineplot(data=df, x='Segmentos', y='Vocabulario', hue='Tipo')
 
 La figura anterior muestra el comportamiento del vocabulario con respecto a palabras y gramas de caracteres. Los gramas de caracteres generan un vocabulario mayor en el conjunto analizado, pero también se puede observar que el vocabulario es finito y va a estabilizarse en algún momento. Esto se puede observar fácilmente en el caso límite, es decir, cuando el tamaño del grama es 1, en este caso el vocabulario corresponde a la codificación utilizada para representar cada caracter.
 
-El siguiente segmentador a analizar es `bilmaLAT`. En este caso se requiere una función auxiliar `bilmaLAT_tok` que solamente extrae el campo texto del diccionario utilizado para guardar cada elemento del conjunto de datos utilizado.
+El siguiente segmentador a analizar es `bilmaLAT`. En este caso se requiere una función auxiliar `bilmaLAT_tok` que solamente extrae el campo de texto del diccionario utilizado para guardar cada elemento del conjunto de datos utilizado.
 
 El crecimiento del vocabulario de estos tres modelos se muestra en la salida de la siguiente celda. Se puede observar como el vocabulario de `bilmaLAT` se estabiliza, esto es porque este modelo tiene un vocabulario fijo y lo único que se observa es la cantidad de texto que se require procesar para cubrir ese vocabulario.
 
@@ -528,7 +528,7 @@ sns.lineplot(data=df, x='Segmentos', y='Vocabulario', hue='Tipo')
 ### Actividad
 
 :::: {#exr-herdan-law}
-Considerando Herdan's Law ($\mid V \mid)=kN^{\beta}$ (donde $k$ y $\beta$ son parámetros, $\mid V \mid$ es el vocabulario y $N$ es los segmentos) seleccione el sistema con un mayor crecimiento (i.e., $\beta$): 
+Considerando Herdan's Law ($\mid V \mid)=kN^{\beta}$ (donde $k$ y $\beta$ son parámetros, $\mid V \mid$ es el vocabulario y $N$ son los segmentos) seleccione el sistema con un mayor crecimiento (i.e., $\beta$): 
 
 * `microTC` 
 * `microTC_qgrams`
@@ -546,7 +546,7 @@ Observe que el conjunto de datos obtenido mediante la función `load_dataset(lan
 
 ## Entrenando un segmentador
 
-Habiendo utilizado el segmentador del modelo `bilmaLAT` (@sec-modelo-mexicano-tok) es momento de describir los pasos para entrenar un segmentador de este tipo. Una de las primeras decisiones es definir las palabras especiales, que son utilizadas para identificar algunas partes del texto. Por ejemplo, es comun utilizar una marca para identificar el inicio de la oración y su final, así como palabras para que todos los textos tengan la misma cantidad de segmentos. En el siguiente código se define estas palabras en la variable `special_tokens`, el primer marcador `[UNK]` se utiliza para identificar los segmentos desconocidos, `[CLS]` es utilizado en el inicio de la oración, `[SEP]` se utiliza para identificar el final de la oración y para separar dos oraciones relacionadas, `[PAD]` se utiliza para completar un texto y que este tenga la cantidad de segmentos requeridos, `[MASK]` es la palabra que se utilizar para ocultar en segmento en la oración, finalemente `URL` y `USR` son etiquetas que se usan para sustituir las URLs y los nombres de usuario respectivamente.
+Habiendo utilizado el segmentador del modelo `bilmaLAT` (@sec-modelo-mexicano-tok) es momento de describir los pasos para entrenar un segmentador de este tipo. Una de las primeras decisiones es definir las palabras especiales, que son utilizadas para identificar algunas partes del texto. Por ejemplo, es comun utilizar una marca para identificar el inicio de la oración y su final, así como palabras para que todos los textos tengan la misma cantidad de segmentos. En el siguiente código se define estas palabras en la variable `special_tokens`, el primer marcador `[UNK]` se utiliza para identificar los segmentos desconocidos, `[CLS]` es utilizado en el inicio de la oración, `[SEP]` se utiliza para identificar el final de la oración y para separar dos oraciones relacionadas, `[PAD]` se utiliza para completar un texto y que este tenga la cantidad de segmentos requeridos, `[MASK]` es la palabra que se utiliza para ocultar un segmento en la oración, finalemente `URL` y `USR` son etiquetas que se usan para sustituir las URLs y los nombres de usuario respectivamente.
 
 ```{python}
 #| echo: true
@@ -559,7 +559,7 @@ special_tokens = [
 ]
 ```
 
-Habiendo definido las palabras especiales, es momento de inicializar la clase que se usa para segmentar, esta clase es `Tokenizer`, la cual requiere el método que encuentra en los segmentos, en esta ocasión se utiliza el método `WordPiece` (@song-etal-2021-fast) que requiere solamente conocer cual es el identificador de los segmentos desconocidos (ver primera linea). En la segunda linea se añaden los identificadores especiales al segmentador. 
+Habiendo definido las palabras especiales, es momento de inicializar la clase que se usa para segmentar, esta clase es `Tokenizer`, la cual requiere el método que encuentra en los segmentos, en esta ocasión se utiliza el método `WordPiece` (@song-etal-2021-fast) que requiere solamente conocer cual es el identificador de los segmentos desconocidos (ver primera línea). En la segunda línea se añaden los identificadores especiales al segmentador. 
 
 ```{python}
 #| echo: true
@@ -571,7 +571,7 @@ tokenizer = Tokenizer(
 tokenizer.add_special_tokens(special_tokens)
 ```
 
-El proceso de segmentar sigue el procedimiento descrito en @fig-pre-procesamiento, donde el primer paso es normalizar el texto. En el siguiente código se definen el proceso de normalización que se utilizara. El primer proceso corresponde a la normalización de unicode implementada en la clase `NFD`. La segunda y tercera normalización corresponde a la sustitución de URL por el identificador `URL` y el cambio de cualquier usuario por la etiqueta `USR`. La última linea añade estas normalizaciones a la instancia `tokenizer`. 
+El proceso de segmentar sigue el procedimiento descrito en @fig-pre-procesamiento, donde el primer paso es normalizar el texto. En el siguiente código se definen el proceso de normalización que se utilizará. El primer proceso corresponde a la normalización de unicode implementada en la clase `NFD`. La segunda y tercera normalización corresponden a la sustitución de URL por el identificador `URL` y el cambio de cualquier usuario por la etiqueta `USR`. La última línea añade estas normalizaciones a la instancia `tokenizer`. 
 
 ```{python}
 #| echo: true
@@ -700,7 +700,7 @@ pp(tokenizer_backend.decode(code))
 ### Actividad
 
 :::: {#exr-comp-bilmaLAT-tokenizer-backend}
-Indicar ¿cuál es la(s) palabra(s) codificadas de forma diferente entre `bilmaLAT` y `tokenizer_backend` al segmentar el texto en la variable `txt`?
+Indicar la(s) palabra(s) codificadas de forma diferente entre `bilmaLAT` y `tokenizer_backend` al segmentar el texto en la variable `txt`.
 
 * bienvenidos, Procesamiento y Lenguaje
 * bienvenidos
