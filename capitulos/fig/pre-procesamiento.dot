@@ -1,0 +1,12 @@
+digraph G {
+    rankdir=LR;
+
+    Entrada [label="Texto", shape=oval];
+    Norm [label="Normalización de Texto", shape=box];
+    Seg [label="Segmentación", shape=box];
+    Terminos [label="...", shape=box];
+
+    Entrada -> Norm;
+    Norm -> Seg;
+    Seg -> Terminos;
+}

@@ -1,0 +1,10 @@
+digraph G {
+    rankdir=LR;
+
+    Terminos [label="Texto\nSegmentado", shape=oval];
+    A [label="Asociación", shape=box];
+    Repr [label="Representación", shape=oval];
+
+    Terminos -> A [label="Pre-entrenados"];
+    A -> Repr;
+}

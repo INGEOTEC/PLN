@@ -1,0 +1,13 @@
+digraph G {
+    rankdir=LR;
+
+    Repr [label="Representación", shape=box, style=rounded];
+    Clasificador [label="Clasificador", shape=box];
+    Regresor [label="Regresor", shape=box];
+    Prediccion [label="Predicción", shape=box, style=rounded];
+
+    Repr -> Clasificador [label="Clasificación"];
+    Repr -> Regresor [label="Regresión"];
+    Clasificador -> Prediccion;
+    Regresor -> Prediccion;
+}
