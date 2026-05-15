@@ -20,4 +20,11 @@ En @sec-modelo-gramas se presentó el modelo de lenguaje basado en gramas, donde
 
 Estas limitaciones motivan la búsqueda de modelos que no dependan de conteos y que, además, superen —al menos parcialmente— la escasez de observaciones que restringe la longitud de las secuencias que pueden modelarse. En este contexto, se introduce un modelo de lenguaje bidireccional que considera la secuencia completa: el segmento $i$ se modela tanto a partir de los segmentos que le siguen, i.e., $i+1, i+2, \ldots$, como de los segmentos que le preceden, i.e., $i-1, i-2, \ldots$. Este enfoque permite capturar dependencias globales y resolver las limitaciones inherentes a los modelos basados exclusivamente en frecuencias y direccionalidad fija.
 
+## Modelos de lenguaje paramétricos
 
+La @eq-modelo-qgrams muestra que, en un modelo de lenguaje basado en *N*-gramas, la probabilidad del siguiente segmento se obtiene directamente a partir de conteos. La idea es reemplazar esta estimación basada en frecuencias por una función paramétrica $f_\theta$ que asigna un puntaje real a cada posible continuación $w_n$ dado el contexto. Dichos puntajes se transforman en probabilidades mediante la función *softmax*, es decir,
+$$
+\mathbb P_\theta(w_n \mid w_{n-N+1}, \ldots, w_{n-1})
+= \textsf{softmax}\left(f_\theta(w_{n-N+1}, \ldots, w_{n-1})\right)_{w_n}.
+$$
+De esta manera, los conteos explícitos son sustituidos por representaciones aprendidas que permiten modelar contextos largos y generalizar a secuencias que no han sido observadas en el corpus.
