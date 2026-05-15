@@ -900,6 +900,7 @@ cl_spacy = make_pipeline(
     class_weight='balanced',
     dual='auto')
 ).fit(D, [x['klass'] for x in D])
+
 score(cl_spacy.predict(Dtest), name='spaCy').statistic
 ```
 
@@ -939,6 +940,7 @@ Se puede inferir que al tener representaciones vectoriales para cada texto, ento
 evomsa = StackBoW(
   lang='es'
 ).fit(D, np.r_[[x['klass'] for x in D]])
+
 score(
   evomsa.predict(Dtest),
   name='StackBoW'

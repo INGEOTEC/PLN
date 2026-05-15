@@ -1,0 +1,23 @@
+# Representaciones Contextuales
+
+El **objetivo** de la unidad es analizar, explicar y aplicar los principios fundamentales de representaciones contextuales.
+
+# Paquetes usados {.unnumbered}
+
+```{python}
+#| echo: true
+from transformers import TrainingArguments, Trainer, pipeline
+from transformers import PreTrainedTokenizerFast
+from transformers import DataCollatorForLanguageModeling
+from transformers.models.bert import BertConfig, BertForMaskedLM
+from datasets import Dataset
+from encexp.utils import load_dataset
+```
+
+## Introducción {#sec-introduccion-06rc}
+
+En @sec-modelo-gramas se presentó el modelo de lenguaje basado en gramas, donde la probabilidad del siguiente segmento se estimó mediante la @eq-modelo-qgrams. En ese enfoque, basta con contar la frecuencia de aparición de las secuencias para aproximar su probabilidad. Sin embargo, también se observó que, conforme aumenta la longitud de las secuencias, la frecuencia con la que aparecen en el corpus disminuye drásticamente, lo que impide estimar de manera confiable sus probabilidades y limita la capacidad del modelo para capturar dependencias de largo alcance.
+
+Estas limitaciones motivan la búsqueda de modelos que no dependan de conteos y que, además, superen —al menos parcialmente— la escasez de observaciones que restringe la longitud de las secuencias que pueden modelarse. En este contexto, se introduce un modelo de lenguaje bidireccional que considera la secuencia completa: el segmento $i$ se modela tanto a partir de los segmentos que le siguen, i.e., $i+1, i+2, \ldots$, como de los segmentos que le preceden, i.e., $i-1, i-2, \ldots$. Este enfoque permite capturar dependencias globales y resolver las limitaciones inherentes a los modelos basados exclusivamente en frecuencias y direccionalidad fija.
+
+
