@@ -26,12 +26,15 @@ La @eq-modelo-qgrams muestra que, en un modelo de lenguaje basado en gramas, la 
 $$
 \mathbb P_\theta(w_n \mid w_{n-N+1}, \ldots, w_{n-1})
 = \textsf{softmax}\left(f_\theta(w_{n-N+1}, \ldots, w_{n-1})\right)_{w_n},
-$$
-donde el subíndice $w_n$ indica la componente específica del vector softmax que corresponde al segmento $w_n$. De esta manera, los conteos explícitos son sustituidos por representaciones aprendidas que permiten modelar contextos largos y generalizar a secuencias que no han sido observadas en el corpus.
+$$ {#eq-modelo-unidireccional}
 
-Un modelo unidireccional tradicional estima la probabilidad de $w_i$ considerando solo el contexto anterior, como se muestra en la ecuación anterior. Sin embargo, un modelo bidireccional incorpora tanto el contexto anterior como el posterior para predecir cada segmento, tal y cmo se muestra en la siguiente ecuación
+donde el subíndice $w_n$ indica la componente específica del vector softmax que corresponde al segmento $w_n$. De esta manera, los conteos explícitos son sustituidos por la función $f_\theta$ cuyos parámetros $\theta$ son estimados a partir de datos, este procedimiento ha mostrado experimentalmente que es capaz de aprender contextos largos y generalizar a secuencias que no han sido observadas en el corpus.
+
+Un modelo unidireccional tradicional estima la probabilidad de $w_i$ considerando únicamente el contexto anterior, como se muestra en la ecuación anterior. Sin embargo, un modelo bidireccional incorpora tanto el contexto previo como el posterior para predecir cada segmento. En este caso, el segmento en la posición $i$ se reemplaza por un marcador no observado $m$, y la probabilidad del segmento original se estima condicionada a todos los demás elementos de la secuencia:
 
 $$
-\mathbb P_\theta(w_i \mid w_1, \ldots, w_{i-1}, w_{i+1}, \ldots, w_n)
-= \textsf{softmax}\left(f_\theta(w_1, \ldots, w_n)\right)_{w_i}.
-$$
+\mathbb P_\theta(w_i \mid w_1, \ldots, w_{i-1}, m, w_{i+1}, \ldots, w_n)
+= \textsf{softmax}\left(f_\theta(\ldots, w_{i-1}, m, w_{i+1}, \ldots)\right)_{w_i},
+$$ {#eq-modelo-bidireccional}
+
+donde $m$ representa el segmento oculto cuya identidad se desea recuperar. La función $f_\theta$ procesa la secuencia completa —incluyendo el marcador en la posición $i$— y produce un vector de puntajes sobre todo el vocabulario. El subíndice $w_i$ indica la componente del vector softmax correspondiente al segmento original que se desea predecir. Este mecanismo permite que el modelo utilice simultáneamente información del contexto izquierdo y derecho.
