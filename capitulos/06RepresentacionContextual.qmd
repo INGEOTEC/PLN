@@ -22,9 +22,16 @@ Estas limitaciones motivan la búsqueda de modelos que no dependan de conteos y 
 
 ## Modelos de lenguaje paramétricos
 
-La @eq-modelo-qgrams muestra que, en un modelo de lenguaje basado en *N*-gramas, la probabilidad del siguiente segmento se obtiene directamente a partir de conteos. La idea es reemplazar esta estimación basada en frecuencias por una función paramétrica $f_\theta$ que asigna un puntaje real a cada posible continuación $w_n$ dado el contexto. Dichos puntajes se transforman en probabilidades mediante la función *softmax*, es decir,
+La @eq-modelo-qgrams muestra que, en un modelo de lenguaje basado en gramas, la probabilidad del siguiente segmento se obtiene directamente a partir de conteos. La idea es reemplazar esta estimación basada en frecuencias por una función paramétrica $f_\theta$ que asigna un puntaje a cada posible continuación $w_n$ dado el contexto. Cabe mencionar que la función $f_\theta$ produce un vector de puntajes (también llamados logits) con una entrada por cada palabra del vocabulario, es decir, $f_\theta \in \mathbb R^{\mid V \mid}$ donde $V$ corresponde al vocabulario. Dichos puntajes se transforman en probabilidades mediante la función **softmax**, es decir,
 $$
 \mathbb P_\theta(w_n \mid w_{n-N+1}, \ldots, w_{n-1})
-= \textsf{softmax}\left(f_\theta(w_{n-N+1}, \ldots, w_{n-1})\right)_{w_n}.
+= \textsf{softmax}\left(f_\theta(w_{n-N+1}, \ldots, w_{n-1})\right)_{w_n},
 $$
-De esta manera, los conteos explícitos son sustituidos por representaciones aprendidas que permiten modelar contextos largos y generalizar a secuencias que no han sido observadas en el corpus.
+donde el subíndice $w_n$ indica la componente específica del vector softmax que corresponde al segmento $w_n$. De esta manera, los conteos explícitos son sustituidos por representaciones aprendidas que permiten modelar contextos largos y generalizar a secuencias que no han sido observadas en el corpus.
+
+Un modelo unidireccional tradicional estima la probabilidad de $w_i$ considerando solo el contexto anterior, como se muestra en la ecuación anterior. Sin embargo, un modelo bidireccional incorpora tanto el contexto anterior como el posterior para predecir cada segmento, tal y cmo se muestra en la siguiente ecuación
+
+$$
+\mathbb P_\theta(w_i \mid w_1, \ldots, w_{i-1}, w_{i+1}, \ldots, w_n)
+= \textsf{softmax}\left(f_\theta(w_1, \ldots, w_n)\right)_{w_i}.
+$$

@@ -20,3 +20,5 @@ spacy
 pysentimiento
 cvxpy
 CompStats
+jax
+optax
