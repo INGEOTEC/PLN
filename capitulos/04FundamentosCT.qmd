@@ -113,15 +113,15 @@ class ModeloNGram(Freck):
 
 ## Introducción 
 
-El problema de categorización (clasificación) de texto es una tarea de PLN que desarrolla algoritmos capaces de identificar la categoría de un texto de un conjunto de categorías previamente definidas. Por ejemplo, el análisis de sentimientos pertenece a esta tarea y su objetivo es el detectar la polaridad (e.g., positiva, neutral, o negativa) del texto. Cabe mencionar, que diferentes tareas de PLN pueden ser formuladas como problemas de clasificación, e.g., la tarea de preguntas y respuestas, vinculación de enunciados, entre otras.  
+El problema de categorización (clasificación) de texto es una tarea de PLN que desarrolla algoritmos capaces de identificar la categoría de un texto de un conjunto de categorías previamente definidas. Por ejemplo, el análisis de sentimientos pertenece a esta tarea y su objetivo es detectar la polaridad (p.ej., positiva, neutral o negativa) del texto. Cabe mencionar que diferentes tareas de PLN pueden ser formuladas como problemas de clasificación, por ejemplo, la tarea de preguntas y respuestas, vinculación de enunciados, entre otras.  
 
-El problema de clasificación de texto se puede resolver desde diferentes perspectivas; el camino que se seguirá corresponde a aprendizaje supervisado. Los problemas de aprendizaje supervisado comienzan con un conjunto de pares, donde el primer elementos del par corresponde a las entradas (variables independientes) y el segundo es la respuesta (variable dependiente). Sea $\mathcal D = \{(\text{texto}_i, y_i) \mid i=1,\ldots, N\}$ donde $y \in \{c_1, \ldots c_K\}$ y $\text{texto}_i$ contiene el texto. 
+El problema de clasificación de texto se puede resolver desde diferentes perspectivas; el camino que se seguirá corresponde al aprendizaje supervisado. Los problemas de aprendizaje supervisado comienzan con un conjunto de pares, donde el primer elemento del par corresponde a las entradas (variables independientes) y el segundo es la respuesta (variable dependiente). Sea $\mathcal D = \{(\text{texto}_i, y_i) \mid i=1,\ldots, N\}$ donde $y \in \{c_1, \ldots c_K\}$ y $\text{texto}_i$ contiene el texto. 
 
 ## Teorema de Bayes
 
-Una manera de modelar este problema es modelando la probabilidad de observar la clase $\mathcal Y$ dada la entrada, es decir, $\mathbb P(\mathcal Y \mid \mathcal X)$. El Teorema de Bayes ayuda a expresa esta expresión en términos de elementos que se pueden medir de un conjunto de entrenamiento. 
+Una manera de modelar este problema es modelando la probabilidad de observar la clase $\mathcal Y$ dada la entrada, es decir, $\mathbb P(\mathcal Y \mid \mathcal X)$. El Teorema de Bayes ayuda a expresar esta expresión en términos de elementos que se pueden medir de un conjunto de entrenamiento. 
 
-La probabilidad conjunta se puede expresar como $\mathbb P(\mathcal X, \mathcal Y)$, esta probabilidad es conmutativa por lo que $\mathbb P(\mathcal X, \mathcal Y)=\mathbb P(\mathcal Y, \mathcal X).$ En este momento se puede utilizar la definición de **probabilidad condicional** que es $\mathbb P(\mathcal Y, \mathcal X)=\mathbb P(\mathcal Y \mid \mathcal X) \mathbb P(\mathcal X).$ Utilizando estas ecuaciones el **Teorema de Bayes** queda como
+La probabilidad conjunta se puede expresar como $\mathbb P(\mathcal X, \mathcal Y)$, esta probabilidad es conmutativa, por lo que $\mathbb P(\mathcal X, \mathcal Y)=\mathbb P(\mathcal Y, \mathcal X).$ En este momento se puede utilizar la definición de **probabilidad condicional** que es $\mathbb P(\mathcal Y, \mathcal X)=\mathbb P(\mathcal Y \mid \mathcal X) \mathbb P(\mathcal X).$ Utilizando estas ecuaciones el **Teorema de Bayes** queda como
 
 $$
 \mathbb P(\mathcal Y \mid \mathcal X) = \frac{ \mathbb P(\mathcal X \mid \mathcal Y) \mathbb P(\mathcal Y)}{\mathbb P(\mathcal X)},
@@ -138,9 +138,9 @@ $$ {#eq-evidencia}
 
 ## Modelado Probabilístico (Distribución Categórica) {#sec-categorical-distribution}
 
-Se inicia la descripción de clasificación de texto presentando un ejemplo sintético que ejemplifica los supuestos que se realizan en el modelo. La distribución categórica modela el evento de seleccionar $K$ eventos, los cuales pueden estar codificados como caracteres. Si esta selección se realiza $\ell$ veces se cuenta con una secuencia de eventos representados por caracteres. Por ejemplo, los $K$ eventos pueden ser representados por los caracteres *w*, *x*, *y* y *z*. Utilizando este proceso se puede utilizar para ejemplificar el proceso de asociar una secuencia a una clase, e.g., positiva o negativa.
+Se inicia la descripción de la clasificación de texto presentando un ejemplo sintético que ejemplifica los supuestos que se realizan en el modelo. La distribución categórica modela el proceso de seleccionar $K$ eventos, los cuales pueden estar codificados como caracteres. Si esta selección se realiza $\ell$ veces se cuenta con una secuencia de eventos representados por caracteres. Por ejemplo, los $K$ eventos pueden ser representados por los caracteres *w*, *x*, *y* y *z*. Este proceso se puede utilizar para ejemplificar el proceso de asociar una secuencia a una clase, p. ej., positiva o negativa.
 
-El primer paso es seleccionar los parámetros de dos distribuciones tal y como se muestra en las siguientes primeras dos líneas. Cada distribución se asume que es la generadora de una clase. El segundo paso es tomar una muestra de cada distribución, en particular se toman $1000$ muestras con el siguiente procedimiento. En cada iteración se toma una muestra de una distribución Gausiana ($\mathcal N(15, 3)$), la variable aleatoria se guarda en la variable `length`. Esta variable aleatoria representa la longitud de la secuencia. El tercer paso es sacar la muestra de las distribuciones categóricas definidas previamente. Las muestras son guardadas en la lista `D` junto con la clase a la que pertenece $0$ y $1.$ 
+El primer paso es seleccionar los parámetros de dos distribuciones tal y como se muestra en las primeras dos líneas siguientes. Cada distribución se asume que es la generadora de una clase. El segundo paso es tomar una muestra de cada distribución, en particular se toman $1000$ muestras con el siguiente procedimiento. En cada iteración se toma una muestra de una distribución Gausiana ($\mathcal N(15, 3)$), la variable aleatoria se guarda en la variable `length`. Esta variable aleatoria representa la longitud de la secuencia. El tercer paso es sacar la muestra de las distribuciones categóricas definidas previamente. Las muestras son guardadas en la lista `D` junto con la clase a la que pertenece $0$ y $1.$ 
 
 
 ```{python}
@@ -198,7 +198,7 @@ class ModeloPalabra(ModeloNGram):
     return self.get_text(texto).split()
 ```
 
-Habiendo definido la clase `ModeloPalabra` los parametros de $\mathbb P(\mathcal X \mid \mathcal Y)$ se pueden calcular con las siguiente instrucciones; en la variable `pos_l` se tienen los parámetros para $\mathbb P(\mathcal X \mid \mathcal Y=1)$ y en `neg_l` para $\mathbb P(\mathcal X \mid \mathcal Y=0).$
+Habiendo definido la clase `ModeloPalabra` los parámetros de $\mathbb P(\mathcal X \mid \mathcal Y)$ se pueden calcular con las siguientes instrucciones; en la variable `pos_l` se tienen los parámetros para $\mathbb P(\mathcal X \mid \mathcal Y=1)$ y en `neg_l` para $\mathbb P(\mathcal X \mid \mathcal Y=0).$
 
 ```{python}
 #| echo: true
@@ -216,7 +216,7 @@ neg_l = ModeloPalabra(k_suavizado=0).fit( # <2>
 1. Estimación de los parametros de $\mathbb P(\mathcal X \mid \mathcal Y=1)$
 2. Estimación de los parametros de $\mathbb P(\mathcal X \mid \mathcal Y=0)$
 
-Recordando que se conocen los valores de los paramétros de $\mathbb P(\mathcal X \mid \mathcal Y)$ dado que se trata de un problema sinténtico (ver @lst-problema-sintetitco), es oportuno comparar los parametros exactos con respecto a los parámetros estimados mediante el conjunto `D`. 
+Recordando que se conocen los valores de los parámetros de $\mathbb P(\mathcal X \mid \mathcal Y)$ dado que se trata de un problema sintético (ver @lst-problema-sintético), es oportuno comparar los parámetros exactos con respecto a los parámetros estimados mediante el conjunto `D`. 
 
 ```{python}
 #| echo: true
